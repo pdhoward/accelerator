@@ -1,0 +1,159 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  /* Obsidian register — the default, dark, "technology" surface */
+  --sm-obsidian: #0a0a0c;
+  --sm-obsidian-2: #121216;
+  --sm-obsidian-3: #1b1b21;
+  --sm-obsidian-border: #26262e;
+
+  /* Daylight register — used deliberately, sparingly, for resort/experience content */
+  --sm-ivory: #f6f4ef;
+  --sm-ivory-2: #ffffff;
+  --sm-ink: #0e0e10;
+
+  /* Text on dark */
+  --sm-fog: #a9a9b2;
+  --sm-mist: #6b6b76;
+
+  /* Accents */
+  --sm-aurora-violet: #7c5cfc;
+  --sm-aurora-cyan: #22d3ee;
+  --sm-signal-green: #34d399;
+  --sm-gold: #c9a227;
+  --sm-gold-bright: #e4bf4a;
+
+  --background: var(--sm-obsidian);
+  --foreground: #f5f5f7;
+}
+
+@theme inline {
+  --color-obsidian: var(--sm-obsidian);
+  --color-obsidian-2: var(--sm-obsidian-2);
+  --color-obsidian-3: var(--sm-obsidian-3);
+  --color-obsidian-border: var(--sm-obsidian-border);
+
+  --color-ivory: var(--sm-ivory);
+  --color-ivory-2: var(--sm-ivory-2);
+  --color-ink: var(--sm-ink);
+
+  --color-fog: var(--sm-fog);
+  --color-mist: var(--sm-mist);
+
+  --color-aurora-violet: var(--sm-aurora-violet);
+  --color-aurora-cyan: var(--sm-aurora-cyan);
+  --color-signal: var(--sm-signal-green);
+  --color-gold: var(--sm-gold);
+  --color-gold-bright: var(--sm-gold-bright);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-aurora-drift: aurora-drift 22s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 2.4s ease-in-out infinite;
+  --animate-orbit: orbit 9s linear infinite;
+  --animate-accordion-down: accordion-down 0.25s ease-out;
+  --animate-accordion-up: accordion-up 0.25s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes aurora-drift {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(3%, -4%) scale(1.08);
+    }
+    66% {
+      transform: translate(-4%, 3%) scale(0.96);
+    }
+  }
+  @keyframes orbit {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--sm-aurora-violet) 55%, transparent);
+  color: white;
+}
+
+.text-aurora-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--sm-aurora-violet),
+    var(--sm-aurora-cyan)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.bg-aurora-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--sm-aurora-violet),
+    var(--sm-aurora-cyan)
+  );
+}
+
+.border-glow-aurora {
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--sm-aurora-violet) 40%, transparent),
+    0 0 24px -8px color-mix(in oklab, var(--sm-aurora-cyan) 60%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

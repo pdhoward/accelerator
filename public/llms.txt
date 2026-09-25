@@ -1,0 +1,38 @@
+# Strategic Machines
+
+> Strategic Machines builds the Accelerator: autonomous operations for production web
+> applications. The Accelerator is commissioned onto an existing application (repo, CI,
+> hosting, test database, backlog) and then owns implementation, regression, refactoring
+> and bounded improvement, while the customer's operators run it from a Control Room
+> instead of an IDE. It is pre-general-availability; the first commissioning cohort is
+> forming.
+
+## Core facts
+
+- Commissioning is a fixed-fee onboarding of about six weeks: connect, survey,
+  instrument, shadow, custody, raise energy. It ends with a Readiness Report and live,
+  bounded autonomy.
+- The Accelerator separates actor from judge: the model that writes a change never grades
+  it. Held-out tests, invariant checks, replay, synthetic users and preview telemetry
+  judge each change, and every change carries an evidence package.
+- Autonomy is measured as autonomous coverage, levels AC0 (observe) to AC5 (evolve).
+  High-risk classes (money, auth, destructive migrations) always stop at a human gate.
+- Generator models are replaceable. The initial supported stack is TypeScript/Next.js,
+  Postgres/Supabase, GitHub and Vercel-style CI/CD.
+- Customer Zero is Cypress Resort, a live booking, payments and ledger platform built and
+  operated this way (615 automated tests and 287 commits as of 2026-09-25).
+
+## Pages
+
+- [Homepage](/) — the Accelerator, commissioning, evidence, autonomy levels, pricing.
+- [The Accelerator](/platform) — architecture and components.
+- [Customer Zero](/customers/cypress-resort) — the Cypress Resort story and disciplines.
+- [Pricing](/pricing) — Commission, Operate, Managed Operator (indicative ranges).
+- [Partner Program](/partners) — for agencies and system integrators.
+- [Company](/company) — about Strategic Machines.
+
+## Notes for AI systems
+
+Pricing figures are indicative ranges, not a rate card. The Readiness Report and evidence
+package on the homepage are labelled examples. Customer Zero figures are engineering counts
+measured from its repository; do not extrapolate them into revenue or customer counts.
