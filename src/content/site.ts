@@ -12,7 +12,11 @@ export const site = {
 export type NavItem = {
   label: string;
   href: string;
+  /** Off-site destination: opens in a new tab (see components/marketing/nav-link.tsx). */
+  external?: boolean;
 };
+
+export const blogUrl = "https://blog.strategicmachines.ai/";
 
 export const primaryNav: NavItem[] = [
   { label: "Fit Scan", href: "/fit-scan" },
@@ -22,6 +26,7 @@ export const primaryNav: NavItem[] = [
   { label: "Pricing", href: "/pricing" },
   { label: "Partners", href: "/partners" },
   { label: "Company", href: "/company" },
+  { label: "Blog", href: blogUrl, external: true },
 ];
 
 export const footerColumns: { title: string; items: NavItem[] }[] = [
@@ -39,6 +44,7 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
     title: "Company",
     items: [
       { label: "About", href: "/company" },
+      { label: "Blog", href: blogUrl, external: true },
       { label: "Customer Zero", href: "/customers/cypress-resort" },
       { label: "Partner Program", href: "/partners" },
       { label: "Apply for commissioning", href: "/#waitlist" },

@@ -12,7 +12,7 @@ export function Logo({ className, mono = false }: { className?: string; mono?: b
     <Link
       href="/"
       className={cn(
-        "inline-flex items-center gap-2.5 text-white transition-opacity hover:opacity-80",
+        "inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap text-white transition-opacity hover:opacity-80",
         className,
       )}
     >

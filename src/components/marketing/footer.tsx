@@ -1,9 +1,8 @@
-import Link from "next/link";
-
 import { footerColumns, site } from "@/content/site";
 import { technologyPartners } from "@/content/partners";
 import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/marketing/logo";
+import { NavLink } from "@/components/marketing/nav-link";
 import { GithubIcon, LinkedinIcon, XIcon } from "@/components/marketing/social-icons";
 
 export function Footer() {
@@ -39,12 +38,7 @@ export function Footer() {
               <ul className="flex flex-col gap-2.5">
                 {col.items.map((item) => (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-sm text-fog transition-colors hover:text-white"
-                    >
-                      {item.label}
-                    </Link>
+                    <NavLink item={item} className="text-sm text-fog transition-colors hover:text-white" />
                   </li>
                 ))}
               </ul>

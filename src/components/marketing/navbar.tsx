@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/marketing/logo";
+import { NavLink } from "@/components/marketing/nav-link";
 
 export function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
@@ -31,20 +32,19 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Logo />
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 xl:flex">
           {primaryNav.map((item) => (
-            <Link
+            <NavLink
               key={item.href}
-              href={item.href}
-              className="rounded-full px-4 py-2 text-sm text-fog transition-colors hover:bg-white/5 hover:text-white"
-            >
-              {item.label}
-            </Link>
+              item={item}
+              className="whitespace-nowrap rounded-full px-3 py-2 text-sm text-fog transition-colors hover:bg-white/5 hover:text-white"
+            />
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
-          <Button variant="ghost" size="sm">
+        <div className="hidden shrink-0 items-center gap-2 xl:flex">
+          {/* Placeholder until a sign-in destination exists; shown only where there's room. */}
+          <Button variant="ghost" size="sm" className="hidden 2xl:inline-flex">
             Sign in
           </Button>
           <Button variant="gold" size="sm" asChild>
@@ -54,7 +54,7 @@ export function Navbar() {
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu">
+            <Button variant="ghost" size="icon" className="xl:hidden" aria-label="Open menu">
               <Menu className="size-5" />
             </Button>
           </SheetTrigger>
@@ -64,12 +64,10 @@ export function Navbar() {
             <nav className="flex flex-col gap-1">
               {primaryNav.map((item) => (
                 <SheetClose asChild key={item.href}>
-                  <Link
-                    href={item.href}
+                  <NavLink
+                    item={item}
                     className="rounded-lg px-3 py-3 text-base text-fog transition-colors hover:bg-white/5 hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
+                  />
                 </SheetClose>
               ))}
             </nav>

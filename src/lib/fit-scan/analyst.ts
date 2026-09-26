@@ -42,7 +42,15 @@ You receive deterministic scan results and an excerpt of the page's visible text
 
 class ClaudeAnalyst implements FitAnalyst {
   name = "Claude";
-  private client = new Anthropic({ timeout: 40_000, maxRetries: 1 });
+  private client = new Anthropic({
+    timeout: 40_000,
+    maxRetries: 1,
+    // An org-level API key (not scoped to a workspace) must name the workspace
+    // on every request, or the API returns 400. The SDK only sends this header
+    // itself for OAuth profiles, so we set it here. A workspace-scoped key
+    // needs no ID; leave the variable unset then.
+    defaultHeaders: workspaceId() ? { "anthropic-workspace-id": workspaceId() } : undefined,
+  });
 
   async analyze({ url, signals, scored }: AnalystInput): Promise<Analysis | null> {
     const evidence = {
@@ -78,6 +86,11 @@ class ClaudeAnalyst implements FitAnalyst {
     if (response.stop_reason === "refusal" || !response.parsed_output) return null;
     return { analyst: this.name, ...response.parsed_output };
   }
+}
+
+/** ANTHROPIC_WORKSPACE_ID is the standard name; ANTHROPIC_WORKSPACE_KEY is accepted as an alias. */
+function workspaceId() {
+  return process.env.ANTHROPIC_WORKSPACE_ID || process.env.ANTHROPIC_WORKSPACE_KEY || undefined;
 }
 
 export function getAnalyst(): FitAnalyst | null {
