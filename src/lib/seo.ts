@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { site } from "@/content/site";
+import { brand, site } from "@/content/site";
+
 
 export function buildMetadata({
   title,
@@ -24,13 +25,16 @@ export function buildMetadata({
       url,
       siteName: site.name,
       type: "website",
+      images: [brand.socialImage],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
+      images: [brand.socialImage],
     },
   };
+
 }
 
 export function organizationJsonLd() {
