@@ -8,8 +8,8 @@ import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 
 export const metadata = buildMetadata({
   title: "Customer Zero — Cypress Resort",
-  description:
-    "A live resort booking, payments and ledger platform, built and operated by the Accelerator: real guests, real money, no hand-written code.",
+    description:
+    "A live resort booking, payments and ledger platform, built and run by the Accelerator. Real guests, real money.",
   path: "/customers/cypress-resort",
 });
 

@@ -5,7 +5,7 @@ import { FitScanTool } from "@/components/marketing/fit-scan-tool";
 export const metadata = buildMetadata({
   title: "Fit Scan",
   description:
-    "Paste a URL and get a Lighthouse-style accelerator-fit report: stack fit, application depth, delivery pipeline, hygiene, and the backlog we'd start with.",
+    "Paste a URL and get a Lighthouse-style accelerator-fit report: stack fit, app depth, pipeline, hygiene, and priority backlog.",
   path: "/fit-scan",
 });
 

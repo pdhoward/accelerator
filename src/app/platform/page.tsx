@@ -10,8 +10,8 @@ import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 
 export const metadata = buildMetadata({
   title: "The Accelerator",
-  description:
-    "Application Model, independent assurance, interlocks and a Control Room — the machine that takes custody of your web application.",
+   description:
+    "Application Model, independent assurance, interlocks and a Control Room: the machine that runs your web app.",
   path: "/platform",
 });
 

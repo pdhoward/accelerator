@@ -42,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-obsidian">
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
+           
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
         />
         <Navbar />

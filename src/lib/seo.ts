@@ -13,14 +13,17 @@ export function buildMetadata({
   path?: string;
 }): Metadata {
   const url = `${site.url}${path}`;
-  const fullTitle = path === "/" ? title : `${title} — ${site.name}`;
+  // Social cards aren't templated, so they carry the brand themselves.
+  const socialTitle = path === "/" ? title : `${title} — ${site.name}`;
 
   return {
-    title: fullTitle,
+    // The root layout's title.template appends " — Strategic Machines" to
+    // every page except the home page, so pass the bare page title here.
+    title,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title: fullTitle,
+      title: socialTitle,
       description,
       url,
       siteName: site.name,
@@ -29,13 +32,13 @@ export function buildMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: fullTitle,
+      title: socialTitle,
       description,
       images: [brand.socialImage],
     },
   };
-
 }
+
 
 export function organizationJsonLd() {
   return {

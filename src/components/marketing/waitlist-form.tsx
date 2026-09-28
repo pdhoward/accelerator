@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check } from "lucide-react";
 import { toast } from "sonner";
@@ -19,12 +19,14 @@ export function WaitlistForm({ defaultCompany, source }: { defaultCompany?: stri
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<WaitlistInput>({
     resolver: zodResolver(waitlistSchema),
     defaultValues: { propertyName: defaultCompany },
   });
+  // useWatch (not watch()) so the React Compiler can still memoize this form.
+  const role = useWatch({ control, name: "role" });
 
   async function onSubmit(data: WaitlistInput) {
     try {
@@ -87,7 +89,7 @@ export function WaitlistForm({ defaultCompany, source }: { defaultCompany?: stri
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="role">Role (optional)</Label>
-          <Select onValueChange={(v) => setValue("role", v as WaitlistInput["role"])} value={watch("role")}>
+          <Select onValueChange={(v) => setValue("role", v as WaitlistInput["role"])} value={role}>
             <SelectTrigger id="role">
               <SelectValue placeholder="Select role" />
             </SelectTrigger>

@@ -16,7 +16,7 @@ import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 
 export const metadata = buildMetadata({
-  title: `${site.name} — ${site.tagline}`,
+  title: site.tagline,
   description: site.description,
   path: "/",
 });
