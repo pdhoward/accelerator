@@ -5,7 +5,8 @@ export const site = {
   /** The hero's cycling verb: "You [manage] your website." First word is the static one. */
   verbs: ["manage", "design", "change", "validate", "inspect", "approve", "release", "govern", "improve"],
   eyebrow: "The AI Control Room for your website",
-  subline: "From requirement to release, every action is controlled, tested, and backed by evidence.",
+  subline: `At your direction, AI Agents design, build, test, and deploy
+                the work, and every change carries its proof from request to production. The first AI control room for your modern website.`,
   description:
     "The Control Room for designing, building, testing, and releasing your website with AI. You direct; AI designs, builds, tests, and deploys, with evidence for every change.",
   domain: "strategicmachines.ai",

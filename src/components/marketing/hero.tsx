@@ -41,8 +41,7 @@ export function Hero() {
 
           <FadeUpItem>
             <p className="max-w-2xl text-pretty text-lg leading-relaxed text-fog sm:text-xl">
-              {site.subline} You define the outcome; AI designs, builds, tests, and deploys
-              the work, and every change carries its proof from request to production.
+              {site.subline} 
             </p>
           </FadeUpItem>
 
