@@ -11,16 +11,16 @@ export type PricingTier = {
 };
 
 /**
- * Indicative ranges from cypress-actions/accelerator.md §6 — proposals, not a
- * rate card. Each engagement is quoted after a scoping call.
+ * Indicative ranges from work/accelerator.md §8 — proposals, not a rate card.
+ * Each engagement is quoted after a scoping call.
  */
 export const pricingTiers: PricingTier[] = [
   {
     id: "commission",
     name: "Commission",
     positioning: "Bring your application up to speed",
-    price: "$30K–$120K",
-    cadence: "fixed fee · ~6 weeks",
+    price: "$5K–$20K",
+    cadence: "one-time · quoted by complexity and scope",
     ctaLabel: "Apply for commissioning",
     ctaHref: "/#waitlist",
     features: [
@@ -29,6 +29,7 @@ export const pricingTiers: PricingTier[] = [
       "Discipline Pack installed",
       "Shadow replay of your recent work",
       "Readiness Report + live AC1–AC2 autonomy",
+      "Complex sites: training courses so your team can lead the migration, plus a support contract",
     ],
   },
   {

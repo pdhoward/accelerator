@@ -236,7 +236,7 @@ The principle: **build everything the harness vendors won't, and make the harnes
 
 | SKU | What | Indicative price |
 |---|---|---|
-| **Commission** | Fixed-fee onboarding (§4) → Readiness Report + live AC1–AC2 | $30K–$120K by complexity |
+| **Commission** | Onboarding (§4) → Readiness Report + live AC1–AC2. **Highly complex sites:** also includes **training courses** so the customer's team can lead the migration to the platform, plus a **support contract**. | **$5K–$20K, custom-quoted by complexity and scope, invoiced** (owner decision 2026-09-29; was $30K–$120K) |
 | **Operate** | Accelerator runtime: orchestration, judges, evidence store, control room, model spend | $6K–$20K/mo by change volume and assurance level |
 | **Managed Operator** | Our operator runs the control room until the customer can | +$10K–$20K/mo, tapering |
 
