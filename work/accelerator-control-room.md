@@ -344,7 +344,8 @@ A prospect **demo** is a tenant (seeded, reset nightly), not a separate app.
   - end-to-end test 20/20 against the real database, and data survives a server restart
 
   The API uses Supabase whenever the startup script injects keys, and the in-memory demo otherwise.
-- **Next:** the **runner spike** (an agent taking a real Cypress request through build → tests → preview → evidence, unattended).
+- **Designed, awaiting approval:** accounts, sign-in and the Platform Admin area → [accounts-auth-admin.md](accounts-auth-admin.md). ts-platform is the first account to board, as the acid test.
+- **Then:** the **runner spike** (an agent taking a real Cypress request through build → tests → preview → evidence, unattended).
 
 | Phase | Scope | Proves |
 |---|---|---|
