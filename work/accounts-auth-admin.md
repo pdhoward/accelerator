@@ -25,7 +25,7 @@
 | # | Decision |
 |---|---|
 | D1 | One auth screen in the console at **`app.strategicmachines.ai`**. The marketing site links to `/login`. |
-| D2 | **Sign in with one step, either:**<br>• **an email magic link** (Supabase Auth), or<br>• **a code texted to the member's verified mobile.**<br>Each proves possession of an inbox or a phone. There's **no extra per-action second factor**. Google and GitHub come later. |
+| D2 | **Sign in with one step, either:**<br>• **an emailed one-time link**: the API makes the token (Supabase Auth) and sends it with nodemailer, so the link always points at our own Control Room, or<br>• **a code texted to the member's verified mobile.**<br>Each proves possession of an inbox or a phone. There's **no extra per-action second factor**. Google and GitHub come later. |
 | D3 | **Mobile captured and verified on first sign-in** (international: E.164, any country code, `libphonenumber-js`; shown masked), with SMS consent recorded. |
 | D4 | **Texted codes are generated and checked by our API** (hashed, 10-minute expiry, 5 tries, 5 texts per number per hour). Twilio only *delivers* the text. |
 | D5 | **One SMS client, `TwilioSms`, pointed at a base URL:**<br>• **production:** `api.twilio.com`, active once the Twilio keys exist; until then it fails loudly.<br>• **outside production:** the **Twilio emulator** (`npx emulate start --service twilio --port 4013`; its default port 4000 is the console's). On Vercel there's no emulator, so texts are suppressed and logged, and the team uses **reserve codes**. |
@@ -85,7 +85,7 @@
 | Route | Who | What |
 |---|---|---|
 | `/login` | Anyone | Split screen: product statement, email field, **Email me a link** / **Text me a code**, then the code boxes. "Use reserve code" appears only outside production. |
-| `/auth/callback` | — | Finishes the magic link. |
+| `/auth/confirm` | — | Finishes the emailed link (one use, 1 hour). |
 | `/profile/mobile` | Signed in | Add or confirm the mobile, plus SMS consent. |
 | `/accounts` | Several accounts | Account picker. |
 | `/admin` | Platform roles | Overview: accounts by status, MRR/ARR, quoted installation fees, AI spend vs revenue, texts sent. |
@@ -110,9 +110,11 @@
 - **`APP_STAGE`**
 - **Access:** `PLATFORM_ADMIN_EMAILS`, `DEV_ALLOWLIST`, `DEV_RESERVE_CODES`
 - **SMS:** `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`, `TWILIO_API_BASE` (the emulator URL locally)
-- **Console:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `API_URL`
+- **Email:** `EMAIL_USER`, `EMAIL_PASS` (Gmail app password), optional `EMAIL_FROM`, `EMAIL_SERVICE`. Locally without them, sign-in links print in the API terminal.
+- **URLs, local vs deployed:** `API_URL_LOCAL` / `API_URL_DEPLOYED`, `CONSOLE_URL_LOCAL` / `CONSOLE_URL_DEPLOYED`. The apps read `_DEPLOYED` when Vercel's `VERCEL=1` is set, `_LOCAL` otherwise (defaults `localhost:4001` / `:4000`). One env file serves both.
+- **Console:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-**Supabase dashboard (one-time):** Auth → URL Configuration → add the console's `/auth/callback` URL for localhost, the Vercel deployment and `app.strategicmachines.ai`.
+**Supabase dashboard:** no redirect-URL setup needed for sign-in; our API builds the links.
 
 ## 8. Owner decisions (2026-09-29)
 
