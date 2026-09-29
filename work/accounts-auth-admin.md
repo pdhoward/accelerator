@@ -1,123 +1,126 @@
-# Accounts, Sign-in & Platform Admin — Design (v0.2)
+# Accounts, Sign-in & Platform Admin — Design (v0.3, approved)
 
-*2026-09-29 · status: **for approval** · repo: `accelerator-platform` · companion to [accelerator-control-room.md](accelerator-control-room.md)*
-*v0.2: SMS second step (Twilio, emulated outside production), explicit `APP_STAGE`, non-production access gate, owner decisions recorded.*
+*2026-09-29 · **approved by owner** · repo: `accelerator-platform` · companion to [accelerator-control-room.md](accelerator-control-room.md)*
+*v0.3: one-step sign-in (email link **or** texted code); no per-action second factor; role-based access for the platform (Owner · Admin · Staff) and for customers (release approval by role).*
 
-**Goal.** Customers are invited (self-serve comes later). Everyone signs in through one screen with **email + a texted code**. Anyone on the platform-admin list lands in **Platform Admin**, which shows every account, subscription, revenue and platform health, and can create or suspend accounts.
+**Status (2026-09-29): built.** API routes, console screens and role gating done; typecheck, tests (22) and both builds pass; demo mode verified end to end. **Waiting on:** migration 0003 applied to accelerator-test, Supabase Auth redirect URLs, then a live sign-in test.
+
+**Where the code is:**
+- Permission maps: `packages/domain/src/permissions.ts` (`canPlatform`, `canSite`)
+- API guards: `apps/api/lib/http.ts` (`platformRoute`, `siteRoute`: 404 not a member · 423 suspended · 403 role)
+- Sign-in + codes: `apps/api/lib/{identity,codes,sms,phone,env}.ts`
+- Console: `lib/access.ts` (`homeFor`, `siteAccess`, `platformAccess`), `components/sidebar.tsx` (one `AppSidebar`, nav filtered on the server), `app/login`, `app/profile/mobile`, `app/admin/**`
+
+**Goal.** Invited customers and our team sign in through one screen. **Platform Admin** shows every account, subscription, revenue and platform health, and creates or suspends accounts. What anyone can do is decided by **role → permission maps** in one file.
 
 ---
 
 ## 1. Pattern (Stripe, Vercel, Supabase, Linear)
 
-- The marketing site only **links** to sign-in and sign-up; auth lives in the **app**.
-- Sign-up: account → organization → plan and payment → onboarding.
-- Staff reach an internal admin through the **same** sign-in, gated server-side.
+- Marketing links to the app; auth lives in the app.
+- Staff use the same sign-in, gated server-side.
 
 ## 2. Decisions
 
 | # | Decision |
 |---|---|
-| D1 | One auth screen, in the console at **`app.strategicmachines.ai`** (the domain is already set up in Vercel). The marketing site links to `/login` and `/signup`. |
-| D2 | **Supabase Auth** for identity: **email magic link**, **Google**, **GitHub**. |
-| D3 | **Second step for everyone: a code texted to the member's verified mobile.** It's required for sign-in (session level `aal2`) and on every admin action. |
-| D4 | **Sign-up captures email + mobile**, plus SMS consent (timestamp and wording shown). The mobile is verified by code before the account opens.<br>**International numbers:**<br>• a country picker plus a number field, validated and stored in **E.164** (`+<country code><number>`) with `libphonenumber-js`<br>• any country Twilio Verify supports, never assuming `+1`<br>• the number is shown masked (`•••• 5391`) everywhere after entry |
-| D5 | **SMS goes through one seam, `SmsProvider`** (the ts-platform `getMailProvider()` pattern):<br>• `emulate` when `APP_STAGE` ≠ `production`: the **Twilio emulator** (`vercel-labs/emulate`, Twilio **Verify v2 + Messaging**) embedded in the API via `@emulators/adapter-next` at `/emulate`.<br>• `twilio` in production: real Twilio Verify. **Stubbed for now**; it fails loudly with "Twilio not configured" until you sign up. |
-| D6 | **`APP_STAGE`** (`development` · `preview` · `production`) is set explicitly per deployment. Vercel's "Production" label does **not** make us production. Today every deployment is `development` (test database, test Stripe). |
-| D7 | **Access gate outside production.** When `APP_STAGE` ≠ `production`:<br>• only emails on `DEV_ALLOWLIST` can sign up or sign in (others see "Invite only")<br>• codes are delivered **only to allow-listed numbers**<br>• the emulator's inspector and its code-lookup route are **admin-only**<br>• keep **Vercel Deployment Protection** on the console and preview deployments as the outer wall |
-| D8 | **Reserve codes** (dev team only, non-production only): each allow-listed person gets their **own** code, stored **hashed** in `DEV_RESERVE_CODES` (`email:sha256`), accepted **only** for that person's verified number, and **refused entirely in production**. The emulator's fixed `123456` is **never** accepted as a reserve code. |
-| D9 | Platform admins = a database allow-list (`acc_platform_admins`), bootstrapped from `PLATFORM_ADMIN_EMAILS` (the owner; see §9). The admin second step is the same SMS code (D3); **TOTP/passkey is the planned upgrade** for admins. |
-| D10 | **Admin area inside the console at `/admin`**, gated on both the console and the API. It can split to `apps/ops` later without API changes. |
-| D11 | **Billing:** Stripe subscription (Operate monthly). **The installation fee is custom-quoted, $5,000–$20,000** by site complexity and scope, and **invoiced** (Stripe invoice), not a fixed Checkout price. For highly complex sites it includes **training courses** (so the customer's team leads the migration) and a **support contract**, recorded on the account as quote line items. |
-| D12 | **Invite-only at launch.** Self-serve Checkout is built behind the `SELF_SERVE_SIGNUP` switch, off until ts-platform proves the loop. |
-| D13 | The API trusts only a **verified Supabase JWT at `aal2`**. It resolves user → memberships → the current org, never from client input. The demo Operator survives only for local runs without keys. |
+| D1 | One auth screen in the console at **`app.strategicmachines.ai`**. The marketing site links to `/login`. |
+| D2 | **Sign in with one step, either:**<br>• **an email magic link** (Supabase Auth), or<br>• **a code texted to the member's verified mobile.**<br>Each proves possession of an inbox or a phone. There's **no extra per-action second factor**. Google and GitHub come later. |
+| D3 | **Mobile captured and verified on first sign-in** (international: E.164, any country code, `libphonenumber-js`; shown masked), with SMS consent recorded. |
+| D4 | **Texted codes are generated and checked by our API** (hashed, 10-minute expiry, 5 tries, 5 texts per number per hour). Twilio only *delivers* the text. |
+| D5 | **One SMS client, `TwilioSms`, pointed at a base URL:**<br>• **production:** `api.twilio.com`, active once the Twilio keys exist; until then it fails loudly.<br>• **outside production:** the **Twilio emulator** (`npx emulate --service twilio`, inspector at `localhost:4013`). On Vercel there's no emulator, so texts are suppressed and logged, and the team uses **reserve codes**. |
+| D6 | **`APP_STAGE`** (`development` · `preview` · `production`) is explicit per deployment. Today it's `development` everywhere (test database, test Stripe). |
+| D7 | **Outside production:** only `DEV_ALLOWLIST` emails can sign in. **Reserve codes** are per person, stored hashed (`DEV_RESERVE_CODES = email:sha256`), valid only for that email, and ignored in production. Vercel Deployment Protection stays on as the outer wall. |
+| D8 | **Invite-only.** Anyone can sign in only if they are a platform staff member, an existing member, or have a pending invite. Self-serve sign-up is off (`SELF_SERVE_SIGNUP`). |
+| D9 | **Platform roles: Owner · Admin · Staff** (`acc_platform_admins.role`), bootstrapped from `PLATFORM_ADMIN_EMAILS` as Owner. |
+| D10 | **Customer roles: Owner · Operator · Tester · Viewer**, per account. |
+| D11 | **Permissions are two maps in `packages/domain/src/permissions.ts`:** platform `role → actions` and customer `role → actions`.<br>• The console hides what a role can't use.<br>• The API refuses it (403).<br>• Each admin sidebar item declares its permission, so **changing who sees what is a one-line edit in the map.**<br>• Money, data, auth and security changes still also need the account Owner (gate policy). |
+| D12 | The API trusts only a **verified Supabase JWT**. It resolves user → platform role and memberships → the site's account and role. Suspended account → **423**. Local runs without keys keep the demo tenant. |
+| D13 | **Billing:** Stripe subscription (Operate monthly). The installation fee is **custom-quoted at $5,000–$20,000**, and **invoiced**; complex sites include training courses and a support contract. Tables exist now; **Stripe wiring is the next step** after this build. |
 
-## 3. How the texted code works
+## 3. Permissions (initial maps; edit in one place)
 
-```
-Sign in (email link / Google / GitHub) ─► session at aal1
-   └─► "Text me a code" ─► API /api/auth/sms/start ─► SmsProvider.sendVerification(verified mobile)
-            emulate: Twilio Verify emulator (code readable in /emulate inspector, admin-only)
-            twilio:  real Twilio Verify (production; stub today)
-   └─► enter code ─► API /api/auth/sms/check ─► SmsProvider.check(code)  — or reserve code (D8, non-prod only)
-            └─► pass ─► session stepped up to aal2 ─► routing rule (§4C)
-```
+**Platform** (the Platform Admin area):
 
-- **How the session is marked `aal2`:** Supabase MFA with a phone factor, where Supabase's **Send-SMS hook** points at our API → `SmsProvider`. Supabase then owns code verification and stamps `aal2` on the JWT, and the API simply checks the claim.
-- **Verify during build:** that the Send-SMS hook covers phone MFA on our plan.
-- **Fallback:** our own step-up record (`acc_step_ups`) keyed to the Supabase session.
-- **Local development:** Supabase must reach the hook, so it goes through your **ngrok** tunnel. Vercel deployments use the API's URL.
-- **Rate limits:** 5 code requests per number per hour; 5 wrong entries lock the code.
+| Action | Owner | Admin | Staff |
+|---|---|---|---|
+| View overview, accounts, health | ✓ | ✓ | ✓ |
+| View revenue and billing | ✓ | ✓ | — |
+| Create accounts, invite people, edit plan or billing mode | ✓ | ✓ | — |
+| Suspend / resume accounts | ✓ | ✓ | — |
+| View audit log | ✓ | ✓ | — |
+| Manage platform staff | ✓ | — | — |
+
+**Customer** (the Control Room):
+
+| Action | Owner | Operator | Tester | Viewer |
+|---|---|---|---|---|
+| View everything | ✓ | ✓ | ✓ | ✓ |
+| Create requests | ✓ | ✓ | ✓ | — |
+| Try and approve changes (non-money) | ✓ | ✓ | ✓ | — |
+| **Release to production (Go live)** | ✓ | ✓ | — | — |
+| Approve money, data, auth or security changes | ✓ | — | — | — |
+| Skills, limits, configuration | ✓ | ✓ | — | — |
+| Members and billing | ✓ | — | — | — |
 
 ## 4. Flows
 
-- **A. Invited (launch path).**
-  1. Admin → **New account**: name, plan, billing mode (`invoiced` / `comped`), owner's email + mobile.
-  2. The owner gets the invite → signs in → confirms their mobile by code → the account opens at **Onboarding**.
-- **B. Self-serve (off at launch).** `/signup` → identity → mobile + consent → code → create organization → Stripe Checkout (subscription) → onboarding. The installation fee is quoted and invoiced separately.
-- **C. Routing after `aal2`:**
-  - platform admin → `/admin`
-  - member of one account → that site's Control Room (or `/onboarding` if there's no site yet)
-  - member of two or more → account picker
-  - pending invite → accept the invite
-  - no account → "Invite only" (or `/onboarding` when self-serve is on)
+- **Sign in:** `/login` → enter email → **Email me a link** or **Text me a code** (the code path needs a verified mobile) → session → routing.
+- **First sign-in:**
+  - pending invites become memberships
+  - allow-listed platform emails become platform Owners
+  - then **add your mobile** (a code confirms it) before continuing
+- **Routing:**
+  - platform role → `/admin`
+  - one account → its site's Control Room
+  - several accounts → a picker
+  - none → "Invite only"
   - suspended → the suspended page
-- **D. Handover** (ts-platform → owners): add their Owner → optionally remove yourself or downgrade to "Strategic Machines support" → billing mode `comped` → `stripe`.
-- **E. Suspend/resume:** requires a reason. The API returns `423` for the account (except billing), and the runner stops its jobs. Both are audited.
+- **New account (admin):** name, site URL, plan, billing mode (`comped` · `invoiced` · `stripe`), quoted installation fee, owner's email → creates the account and the owner's invite. The owner signs in at `/login` with that email.
+- **Suspend/resume:** a reason is required; everything is audited; the account's requests get a 423.
+- **Handover** (ts-platform → owners): invite their Owner → optionally remove yourself → billing mode `comped` → `stripe`.
 
 ## 5. Screens
 
 | Route | Who | What |
 |---|---|---|
-| `/login`, `/signup` | Anyone | Split screen: product statement, and the auth widget (email link · Google · GitHub). Sign-up adds mobile + SMS consent. |
-| `/verify` | Signed in at `aal1` | "We texted a code to •••• 4567" → six boxes → resend (rate-limited). A **"Use reserve code"** link appears only outside production. |
-| `/auth/callback` | — | Finishes the link or OAuth → `/verify`. |
-| `/onboarding`, `/accounts` | Members | Create organization / account picker. |
-| `/admin` | Admins | MRR, ARR, active / onboarding / past-due / suspended accounts, **AI cost vs revenue (gross margin)**, alerts. |
-| `/admin/accounts`, `/admin/accounts/[id]` | Admins | The list, plus detail pages with members, sites, subscription, quoted installation fee, usage and audit. **Actions:** new account, suspend/resume, plan or billing mode, resend invite, transfer ownership. |
-| `/admin/revenue` · `/admin/health` · `/admin/audit` | Admins | Revenue and margin · platform health (API errors, webhooks, AI spend vs limits, SMS sends) · every admin action. |
-| API `/emulate` | Admins, non-prod only | The Twilio emulator inspector (texts "sent" and codes). |
+| `/login` | Anyone | Split screen: product statement, email field, **Email me a link** / **Text me a code**, then the code boxes. "Use reserve code" appears only outside production. |
+| `/auth/callback` | — | Finishes the magic link. |
+| `/profile/mobile` | Signed in | Add or confirm the mobile, plus SMS consent. |
+| `/accounts` | Several accounts | Account picker. |
+| `/admin` | Platform roles | Overview: accounts by status, MRR/ARR, quoted installation fees, AI spend vs revenue, texts sent. |
+| `/admin/accounts` (+ `/new`, `/[id]`) | Per map | List, create + invite, detail with members, sites, billing, suspend/resume. |
+| `/admin/audit` · `/admin/team` | Per map | Admin actions · platform staff. |
 
 ## 6. Data (migration `0003_accounts_auth_admin.sql`)
 
 | Table / change | Purpose |
 |---|---|
-| `acc_profiles (user_id, email, mobile_e164, mobile_verified_at, sms_consent_at, sms_consent_text)` | Captured at sign-up (D4). |
-| `acc_platform_admins (user_id, email, added_by, added_at)` | Admin allow-list (D9). |
-| `acc_orgs` + `status`, `billing_mode` (`stripe · invoiced · comped`), `stripe_customer_id`, `install_fee_quote_usd`, `suspended_at`, `suspended_reason`, `created_by` | Account lifecycle and the quoted installation fee (D11). |
-| `acc_subscriptions`, `acc_stripe_events` | Webhook-synced billing and idempotency. |
-| `acc_invites (org_id, email, mobile_e164, role, invited_by, token_hash, expires_at, accepted_at)` | Invite-only launch (D12). |
-| `acc_sms_log (user_id, to_masked, purpose, provider, status, at)` | Rate limits and health; never stores codes. |
-| `acc_admin_audit (admin_user_id, action, org_id, detail, at)` | Every admin action; never deleted. |
+| `acc_profiles (user_id, email, mobile_e164, mobile_verified_at, sms_consent_at, sms_consent_text)` | D3 |
+| `acc_platform_admins (user_id, email, role owner·admin·staff, added_by, added_at)` | D9 |
+| `acc_orgs` + `status`, `billing_mode`, `install_fee_quote_usd`, `suspended_at`, `suspended_reason`, `created_by` | Lifecycle |
+| `acc_invites (org_id, email, role, invited_by, created_at, accepted_at, revoked_at)` | D8 |
+| `acc_sms_codes (email, mobile_e164, purpose, code_hash, expires_at, attempts, consumed_at)` | D4 |
+| `acc_sms_log (email, to_masked, purpose, provider, status, at)` | Rate limits and health; never stores codes |
+| `acc_subscriptions`, `acc_stripe_events` | D13 (populated when Stripe is wired) |
+| `acc_admin_audit (actor_user_id, actor_email, action, org_id, detail, at)` | Every admin action |
 
-## 7. Configuration
+## 7. Configuration (values in envmachine, never in this repo)
 
-| Key | Where | Notes |
-|---|---|---|
-| `APP_STAGE` | api + console | `development` now on every deployment (D6). |
-| `PLATFORM_ADMIN_EMAILS` | api | Bootstraps admins. |
-| `DEV_ALLOWLIST` | api | Team emails; enforced when not `production`. |
-| `DEV_RESERVE_CODES` | api | `email:sha256(code)` pairs; ignored in `production`. |
-| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_VERIFY_SERVICE_SID` | api | The emulator's seeded values outside production; real values later. |
-| `SELF_SERVE_SIGNUP` | api + console | `off` at launch. |
+- **`APP_STAGE`**
+- **Access:** `PLATFORM_ADMIN_EMAILS`, `DEV_ALLOWLIST`, `DEV_RESERVE_CODES`
+- **SMS:** `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`, `TWILIO_API_BASE` (the emulator URL locally)
+- **Console:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `API_URL`
 
-## 8. Build order (after approval)
+**Supabase dashboard (one-time):** Auth → URL Configuration → add the console's `/auth/callback` URL for localhost, the Vercel deployment and `app.strategicmachines.ai`.
 
-1. Migration 0003; Supabase providers (email, Google, GitHub) + phone MFA + Send-SMS hook; `APP_STAGE`, allow-lists.
-2. `SmsProvider` (`emulate` via `@emulators/adapter-next` in apps/api; a `twilio` stub); `/api/auth/sms/*`; reserve codes; rate limits.
-3. Console: `/login`, `/signup`, `/verify`, `/auth/callback`, `proxy.ts`, routing (§4C). API: JWT at `aal2`, `423` on suspended accounts.
-4. `/admin`: overview, accounts, **New account (invite)**, suspend/resume, audit.
-5. Stripe: subscription + invoiced installation fee, Customer Portal, webhooks, revenue page (self-serve behind the switch).
-6. Board **ts-platform** as account #1 (`comped`, owner = you) → real design updates → handover.
-7. Marketing site: **Sign in** / **Get started** → `app.strategicmachines.ai`.
+## 8. Owner decisions (2026-09-29)
 
-**Out of v1:** impersonation, cross-account work queues, SSO/SAML, TOTP/passkeys (planned for admins).
-
-## 9. Owner decisions (2026-09-29)
-
-- ✅ Domain `app.strategicmachines.ai` (already defined in Vercel).
-- ✅ Invite-only first; self-serve built behind a switch.
-- ✅ Installation fee custom-quoted, **$5,000–$20,000** by complexity and scope; complex sites include training courses + a support contract.
-- ✅ Second factor = texted code (Twilio; emulated outside production); reserve codes for the dev team only.
-- ✅ `DEV_ALLOWLIST` = **the owner only** for now (work email + mobile). Values live in envmachine, **never in this repo** (this doc is committed to GitHub).
-- ✅ Mobile numbers are international: E.164, any country code.
-- **To confirm:** `PLATFORM_ADMIN_EMAILS`, the owner's work address (`pdhoward@strategicmachines.ai`) instead of the Gmail address, or both?
+- ✅ `app.strategicmachines.ai`
+- ✅ invite-only
+- ✅ installation fee $5K–$20K, custom-quoted (complex sites: training + support contract)
+- ✅ one-step sign-in (email link or texted code)
+- ✅ platform roles Owner · Admin · Staff
+- ✅ role-gated release approval
+- ✅ `DEV_ALLOWLIST` = the owner only
+- ✅ `PLATFORM_ADMIN_EMAILS` = the owner's work address

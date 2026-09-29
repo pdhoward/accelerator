@@ -330,7 +330,7 @@ A prospect **demo** is a tenant (seeded, reset nightly), not a separate app.
 
 ## 10. MVP and phases
 
-**Built so far (2026-09-28):**
+**Built so far (2026-09-29):**
 - **The Control Room and API run end to end** against a seeded demo tenant (Cypress Resort). All 15 pages work: Bridge, Requests, Change Room, Consultations, Proof, Data Desk, Library, Health, Releases, Metrics, Configuration, Skills, Account & usage, Code, Onboarding.
 - **Real behaviour:**
   - request capture with triage
@@ -344,10 +344,11 @@ A prospect **demo** is a tenant (seeded, reset nightly), not a separate app.
   - end-to-end test 20/20 against the real database, and data survives a server restart
 
   The API uses Supabase whenever the startup script injects keys, and the in-memory demo otherwise.
-- **Designed, awaiting approval (v0.2):** accounts, sign-in and the Platform Admin area → [accounts-auth-admin.md](accounts-auth-admin.md).
-  - Sign-in is email + a texted code; texts are emulated (Twilio emulator) until `APP_STAGE=production`.
-  - Invite-only launch.
-  - ts-platform is the first account to board, as the acid test.
+- **Built (2026-09-29): accounts, sign-in and Platform Admin** → [accounts-auth-admin.md](accounts-auth-admin.md).
+  - One-step sign-in: email link or texted code (emulated outside production).
+  - Role maps in one file: platform Owner · Admin · Staff; site Owner · Operator · Tester · Viewer. The API enforces; the console only hides.
+  - Platform Admin: overview (revenue, AI spend, texts), accounts, new account + owner invite, suspend/resume, audit log, team.
+  - Pending: migration 0003 on accelerator-test and a live sign-in test.
 - **Then:** the **runner spike** (an agent taking a real Cypress request through build → tests → preview → evidence, unattended).
 
 | Phase | Scope | Proves |
