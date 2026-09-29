@@ -5,6 +5,7 @@ import { site } from "@/content/site";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AuroraMesh } from "@/components/motion/aurora-mesh";
+import { CyclingWord } from "@/components/motion/cycling-word";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 import { Parallax } from "@/components/motion/parallax";
 import { FadeUp, FadeUpItem } from "@/components/motion/fade-up";
@@ -26,20 +27,22 @@ export function Hero() {
           </FadeUpItem>
 
           <FadeUpItem>
+            <p className="mb-4 font-mono text-[12px] uppercase tracking-[0.2em] text-fog">{site.eyebrow}</p>
             <h1
-              className="text-balance font-semibold tracking-tight text-white"
-              style={{ fontSize: "clamp(2.75rem, 6.5vw, 6.5rem)", lineHeight: 1.02 }}
+              className="font-semibold tracking-tight text-white"
+              style={{ fontSize: "clamp(2.4rem, 5.6vw, 5.25rem)", lineHeight: 1.05 }}
             >
-              Hands off the code.{" "}
-              <span className="text-aurora-gradient">Hands on the controls.</span>
+              <span className="block">
+                You <CyclingWord words={site.verbs} wordClassName="text-aurora-gradient" /> your website.
+              </span>
+              <span className="block text-white/60">AI delivers the outcome.</span>
             </h1>
           </FadeUpItem>
 
           <FadeUpItem>
             <p className="max-w-2xl text-pretty text-lg leading-relaxed text-fog sm:text-xl">
-              {site.product} takes custody of your existing web application. It builds,
-              tests, ships and improves your software with AI, and proves every change is
-              safe. You run it from a control room, not an IDE.
+              {site.subline} You define the outcome; AI designs, builds, tests, and deploys
+              the work, and every change carries its proof from request to production.
             </p>
           </FadeUpItem>
 
@@ -61,7 +64,7 @@ export function Hero() {
 
           <FadeUpItem>
             <p className="font-mono text-[11px] uppercase tracking-widest text-mist">
-              Not a coding assistant · Custody of your app, with evidence for every change
+              One Control Room · Every change under your control
             </p>
           </FadeUpItem>
         </FadeUp>

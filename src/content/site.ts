@@ -1,9 +1,13 @@
 export const site = {
   name: "Strategic Machines",
   product: "The Accelerator",
-  tagline: "Hands off the code. Hands on the controls.",
+  tagline: "You manage your website. AI delivers the outcome.",
+  /** The hero's cycling verb: "You [manage] your website." First word is the static one. */
+  verbs: ["manage", "design", "change", "validate", "inspect", "approve", "release", "govern", "improve"],
+  eyebrow: "The AI Control Room for your website",
+  subline: "From requirement to release, every action is controlled, tested, and backed by evidence.",
   description:
-    "An AI accelerator that builds, tests and ships your web app, with evidence for every change. You run the controls.",
+    "The Control Room for designing, building, testing, and releasing your website with AI. You direct; AI designs, builds, tests, and deploys, with evidence for every change.",
   domain: "strategicmachines.ai",
   url: "https://strategicmachines.ai",
   waitlistCtaLabel: "Commission your app",
@@ -26,7 +30,7 @@ export const brand = {
     url: `${site.url}/og`,
     width: 1200,
     height: 630,
-    alt: "Strategic Machines: Hands off the code. Hands on the controls.",
+    alt: "Strategic Machines: You manage your website. AI delivers the outcome.",
   },
 } as const;
 

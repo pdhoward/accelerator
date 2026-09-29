@@ -36,15 +36,15 @@ export function GET() {
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", fontSize: 76, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>
-            Hands off the code.
+            You manage your website.
           </div>
           <div
             style={{ display: "flex", fontSize: 76, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, color: CYAN }}
           >
-            Hands on the controls.
+            AI delivers the outcome.
           </div>
           <div style={{ display: "flex", marginTop: 28, fontSize: 30, color: FOG, maxWidth: 900 }}>
-            AI that builds, tests and ships your web app, with evidence for every change.
+            {site.subline}
           </div>
         </div>
 
