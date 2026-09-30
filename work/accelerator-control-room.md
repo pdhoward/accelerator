@@ -55,6 +55,8 @@ For a year, Customer Zero (cypressresort.com on `ts-platform`) has been run at *
 
 ## 4. The Loop: the process that makes it fast
 
+> **Refined by [flywheel.md](flywheel.md) (v0.1, for approval):** conversation-first Work items on one visible rail, with a design doc, a plan, and the Protocol enforced by the runner.
+
 Every request moves through eight steps. The human owns three of them (**bold**).
 
 ```
