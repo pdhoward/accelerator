@@ -55,7 +55,7 @@ For a year, Customer Zero (cypressresort.com on `ts-platform`) has been run at *
 
 ## 4. The Loop: the process that makes it fast
 
-> **Refined by [flywheel.md](flywheel.md) (v0.1, for approval):** conversation-first Work items on one visible rail, with a design doc, a plan, and the Protocol enforced by the runner.
+> **Refined by [flywheel.md](flywheel.md) (v0.3, approved):** conversation-first Work items on one visible rail, with a design doc, a plan, and the Protocol enforced by the runner.
 
 Every request moves through eight steps. The human owns three of them (**bold**).
 
@@ -351,6 +351,7 @@ A prospect **demo** is a tenant (seeded, reset nightly), not a separate app.
   - Role maps in one file: platform Owner · Admin · Staff; site Owner · Operator · Tester · Viewer. The API enforces; the console only hides.
   - Platform Admin: overview (revenue, AI spend, texts), accounts, new account + owner invite, suspend/resume, audit log, team.
   - Pending: migration 0003 on accelerator-test and a live sign-in test.
+- **Built (2026-09-30): the Flywheel** → [flywheel.md](flywheel.md). Work items on one rail, design/plan gates, the runner (Claude Agent SDK) with the Protocol enforced, Setup (Install · Checkout · Agreement), model choice per job. First live run: Machine Shop.
 - **Then:** the **runner spike** (an agent taking a real Cypress request through build → tests → preview → evidence, unattended).
 
 | Phase | Scope | Proves |
