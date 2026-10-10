@@ -4,6 +4,8 @@
 *v0.3 (**approved by owner 2026-09-30**): the customer picks the model for each job (§2 F15, §7).*
 *v0.2: the flywheel starts with **Install → Checkout → Agreement**; one prescribed stack (GitHub + Vercel + separate test database); the branch and URL path from preview to production.*
 
+> **Status 2026-10-10: still the core of Gen 2** ([gen2-crew.md](gen2-crew.md)). The rail, the three gates, the Protocol and the runner all stay. **Changes:** each stop is worked by a named **specialist** from the site's crew; agents reach the world through the **Toolbelt** (MCP) with a job token instead of `envmachine` keys (§7 "Keys"); §3 Install → Checkout → Agreement becomes the later steps of **Boarding** (gen2-crew.md §2.5); the **Learn** stop feeds the **Skillsmith**; the "Staff access" rule below is replaced by partner staff plus support grants (gen2-crew.md §5); Machine Shop's `envmachine` keys move to the vault and Toolbelt (G2.2).
+
 **Goal.** Make the working rhythm of Customer Zero the product, starting from a correctly installed site: **install → checkout → agreement**, then, for every body of work, **conversation → design → approval → plan → build → test → try → release → learn**, always visible, with a business person steering and an engine that proposes, asks, builds and proves. The Control Room pulls the person through it.
 
 **Status (2026-09-30): steps 1–5 built, not yet run live.**

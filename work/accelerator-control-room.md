@@ -2,6 +2,8 @@
 
 *Strategic Machines · 2026-09-28 · companion to [accelerator.md](accelerator.md) · status: design for review*
 
+> **Status 2026-10-10: partly superseded by Gen 2** ([newvision.md](newvision.md), [gen2-crew.md](gen2-crew.md)). Still valid: §1–2 (the thesis and design principles), the Loop's intent and the lessons table (§8). **Replaced:** §5's fifteen pages become four client screens (Inbox · Work · Site · Crew) plus the operator's Crew Lab; §5.8 Connections, §5.10 the env manifest and §5.11 Skills become the **Toolbelt** and the **Crew**; §5.9 Onboarding becomes **Boarding ($2,500)**. The demo tenant moves from Cypress Resort to **Machine Shop**: Cypress is live production and never a test target. §9's tenancy gains a **partner** level (gen2-crew.md §5).
+
 > **The goal:** a person who knows their business but not git, SQL or DNS runs their own website and gets changes live in hours or days, not the weeks a consulting firm takes. They decide what should change and judge whether it came out right. The engine does everything in between, and shows its work.
 
 ---

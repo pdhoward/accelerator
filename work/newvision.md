@@ -1,7 +1,10 @@
 # New Vision: from Control Room to a product the market buys
 
-*Strategic Machines · 2026-10-08 · status: recommendations for owner review*
+*Strategic Machines · 2026-10-08 · **v0.2, adopted by owner 2026-10-10** (decisions in §9)*
+*Design that implements it: **[gen2-crew.md](gen2-crew.md)**, the approved foundation for execution: Toolbelt/MCP, Crew Lab and Skillsmith, Library and storage, partners and multi-vendor tenancy, what happens to the code, the decisions log and the **action list**.*
 *Reads with: [accelerator.md](accelerator.md) · [accelerator-control-room.md](accelerator-control-room.md) · [flywheel.md](flywheel.md) · [accounts-auth-admin.md](accounts-auth-admin.md)*
+
+> **Test site: Machine Shop** (`machine/machineshop`). Every capability is proven there first, and it is boarded as client #1. **Cypress Resort (`ts-platform`) is live production serving real guests. It is our Customer Zero *story*, never a test target.**
 
 > **The short version.** The thinking so far is strong, and Customer Zero is real proof. But the product has grown wide before it has gone deep. It speaks to three different buyers in a dozen invented words, and its one core promise has not run live end to end: a request goes in, and a tested change comes out live, with nobody touching code.
 >
@@ -70,7 +73,7 @@ This is where "agents that build agents" pays off, and it is the real flywheel:
 - It **proposes** a new skill or an edit to an existing one ("When a Supabase table is added, always write the RLS policy and a test that an anonymous user can't read it").
 - Proposals arrive **disabled, as a diff** (Uber's pattern). The Owner, or Strategic Machines for shared skills, approves them, and rollback is one click.
 - Before it's enabled, each skill change is **replayed against past Work items** ("with this skill, 3 of the last 20 send-backs would not have happened").
-- **Two levels:** *site skills* stay private to the customer. *Crew skills* are generalized, anonymized and shared across every customer. Each new customer makes the crew better for all of them. This is the moat the docs call the "evidence data flywheel", made concrete.
+- **Four tiers** (updated 2026-10-10, gen2-crew.md §2.2): *crew skills* (ours, shared by every crew), *partner skills* (a partner firm's know-how across its clients), *company skills* and *site skills* (private to the client). Lessons are generalized, anonymized and promoted with approval, so each new customer makes the crew better for all of them. This is the moat the docs call the "evidence data flywheel", made concrete.
 
 ### Moving to other stacks
 The Protocol, gates, rail, evidence and gateway don't depend on the stack. Only **skill packs** and **checkout recipes** do (how to install, build, test and preview). Expanding to another stack means writing a new skill pack plus a recipe, running it through the Judge on reference repos, and turning it on. Suggested order, following where the customers are:
@@ -146,7 +149,7 @@ These people already pay monthly for AI tools, already accept AI doing the work,
 **Who they are:** founders, solo builders and small teams (0–3 developers) running a revenue-earning app built with Lovable, v0, Bolt, Cursor or Replit, or an agency handing such apps to clients.
 
 ### Second: agencies, as a channel
-Agencies maintaining 20–200 client sites live on monthly maintenance retainers with thin margins. Offer them "run 50 client sites with 2 people", sold per site at wholesale. This is the existing Partner Program idea, but **after** the product works self-serve, not instead of it.
+Agencies maintaining 20–200 client sites live on monthly maintenance retainers with thin margins. Offer them "run 50 client sites with 2 people", sold per site at wholesale. This is the Partner Program (Silver · Gold · Platinum, decided in §10 and designed in gen2-crew.md §5), launched **after** the product works, not instead of it. Founding agency partners can double as design partners.
 
 ### Third, kept as a premium service: businesses with custom apps
 The original accelerator.md buyer (Customer Zero-style businesses with real engineering spend) stays as a premium, managed service. It funds the company and supplies the hardest cases, but it isn't the product's primary design target.
@@ -165,7 +168,7 @@ Shorter variants for the website: *"Ship changes without breaking things."* · *
 | Step | What they get | Price idea (to validate) |
 |---|---|---|
 | **1. Free Checkup** | Paste a URL and connect GitHub. In minutes: a security report (RLS, headers, exposed keys), a freshness report (framework and dependency age), a test-safety score and a ranked fix list. *The Fit Scan, extended into the repo.* | Free. The lead engine |
-| **2. Stabilize** (one-off) | The crew fixes the critical findings and installs the safety net: staging, preview links, a baseline test suite around the money and login paths, branch protection and rollback. You watch it happen on the rail and approve each fix. | Fixed price, e.g. **$499–$1,999** by size. Replaces the $5–20K installation for this segment |
+| **2. Boarding** (one-off) | A **Boarding crew** connects your accounts, surveys the site, interviews you, assembles *your site's own crew*, then fixes the critical findings and installs the safety net: staging, preview links, a baseline test suite around the money and login paths, branch protection and rollback. You watch it happen on the rail and approve each fix. ([gen2-crew.md](gen2-crew.md) §2.5) | **$2,500 fixed** (owner decision 2026-10-10). Replaces the $5–20K installation for this segment |
 | **3. Crew plan** (monthly) | Ongoing: request changes in plain words → design → preview → approve → live. Plus automatic upkeep: upgrades, security patches, health monitoring and a weekly briefing. | Tiers by changes per month, e.g. **$199 / $599 / $1,499**. Model costs are metered inside a cap |
 
 The premium managed service (custom apps, the Customer Zero type) stays custom-quoted, as it is today.
@@ -185,12 +188,12 @@ Everything else becomes a tab inside one of these, moves behind Engineer view, o
 
 ---
 
-## 6. Architecture changes that follow (no code yet, just direction)
+## 6. Architecture changes that follow (direction; detailed in [gen2-crew.md](gen2-crew.md))
 
 1. **The Toolbelt (thin gateway) in `apps/api`.** Every external action is a named, schema-described tool. Credentials stay server-side, and the gateway does per-specialist allowlists, audit, redaction and spend caps. The runner calls tools through the API and holds only test env vars for the sandbox. This *replaces* the separate Connections / Vault / env-manifest pages with one model.
 2. **Crew registry.** Specialists are data: skills + tools + permissions + model. `packages/domain` keeps the permission and gate policy, as it does today.
-3. **Site Crawler.** Turns a repo plus its connected accounts into the drafts listed in §1 (Stack card, env manifest, routes, schema/RLS map, tests, invariants), all disabled until the Owner approves. It powers the free Checkup and the start of Stabilize.
-4. **Skillsmith plus a skill registry with versions, diffs, replay evaluation and rollback.** Crew skills are shared; site skills are private.
+3. **Site Crawler.** Turns a repo plus its connected accounts into the drafts listed in §1 (Stack card, env manifest, routes, schema/RLS map, tests, invariants), all disabled until the Owner approves. It powers the free Checkup and the start of Boarding.
+4. **Skillsmith plus a skill registry with versions, diffs, replay evaluation and rollback.** Four tiers: crew, partner, company, site (gen2-crew.md §2.2).
 5. **Progressive discovery** for skills and tools, so context stays small as the crew grows.
 6. **Keep:** the rail, the three human gates, the independent Judge, test-only data for builders, open formats, and model choice per role.
 
@@ -202,10 +205,10 @@ The rule for this period: **depth before breadth. No new pages until the loop ru
 
 | Window | Goal | Done when |
 |---|---|---|
-| **Weeks 1–3: one real loop** | Run migration 0004/0005 live. Run the runner on Machine Shop, then Cypress: request → design → plan → build → tests → preview → approve → live, with evidence, unattended between the gates. Add a GitHub App and Vercel previews. | **10 real Work items shipped** through the rail on 2 sites, with send-back rate and time-to-live measured |
-| **Weeks 3–6: Checkup + Toolbelt v0** | Extend Fit Scan into a repo Checkup (RLS, keys in the repo, freshness, tests). Connect buttons for GitHub, Vercel and Supabase, with test-side provisioning. Collapse the console toward the four screens. | A stranger connects a repo and gets a useful report in under 10 minutes with **zero pasted keys** |
-| **Weeks 6–10: 5 design partners** | Recruit 5 founders running AI-built apps (from communities around Lovable, v0, Bolt and Supabase). Stabilize each one free or at cost, in exchange for honest feedback and metrics. | 5 apps stabilized; each has had ≥5 crew changes go live; at least 3 say they would pay |
-| **Weeks 10–13: price and Skillsmith v0** | Charge for Crew plans. Turn on Skillsmith proposals from Learn, with replay evaluation. | First paid revenue; the first crew skill learned on one customer and adopted by another |
+| **Weeks 1–3: one real loop** | Run migration 0004/0005 live. Run the runner on **Machine Shop**: request → design → plan → build → tests → preview → approve → live, with evidence, unattended between the gates. Add a GitHub App and Vercel previews. *(gen2-crew.md G2.0–G2.1)* | **10 real Work items shipped** on Machine Shop, with send-back rate and time-to-live measured |
+| **Weeks 3–6: Toolbelt + Crew v0** | The MCP Toolbelt with job tokens; retire `envmachine`. Specialists as data, with Machine Shop's own crew. Collapse the console toward the four screens. *(G2.2–G2.4)* | The crew works Machine Shop with **zero keys in any agent's shell** |
+| **Weeks 6–10: Library, Skillsmith, Boarding** | Library and export; Skillsmith proposals and the Crew Lab test bench; extend Fit Scan into the repo Checkup with Connect buttons. **Board Machine Shop end to end as client #1**, logging every human step. Meanwhile, find design partners (decision 7). *(G2.5–G2.6)* | Machine Shop's Library is demo-ready; Boarding runs with a short list of human steps |
+| **Weeks 10–13: first design partners** | Board 3–5 founders running AI-built apps (from communities around Lovable, v0, Bolt and Supabase), free or at cost, in exchange for honest feedback and metrics. Then charge: $2,500 Boarding plus Crew plans. | First paid revenue; the first crew skill learned on one site and adopted by another |
 
 **Metrics to watch from day one:**
 - time from request to live
@@ -213,10 +216,10 @@ The rule for this period: **depth before breadth. No new pages until the loop ru
 - escaped defects
 - owner minutes per change
 - model cost per change
-- Checkup → Stabilize conversion
+- Checkup → Boarding conversion
 
 ### Kill or pivot signals
-- After 5 design partners, owners still need a developer to get through Stabilize.
+- After 5 design partners, owners still need a developer to get through Boarding.
 - Cost per accepted change stays above roughly $25 at the starter tier.
 - Founders say "nice" but won't pay $199/month. That would point back to agencies or the premium managed service as the real business.
 
@@ -234,12 +237,26 @@ The rule for this period: **depth before breadth. No new pages until the loop ru
 
 ---
 
-## 9. Decisions for the owner
+## 9. Owner decisions (2026-10-10)
 
-1. **Beachhead:** do we lead with *AI-built apps that are live and fragile*, keeping Customer Zero-type businesses as the premium managed tier? *(Recommended: yes.)*
-2. **Name in market:** keep *The Accelerator*, or lead with the crew ("Strategic Machines Crew")? *(Recommended: test "crew" language on the website alongside "Accelerator" with the first 5 prospects.)*
-3. **Onboarding:** replace the $5–20K installation with a **fixed-price Stabilize** for this segment? *(Recommended: yes, and keep custom quotes for the premium tier.)*
-4. **UI freeze:** accept the four-screen target and hide the remaining pages behind Engineer view or a later release? *(Recommended: yes.)*
-5. **Toolbelt and Connect buttons** replace pasted env keys as the default way to connect a site? *(Recommended: yes.)*
-6. **Skillsmith:** shared crew skills learned from customers, with anonymization and owner approval. Is this acceptable in the customer agreement? *(Needs a contract clause.)*
-7. **Design partners:** who are the first five? Fit-scan the candidates first.
+1. ✅ **Beachhead:** lead with *AI-built apps that are live and fragile*; Customer Zero-type businesses are the premium managed tier.
+2. ✅ **Name:** the product stays **The Accelerator**. What the client gets is **a crew specialized for their site**: "crew" is the market-facing word for the team of agents, and every client site has its own.
+3. ✅ **Onboarding:** **Boarding, $2,500 fixed**, run by a **Boarding crew** (Surveyor, Connector, Consultant, Skillsmith in Assemble mode, then Builder, Judge and Upkeep for stabilizing). Custom quotes remain for the premium tier.
+4. ✅ **UI:** four client screens (Inbox · Work · Site · Crew), plus the operator's Crew Lab. Everything else is a tab, behind Engineer view, or retired.
+5. ✅ **Toolbelt and Connect buttons** replace pasted env keys. The Toolbelt is an MCP server inside `apps/api` (gen2-crew.md §1).
+6. ✅ **Skillsmith:** adopted. It assembles each client's crew and improves it from every job, through proposals a human approves (gen2-crew.md §2). Sharing learned skills across clients needs a **clause in the Agreement** (still to draft).
+7. ⏳ **Design partners:** not yet identified. Machine Shop is boarded first as client #1; candidates are found during weeks 6–10 and fit-scanned first.
+
+---
+
+## 10. Further owner decisions (2026-10-10)
+
+8. ✅ **No open source.** Protection comes from hosting: partners and clients use our hosted platform, and the code is never licensed out. Still, **design the seams now**: the Toolbelt, the Library format and the runner adapters stay clean packages behind interfaces, and the proprietary parts (crew catalog, Skillsmith, test bench, Boarding automation) plug into them.
+9. ✅ **Partner Program for agencies and system integrators: Silver · Gold · Platinum** (on the website as "coming soon").
+   - At every level the **partner is the point of contact for their clients**, and the client's crew is **branded to the partner's firm**: named at Silver, co-branded at Gold, fully white-labelled at Platinum.
+   - Economics: a revenue share at Silver, wholesale pricing on Boarding and Crew plans at Gold and Platinum (the partner sets their own price), plus a certification fee. No upfront license fee. Hosted only, never self-hosted.
+   - **Partner skills** become a fourth skills tier (crew → partner → company → site), private to the partner's firm. This needs a `partner_id` seam in the tenancy model: Partner → Companies → Sites.
+   - Founding partners can double as design partners: one agency can bring several real sites at once.
+10. 💡 **Partner Playground** (an idea, not committed): a scripted playbook on a sample site that walks an SI through a full engagement in under an hour. Machine Shop is the natural sample.
+11. ✅ **Public showcase:** Machine Shop becomes a public example, with video of the crew working with the business expert.
+12. ✅ **We run on our own product:** the Accelerator website, and later the Accelerator platform itself, are boarded and managed through the Accelerator. Order: Machine Shop → the website → the platform, with a break-glass path for the platform (gen2-crew.md).

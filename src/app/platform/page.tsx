@@ -5,6 +5,8 @@ import { ShiftSection } from "@/components/marketing/shift-section";
 import { FiveLayers } from "@/components/marketing/five-layers";
 import { FeatureGrid } from "@/components/marketing/feature-grid";
 import { EvidenceSection } from "@/components/marketing/evidence-section";
+import { LibrarySection } from "@/components/marketing/library-section";
+import { ToolbeltSection } from "@/components/marketing/toolbelt-section";
 import { AutonomyLadder } from "@/components/marketing/autonomy-ladder";
 import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 
@@ -24,8 +26,10 @@ export default function PlatformPage() {
         description="Model-agnostic generators do the building. Independent judges verify the work. Interlocks limit what can reach production. Your operators steer the whole thing."
       />
       <FiveLayers />
+      <LibrarySection />
       <FeatureGrid primary={primaryFeatures} secondary={secondaryFeatures} />
       <EvidenceSection />
+      <ToolbeltSection />
       <AutonomyLadder />
       <ShiftSection />
       <WaitlistCta />

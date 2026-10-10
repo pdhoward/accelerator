@@ -3,6 +3,12 @@
 *2026-09-29 · **approved by owner** · repo: `accelerator-platform` · companion to [accelerator-control-room.md](accelerator-control-room.md)*
 *v0.3: one-step sign-in (email link **or** texted code); no per-action second factor; role-based access for the platform (Owner · Admin · Staff) and for customers (release approval by role).*
 
+> **Status 2026-10-10: extended by Gen 2** ([gen2-crew.md](gen2-crew.md) §5). Sign-in (D1–D8) is unchanged. **Changed:**
+> - Tenancy gains a **partner** level: Platform → Partner → Company → Site. Every account belongs to one partner, and Strategic Machines' direct clients belong to the **house partner**.
+> - A third permission map, `PARTNER_PERMISSIONS`, joins the two in `permissions.ts`.
+> - The rule "platform staff get Operator rights on any account" (`store.access()`) is **replaced**. Partner staff operate *their own* partner's accounts; platform staff reach an account only through an explicit, time-boxed, audited **support grant**.
+> - Billing gains wholesale billing to partners (later).
+
 **Status (2026-09-29): built.** API routes, console screens and role gating done; typecheck, tests (22) and both builds pass; demo mode verified end to end. **Waiting on:** migration 0003 applied to accelerator-test, Supabase Auth redirect URLs, then a live sign-in test.
 
 **Where the code is:**

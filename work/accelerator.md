@@ -2,6 +2,8 @@
 
 *Strategic Machines · drafted 2026-09-25 · rev. 2026-09-25 (added §6 competitive reality, §7 moat builds, §7a website + Fit Scan status, §11 owner action list) · status: thesis + plan, pre-validation*
 
+> **Status 2026-10-10: the market and offer are refined by [newvision.md](newvision.md).** Still valid: §1 (Customer Zero), §2–3 (principles, Actor ≠ Judge, evidence), §6–7 (competition and moat). **Changed:** the beachhead is now *AI-built apps that are live and fragile* (§5's engineering-team buyer becomes the premium managed tier); commissioning becomes **Boarding at $2,500 fixed**, run by a Boarding crew; the product stays **The Accelerator**, delivered as **a crew specialized for each client site**. The roadmap (§9) is replaced by newvision.md §7 and gen2-crew.md §4.5, with **Machine Shop as the test site**. §8's Partner Program becomes **Silver · Gold · Platinum** (partners are the point of contact, and crews are branded to their firm), hosted only; **no open source** (gen2-crew.md §0 and §5).
+
 > **One sentence.** We commission an existing production web application into an AI-operated accelerator that owns implementation, regression, refactoring and bounded improvement — and the customer runs it from a **control room**, not an IDE.
 >
 > **Hands off the code. Hands on the controls.**

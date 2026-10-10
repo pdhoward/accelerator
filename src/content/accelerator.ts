@@ -116,3 +116,104 @@ export const readinessReport = [
   { label: "Human authorization gates", value: "6" },
   { label: "Autonomous coverage", value: "71%" },
 ];
+
+/**
+ * "Why not just use Claude?" — the Library pitch (work/gen2-crew.md §3.1).
+ * One row per thing an LLM on its own lacks.
+ */
+export type ComparisonRow = { need: string; llm: string; accelerator: string };
+
+export const llmComparison: ComparisonRow[] = [
+  {
+    need: "Memory",
+    llm: "Forgets between sessions. You re-explain your business every time.",
+    accelerator: "Your Library: every decision, design, conversation and change, kept and organized.",
+  },
+  {
+    need: "Hands",
+    llm: "You copy code, paste keys, run commands and deploy.",
+    accelerator: "Connected to GitHub, Vercel and your database through a secured Toolbelt.",
+  },
+  {
+    need: "Safety",
+    llm: "Edits whatever it's pointed at, and grades its own work.",
+    accelerator: "Test data only, an independent judge, human gates, a preview before live, one-click undo.",
+  },
+  {
+    need: "Team",
+    llm: "One generalist.",
+    accelerator: "A crew of specialists tuned to your site: design, build, data, test, release.",
+  },
+  {
+    need: "Proof",
+    llm: "“Trust me, it works.”",
+    accelerator: "Evidence on every change: tests, screenshots and a full audit trail.",
+  },
+  {
+    need: "Learning",
+    llm: "The same tomorrow as today.",
+    accelerator: "Every job teaches your crew something, with your approval.",
+  },
+];
+
+export type SkillTier = { name: string; scope: string; example: string };
+
+/** The three tiers of crew know-how (gen2-crew.md §2.2). */
+export const skillTiers: SkillTier[] = [
+  { name: "Crew skills", scope: "Ours, shared by every crew", example: "Next.js upgrade playbook · database security rules" },
+  { name: "Your company", scope: "Shared by all your sites", example: "Brand voice · pricing rules · tone with customers" },
+  { name: "Your site", scope: "One site, private to you", example: "Catalog rules · checkout quirks · what must never break" },
+];
+
+/** Where Library content lives (gen2-crew.md §3.2): open files in your repo, history with us, export any time. */
+export const libraryHomes = [
+  {
+    where: "In your own repository",
+    what: "Everything needed to understand your site without us: the handbook, decisions, approved designs, site skills and tests, as plain Markdown and code.",
+  },
+  {
+    where: "In your private Library with us",
+    what: "How the work happened: conversations, evidence, previews, the tool log and the release timeline. Exportable in one click, any time.",
+  },
+];
+
+/** An illustrative Library view for the Machine Shop test site. Labelled "example" on the page. */
+export const exampleLibrary = {
+  site: "Machine Shop",
+  knows: 47,
+  entries: [
+    { kind: "Decision", text: "The assistant only mentions products its search returned", ref: "from Work #4" },
+    { kind: "Release", text: "Search by brand, live with before/after screenshots", ref: "Work #7 · undo" },
+    { kind: "Site skill", text: "Catalog is read-only; every query is paginated", ref: "v2 · approved" },
+    { kind: "Design", text: "Saved lists for shoppers", ref: "approved · in build" },
+    { kind: "Learned", text: "Mobile search box too small; crew proposes a layout rule", ref: "awaiting you" },
+  ],
+};
+
+/** The Toolbelt: how agents act without ever holding a client's credentials (gen2-crew.md §1). */
+export const toolbeltPoints = [
+  {
+    title: "Agents never hold your keys",
+    body: "Your credentials sit in an encrypted vault. Agents call named tools, and the Toolbelt attaches the credential on our server. No key ever appears in a prompt, a chat or a log.",
+  },
+  {
+    title: "Connect, don't paste",
+    body: "GitHub, Vercel and your database connect with sign-in buttons. Each connection is tested at setup, so problems surface on day one, not at 11pm.",
+  },
+  {
+    title: "Short-lived, single-job passes",
+    body: "Every job gets a pass that works for one site, one task and one specialist, then expires. Your tenant comes from the pass, never from anything an agent types.",
+  },
+  {
+    title: "Each specialist sees only its tools",
+    body: "The builder can't see the release tool. The judge can't edit code. Least privilege is enforced by what exists in the agent's world, not by asking it nicely.",
+  },
+  {
+    title: "Gates live inside the tool",
+    body: "Going live, data changes and anything touching money or sign-in check the gate policy at the moment of the call. An agent can't talk its way past a gate.",
+  },
+  {
+    title: "Every action on the record",
+    body: "Each call is logged with who, what, when and what it cost. That record becomes the evidence on every change and the timeline in your Library.",
+  },
+];

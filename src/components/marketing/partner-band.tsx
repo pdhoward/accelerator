@@ -14,12 +14,11 @@ export function PartnerBand() {
             <div className="max-w-2xl">
               <SectionEyebrow>For agencies &amp; system integrators</SectionEyebrow>
               <h2 className="mt-4 text-balance text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                Your clients&apos; code is about to stop being hand-written. Run the machines
-                that write it.
+                Your firm. Your clients. Your crew.
               </h2>
               <p className="mt-3 text-fog">
-                Get certified in the commissioning method and the Discipline Pack. You commission
-                and operate client applications on the Accelerator.
+                Board and run your clients&apos; sites on the Accelerator with a crew of AI specialists
+                branded to your firm. Silver, Gold and Platinum levels, coming soon.
               </p>
             </div>
             <Button variant="outline" size="lg" asChild className="w-fit shrink-0">

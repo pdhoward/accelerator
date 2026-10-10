@@ -8,6 +8,8 @@ import { ShiftSection } from "@/components/marketing/shift-section";
 import { CustomerSpotlight } from "@/components/marketing/customer-spotlight";
 import { CommissioningTimeline } from "@/components/marketing/commissioning-timeline";
 import { EvidenceSection } from "@/components/marketing/evidence-section";
+import { LibrarySection } from "@/components/marketing/library-section";
+import { ToolbeltSection } from "@/components/marketing/toolbelt-section";
 import { AutonomyLadder } from "@/components/marketing/autonomy-ladder";
 import { FeatureGrid } from "@/components/marketing/feature-grid";
 import { PricingTiers } from "@/components/marketing/pricing-tiers";
@@ -29,8 +31,10 @@ export default function Home() {
       <ShiftSection />
       <FitScanBand />
       <CustomerSpotlight />
+      <LibrarySection />
       <CommissioningTimeline />
       <EvidenceSection />
+      <ToolbeltSection />
       <AutonomyLadder />
       <FeatureGrid primary={primaryFeatures} secondary={secondaryFeatures} />
       <PricingTiers />
