@@ -1,6 +1,6 @@
-# Gen 2 — Crew, Toolbelt, Library, Partners (Design v0.2)
+# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.3)
 
-*Strategic Machines · 2026-10-10 · **status: approved design foundation. Code refactoring and database changes are executed from this document.** · repo: `accelerator-platform`*
+*Strategic Machines · foundation 2026-10-10 · revised 2026-10-12 · **status: approved product-design direction; documentation update authorized. Implementation requires the Owner's separate approval after Claude's current work is reconciled.** · repo: `accelerator-platform`*
 *Implements the decisions in [newvision.md](newvision.md) §9–10. Refines [flywheel.md](flywheel.md) (the rail stays) and replaces [accelerator-control-room.md](accelerator-control-room.md) §5 (the 15 pages). Extends [accounts-auth-admin.md](accounts-auth-admin.md) with the partner layer (§5).*
 
 **How to use this doc:**
@@ -10,9 +10,10 @@
 - §7 is the decisions log.
 - §8 is the action list. Tick items there as they're done.
 - §9 covers agent interfaces: APIs-first MCP (WebMCP optional), Stripe, the Decide layer (Jev), understanding artifacts (Karpathy's ladder), live voice agents and generative forms.
-- When the code and this doc disagree, the code wins. Fix this doc in the same change.
+- §10 defines executive governance, the shared meeting workspace, the capability inventory, vital signs, engineering assurance and product validation. It governs the human experience across §1–9.
+- Code is the evidence of what is implemented; this document defines the target. Record gaps explicitly rather than treating planned behavior as shipped. Reconcile implementation and completion records in each change.
 
-> **What Gen 2 is.** The Accelerator stops being a 24-page console wrapped around one runner. It becomes a **crew of specialist agents per client site**. The crew works through one governed **Toolbelt** (an MCP server inside our API), remembers everything in the site's **Library**, and improves itself through the **Skillsmith**. The client sees four screens. Strategic Machines operators also get the **Crew Lab**.
+> **What Gen 2 is.** An expert team that knows the client's digital business, improves it safely, and shows the evidence. The client **governs like an executive**, using business vital signs, priorities, budgets and consequential decisions. One accountable **Team Lead** coordinates the specialist crew in a shared meeting workspace. A durable **capability inventory** makes the site understandable in business terms and traceable to engineering assets. The crew works through the governed **Toolbelt**, retains knowledge in the **Library**, and improves through evaluated **Skillsmith** proposals. Four client screens: **Overview · Work · Site · Crew & Knowledge**. Operators also have the **Crew Lab**.
 >
 > **Test site: Machine Shop** (`machine/machineshop`, github.com/pdhoward/machineshop). Every Gen 2 capability is proven there first. **Cypress Resort (`ts-platform`) is a live production platform serving real guests. It is never a test target** and stays our *Customer Zero story*, not our sandbox.
 
@@ -31,6 +32,10 @@
 10. **Platform ≠ house partner.** Platform powers are infrastructure only. Access to any partner's clients needs an explicit, time-boxed, audited support grant.
 11. **Test on Machine Shop; never on Cypress.** Every phase ships green: run `pnpm typecheck && pnpm test` locally before every push. *For our own repos* (two developers: the owner and Claude) we work on `main` and push to production. No `stage` branch and no CI until a second contributor or the first paying client (decision D15). **Client sites** still get the `work/<n>` → preview → `stage` → `main` path from Boarding.
 12. **Break-glass:** the platform repo must always be workable directly, without the platform (§4.7).
+13. **The client governs; the crew coordinates.** The Team Lead owns specialist handoffs, execution and synthesis. The executive sets outcomes, approves authority and resolves consequential exceptions; routine internal steps stay within the approved mandate (§10.1).
+14. **Visible state must be true.** Vital signs, specialist presence, action results and progress come from server records, with source and freshness. Missing, stale or insufficient evidence is explicit. Demonstration data is labelled and separated from live records.
+15. **Capabilities persist; work changes them.** Business capabilities have stable identities and traceable requirements, technical assets and evidence. Current operational condition and change progress are separate dimensions (§10.3).
+16. **Engineering proof underpins business assurance.** Typed contracts, deterministic policy, meaningful Vitest tests, integration checks and browser QA establish acceptance. A model report, passing test count or successful HTTP response alone is not proof of the business promise (§10.5).
 
 ---
 
@@ -161,12 +166,14 @@ Clients get a simplified **Crew** screen (§2.4); they approve, they don't assem
 3. **Skillsmith:** a conversation ("make the Designer stricter about mobile layouts") plus the proposals queue, each proposal shown as a diff.
 4. **Test bench:** the proof. Run a draft specialist against a **replayed past Work item** or a scripted scenario in a sandbox on the test environment. Compare it with the live version on checks, send-backs, cost and time. Only a draft that does at least as well can be **promoted**. Every promotion is versioned, with rollback.
 
-### 2.4 What the client sees: the Crew screen
+### 2.4 What the client sees: Crew & Knowledge and the shared meeting
 - **Branding:** the crew carries the partner's brand (§5): the partner is named at Silver, co-branded at Gold, fully white-labelled at Platinum. The house partner's crews carry the Strategic Machines brand.
-- **Your crew:** one card per specialist, with what it does in plain words, what it may touch and the model it uses.
-- **"Your crew learned 2 things this week":** Skillsmith proposals in plain language, each with **Approve** / **Not now**, and a link to the evidence.
-- **"What your crew knows about Machine Shop":** the site and org skills, readable as a short handbook, with a count that grows over time.
-- **Spend and limits** per specialist.
+- **Your Team Lead:** the Consultant role becomes the accountable client-facing lead, coordinating the existing specialists rather than introducing a separate generalist application. It owns recommendations, handoffs, commitments and exception reporting (§10.1).
+- **Your crew:** specialist cards show business remit, permission boundaries and actual activity. Model details and per-specialist spend remain available in Engineer/operator view; the executive sees total budget and material exceptions.
+- **Shared meeting workspace:** one conversation and shared artifacts; the lead invites relevant specialists to contribute in business-advisor language. Avatars identify roles; presence derives from actual jobs/session state (§10.2).
+- **Learning proposals:** show the observed problem, proposed lesson, evaluation and decision. Proposed, evaluated, activated and measured improvements have distinct labels (§10.6).
+- **What the crew knows:** a readable handbook of site/org rules with sources, versions and unresolved assumptions. A knowledge count is an inventory, not evidence of improvement.
+- **Library and export:** decisions, designs, capability records, evidence and learning history are accessible here and contextually from Site and Work.
 
 ### 2.5 Boarding: the $2,500 fixed-price onboarding, run by a Boarding crew
 Boarding replaces the $5–20K custom installation (except for the premium managed tier). It runs on the Setup page as one checklist; flywheel.md §3 (Install → Checkout → Agreement) becomes its later steps. **The client's partner runs Boarding** (the house partner for direct clients). Gold and Platinum partners buy it at wholesale and set their own price.
@@ -175,8 +182,8 @@ Boarding replaces the $5–20K custom installation (except for the premium manag
 |---|---|---|---|
 | 0. **Checkup** (free, before purchase) | Surveyor | URL scan plus a read-only repo scan: security, freshness, tests, stack fit | Pastes URL, connects GitHub |
 | 1. **Connect** | Connector | Connect buttons (GitHub App, Vercel, Supabase or the site's database, Stripe test). It creates the `stage` branch, previews and the test database. Remaining keys go through the connection catalog | Clicks Connect; pastes any leftover keys |
-| 2. **Survey** | Surveyor | Stack card, env manifest, route map, schema/RLS map, test map, invariant draft. All arrive disabled for review | — |
-| 3. **Interview** | Consultant | A 15-minute conversation (chat or voice) on business rules, brand, what must never break | Talks |
+| 2. **Survey** | Surveyor | Stack card, env manifest, route/schema/test maps, invariant draft and proposed capability inventory with confidence and evidence. Findings are proposals for review | — |
+| 3. **Interview** | Team Lead (Consultant) | Conversation on business outcomes, critical journeys, brand, invariants, KPI definitions, budget and decision authority; confirms the inventory | Sets direction and confirms facts |
 | 4. **Assemble** | Skillsmith | Drafts the site's crew and first site skills; the operator reviews them in the Crew Lab | — |
 | 5. **Stabilize** | Builder + Judge + Upkeep | Fixes the Checkup's critical findings, adds a baseline test suite and branch protection, and proves rollback, all through the normal rail | Approves on the rail |
 | 6. **Agreement** | Librarian | The one-page Agreement (flywheel.md §3) plus the skills-sharing clause | Signs |
@@ -285,13 +292,14 @@ The Library is the **showroom**. Sell it with Machine Shop's live Library, not w
 | New | What |
 |---|---|
 | Migration 0006 (partners) | `acc_partners` (seed the house partner), `acc_orgs.partner_id`, `acc_partner_members`, `acc_support_grants`, `partner_id` on audit and usage (§5.3) |
+| Migration 0007 (prove · try · release) | Built in G2.1: preview, proof, Try approval and release on `acc_work`; `prove` and `release` jobs |
 | `packages/domain` partner rules | `Partner`/`PartnerRole` types, `PARTNER_PERMISSIONS`, `canPartner()`, skill-tier assembly rules, all with tests |
 | `apps/api/app/mcp` + `apps/api/lib/toolbelt/` | The MCP endpoint, tool registry, connectors/proxies, gate checks, redaction, metering, audit |
 | Job tokens | Minted per job, bound to org, site, work item, specialist and expiry; verified by the Toolbelt |
-| Migration 0007 (crew) | `acc_specialists`, `acc_specialist_versions`, `acc_skills` reworked with `scope` (platform · partner · org · site) and versions, `acc_skill_versions`, `acc_proposals`, `acc_bench_runs` |
-| Migration 0008 (toolbelt) | `acc_tools`, `acc_site_tools` (disabled by default), `acc_connections` (OAuth), `acc_tool_calls` (audit) |
+| Migration 0008 (crew) | `acc_specialists`, `acc_specialist_versions`, `acc_skills` reworked with `scope` (platform · partner · org · site) and versions, `acc_skill_versions`, `acc_proposals`, `acc_bench_runs` |
+| Migration 0009 (toolbelt) | `acc_tools`, `acc_site_tools` (disabled by default), `acc_connections` (OAuth), `acc_tool_calls` (audit) |
 | Console: Inbox, Site, Crew, Crew Lab, Boarding | The four client screens, plus the operator's Lab and Boarding |
-| Migration 0009 (library) | `acc_site_events` (the append-only Site Timeline, §3.3) and tenant-prefixed storage buckets |
+| Migration 0010 (library) | `acc_site_events` (the append-only Site Timeline, §3.3) and tenant-prefixed storage buckets |
 | Library export | A zip download, and a sync of handbook, decisions, designs and skills to the site repo's `/docs` |
 | Website (`accelerator` repo) | **Done 2026-10-10 (uncommitted):** `LibrarySection` and `ToolbeltSection` on Home and `/platform`; three FAQ entries; the Partners page rebuilt (Silver/Gold/Platinum table, pillars, Partner Playground, all "coming soon"); the home page's partner band updated |
 
@@ -309,12 +317,18 @@ The Library is the **showroom**. Sell it with Machine Shop's live Library, not w
 |---|---|---|
 | **G2.0** Setup | ~~`stage` + CI~~ deferred (D15). Machine Shop's Vercel project is linked and configured; migrations 0004/0005 are run | The house rules can be followed |
 | **G2.0b** Partner seam | Migration `0006_partners`, the house partner, `PARTNER_PERMISSIONS`, `store.access()` rewritten without the staff bypass, support grants (§5.3). No partner UI yet | Strategic Machines is "just another partner" in the data |
-| **G2.1** One loop live | Runner on Machine Shop: request → design → plan → build → tests → preview → approve → live. *Gen 1 runner, as is* | The core promise works (newvision.md §7, weeks 1–3) |
+| **G2.1** One loop live | Finish Claude's current work; reconcile code, migrations and completion records. Run 10 Machine Shop Work items through preview and release; record failures, send-backs, human intervention and time-to-live | The core promise works; baseline evidence exists |
+| **G2.1a** Trustworthy operational state | Connect Overview to `acc_work` and its proof/release records. Replace toast-only operational controls and fixed trends with real actions/data, or explicit unavailable states; separate demo data | Every executive signal and action reflects the same engine as Work |
 | **G2.2** Toolbelt v0 | `/mcp`, job tokens, 6–8 tools (repo, preview, Lighthouse, screenshot, mongo read-only, library read, rail post), audit; drop `envmachine` | Agents work with no keys in their shell |
-| **G2.3** Crew v0 | Specialists as data; runner assembles instructions and tools per specialist; Machine Shop gets its crew | "Crew per site" is real |
-| **G2.4** Four screens | Inbox · Work · Site · Crew; retire Gen 1 pages and tables | A client can understand it in 5 minutes |
-| **G2.5** Library + Skillsmith | Library sections and export; Skillsmith proposals from Learn; Crew Lab with test bench | The "why not Claude" answer is visible |
+| **G2.3** Crew and authority | Specialists as data; assembled skills/tools; Consultant as Team Lead; versioned mandate, specialist handoffs and deterministic escalation rules. Preserve client gates | The client can steer one lead without managing agents |
+| **G2.3a** Capability inventory | Proposed inventory for Machine Shop catalog/search/quotes; stable identities, requirements, technical links, evidence and many-to-many Work links; review before acceptance | The business and engineering views describe the same site |
+| **G2.4** Executive experience | Overview · Work · Site · Crew & Knowledge; shared meeting built from Work Room; truthful roster, contextual artifacts/actions, separate condition and progress, source-backed vital signs. Migrate legacy records before retiring pages/tables | A business user governs a change without coordinating specialists |
+| **G2.5** Library + measured learning | Site Timeline/export includes capability/mandate/decision evidence; Skillsmith proposals; replay and holdout bench; approved activation and later measurement | At least one improvement is demonstrated rather than asserted |
 | **G2.6** Boarding | Checkup → Connect → Survey → Interview → Assemble → Stabilize → Agreement, run on Machine Shop as client #1 | $2,500 Boarding is repeatable |
+
+**Phase acceptance:** §10.5 defines engineering assurance and §10.7 defines product acceptance. Retain existing phase numbers and completed history; suffix phases are new design work, not claims of implementation. Migration numbers 0008–0010 above are reservations: inspect Claude's final state before assigning additional capability, mandate, KPI or meeting schema migrations. No destructive legacy-table removal until references, data migration and rollback are verified.
+
+**Priority:** text, artifacts, real decisions and inventory precede rich avatars/voice. Voice is optional after the same experience works in text. Commerce packs, advanced model routing, narrated videos and extensive white-label customization do not gate the core release. Preserve their research notes in §9; verify vendor capabilities, pricing and links before implementation.
 
 ### 4.6 Machine Shop specifics
 - **Its database is MongoDB (read-only catalog), not Postgres.** That's a good test: the Data specialist needs `mongo.*` tools, and the crew catalog must not assume Supabase.
@@ -412,7 +426,7 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D1 | 2026-10-08 | Beachhead: AI-built apps that are live and fragile; Customer Zero-type businesses are the premium managed tier | newvision.md §4 |
 | D2 | 2026-10-10 | The product stays **The Accelerator**; every client site gets **a crew specialized for it** ("crew" is the market word) | newvision.md §9 |
 | D3 | 2026-10-10 | Onboarding is **Boarding, $2,500 fixed**, run by a Boarding crew; custom quotes only for the premium tier | §2.5 |
-| D4 | 2026-10-10 | Four client screens (Inbox · Work · Site · Crew) plus the operator's Crew Lab; the other Gen 1 pages fold in or retire | §4.4 |
+| D4 | 2026-10-10 | Four client screens (originally Inbox · Work · Site · Crew), plus operator Crew Lab. Refined by D23–D25 to Overview · Work · Site · Crew & Knowledge | §4.4, §10 |
 | D5 | 2026-10-10 | The Toolbelt is an **MCP server inside `apps/api`**; Connect buttons replace pasted keys; `envmachine` retires | §1 |
 | D6 | 2026-10-10 | The **Skillsmith** assembles each site's crew and improves it through human-approved proposals; the Crew Lab is its operator UI | §2 |
 | D7 | 2026-10-10 | **Machine Shop is the test site** and client #1 through Boarding; Cypress is never a test target | §0, §4.6 |
@@ -431,6 +445,12 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D20 | 2026-10-12 | **Generative forms from a FormSpec:** the server decides the fields, the agent arranges and prefills, one renderer (shadcn + zod), secret fields bypass the agent | §9.5 |
 | D21 | 2026-10-12 | **Server-side MCP over real APIs is primary.** WebMCP is not relied on: there's none in our console, and it's only an optional extra on client sites. Agent-ready sites get an MCP endpoint over their API | §9.1 |
 | D22 | 2026-10-12 | **Understanding artifacts (Karpathy's ladder):** controlled-English writing → diagrams → a discardable HTML explainer page per Work item → narrated release and briefing videos, all generated from the record | §9.3 |
+| D23 | 2026-10-12 | **Executive governance:** client sets outcomes, budgets and decision authority; Consultant becomes accountable Team Lead. Crew coordinates execution within a versioned mandate; material exceptions and protected actions return to authorized client decision-makers | §10.1 |
+| D24 | 2026-10-12 | **Shared meeting workspace:** one lead-led conversation, visible specialist roster, shared artifacts and contextual server-authorized decisions. Specialist contributions are business advice; avatars and optional voice reflect actual activity | §10.2 |
+| D25 | 2026-10-12 | **Business capability inventory:** durable capabilities map business purposes to requirements, architecture, assets and evidence. Condition and change progress are separate. Four screens: Overview · Work · Site · Crew & Knowledge | §10.3–10.4 |
+| D26 | 2026-10-12 | **Trustworthy vital signs:** business outcomes, journey health, delivery, budget, risk and complexity have explicit definitions, sources, freshness and uncertainty. No invented composite score or unlabelled demo metrics | §10.4 |
+| D27 | 2026-10-12 | **Engineering assurance:** retain current stack and boundaries; strengthen contracts, architecture decisions, Vitest, lint/typecheck, integration and browser QA, independent review, commit-bound approvals and verified recovery | §10.5 |
+| D28 | 2026-10-12 | **Measured flywheel and sequencing:** replay plus holdout evaluation, human-approved versioned activation and later outcomes. Reconcile Claude's current work; operational truth and inventory precede rich presentation. Documentation authorization does not authorize code refactoring | §4.5, §10.6–10.7 |
 
 ---
 
@@ -458,13 +478,28 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
     - Accounts created in Platform Admin belong to the house partner.
     - New `/api/admin/support` (GET, POST) and `/api/admin/support/[id]` (DELETE).
   - Console: `siteAccess` reads `via`; the sidebar labels partner and support access.
-  - **Deferred:** `partnerRoute()` (with the partner console, when partner routes exist); `partner_id` on usage (rolls up through the company for now; add when wholesale billing needs history at the time of use); skill and specialist `scope` (migration 0007, as planned).
-- [ ] **Run `0006_partners.sql` on accelerator-test before deploying the G2.0b code.** Without it, `/me` returns no accounts and creating an account fails.
-- [ ] **G2.1** One loop live on Machine Shop (Gen 1 runner): 10 real Work items, with send-back rate and time-to-live measured.
+  - **Deferred:** `partnerRoute()` (with the partner console, when partner routes exist); `partner_id` on usage (rolls up through the company for now; add when wholesale billing needs history at the time of use); skill and specialist `scope` (migration 0008, renumbered).
+- [x] Run `0006_partners.sql` on accelerator-test *(owner, 2026-10-12; G2.0b pushed as `035c20e`; your partner seat verified in the database)*.
+- [x] Machine Shop prepared for G2.1 *(2026-10-12)*: `stage` branch created and pushed (from `main`); site record fixed (name, stack; base branch `stage`).
+- [x] **G2.1 code: Prove · Try · Release** *(built 2026-10-12; typecheck, 66 tests and the console and API builds green; not yet run live)*:
+  - `supabase/migrations/0007_prove_try_release.sql`: preview, proof, Try approval and release columns on `acc_work`; `prove` and `release` job kinds.
+  - `packages/domain/src/flywheel.ts`: the rail runs through `try → release → learn`; new actions `prove`, `approveTry`, `release` and `close`; `proveVerdict` and `releaseVerdict` (the API judges, the runner only reports); 11 new tests.
+  - `apps/runner`:
+    - `deploys.ts` reads Vercel's preview and production deployments from GitHub's records, so no Vercel key is needed.
+    - The `prove` job runs typecheck, tests and build, then pushes `work/<n>` and waits for its preview. It doesn't push code that fails.
+    - The `release` job: stage ← main ← `work/<n>`, re-check, push `stage`, fast-forward `main`, wait for production, probe the live URL. It stops before `main` on any conflict or failed check.
+    - Checkout's C2 now really pushes a branch and checks its preview.
+  - `apps/api`: `proveWork`, `approveTry` (gate 3; risky changes need the Owner), `releaseWork` (needs `release.ship`), `closeWork`, one route `work/[number]/ship`. New or rebuilt steps clear a stale Prove and Try. Cadence "run" goes on to Prove automatically, but never past a gate.
+  - Console: the "Needs you" bar covers Prove, Try (Open preview · Approve for release), Go live and Close, plus a new **Prove & release** tab.
+- [ ] **Run `0007_prove_try_release.sql` on accelerator-test before deploying the G2.1 code.**
+- [ ] **G2.1 live run on Machine Shop:** run Checkout first, then 10 real Work items, measuring send-back rate and time-to-live.
+- [ ] Console sign-in hiccup (2026-10-12): a menu link sent a signed-in owner to `/login` once; the retry worked. Likely cause: Next.js pre-loading the link while the session was expiring, and caching the proxy's sign-in redirect. Fix: don't redirect pre-load requests in `apps/console/proxy.ts`. Note the page if it happens again.
 - [ ] **G2.2** Toolbelt v0: `/mcp`, job tokens, 6–8 tools, `acc_tool_calls`; drop `envmachine` from the runner and from Machine Shop's `dev` script.
-- [ ] **G2.3** Crew v0: migration 0007; specialists as data; skill assembly across four tiers; Machine Shop's crew.
-- [ ] **G2.4** Four screens; retire the Gen 1 pages; migrate `acc_requests`/`acc_changes`/`acc_approvals`/`acc_consultations` into `acc_work*`; demo tenant → Machine Shop.
-- [ ] **G2.5** Library (migration 0009, the Site Timeline, export); Skillsmith proposals; Crew Lab with test bench.
+- [ ] **G2.1a** Overview reads the real Work/proof/release records; actual actions, accurate unavailable states, measured trends and labelled demo data (§10.4).
+- [ ] **G2.3** Crew v0 plus Team Lead, versioned mandate and audited specialist handoffs; migration reservations reconciled with Claude's work (§10.1).
+- [ ] **G2.3a** Reviewed Machine Shop capability inventory, requirements/technical/evidence links and independent condition/progress views (§10.3).
+- [ ] **G2.4** Overview · Work · Site · Crew & Knowledge; shared meeting, real roster states, accessible artifacts and server-authorized decisions. Migrate legacy records before retirement; demo tenant → Machine Shop (§10.2–10.4).
+- [ ] **G2.5** Library/Timeline/export, Skillsmith and Crew Lab; replay plus holdout bench; one approved lesson with later measurement (§10.6).
 - [ ] **G2.6** Boarding end to end on Machine Shop as client #1, logging every human step.
 - [ ] Later: partner console UI, white-label domains, wholesale price lists, partner payouts, the Partner Playground, member-facing MCP (§1.4), a dedicated database option.
 
@@ -497,6 +532,15 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] When to ship member-facing MCP.
 - [ ] Voice model for the Interview step.
 - [ ] Crew catalog v1: 8 specialists plus 3 Boarding specialists.
+
+### 8.7 Executive experience and engineering acceptance
+- [ ] Reconcile this target with Claude's completed work before implementation; obtain separate Owner approval for code changes.
+- [ ] Define the mandate schema and explicit relationship to cadence, AC levels and existing design/plan/release gates; no implicit gate relaxation.
+- [ ] Confirm Machine Shop's critical journeys, capability boundaries, business outcomes and KPI sources; missing instrumentation remains visible.
+- [ ] Define typed capability, evidence, meeting-event and decision contracts plus scoped access and idempotency rules.
+- [ ] Establish relevant lint/typecheck/Vitest/integration/browser-QA checks and independent acceptance review; record a baseline.
+- [ ] Verify release approvals apply to the exact candidate; invalidation, concurrency and recovery behavior are explicit.
+- [ ] Conduct the §10.7 business-user walkthrough and partner review before expanding presentation or adjacent service lines.
 
 ---
 
