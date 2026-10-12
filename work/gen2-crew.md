@@ -9,7 +9,7 @@
 - §4.5 is the build order.
 - §7 is the decisions log.
 - §8 is the action list. Tick items there as they're done.
-- §9 covers agent interfaces: WebMCP and Stripe, the Decide layer (Jev), the writing standard, live voice agents and generative forms.
+- §9 covers agent interfaces: APIs-first MCP (WebMCP optional), Stripe, the Decide layer (Jev), understanding artifacts (Karpathy's ladder), live voice agents and generative forms.
 - When the code and this doc disagree, the code wins. Fix this doc in the same change.
 
 > **What Gen 2 is.** The Accelerator stops being a 24-page console wrapped around one runner. It becomes a **crew of specialist agents per client site**. The crew works through one governed **Toolbelt** (an MCP server inside our API), remembers everything in the site's **Library**, and improves itself through the **Skillsmith**. The client sees four screens. Strategic Machines operators also get the **Crew Lab**.
@@ -424,11 +424,13 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D13 | 2026-10-10 | **We run on our own product:** Machine Shop → the website → the platform, with a break-glass path. Machine Shop is a public showcase, with video | §4.7 |
 | D14 | 2026-10-10 | Website value proposition: the Library ("why not just use an AI model?") and the Toolbelt ("your keys never enter a prompt") | §4.3 |
 | D15 | 2026-10-12 | **Our own repos: work on `main` and push to production**; no `stage` branch and no CI until a second contributor or the first paying client. A local `pnpm typecheck && pnpm test` gates every push. Client sites keep the full branch path | §0 rule 11 |
-| D16 | 2026-10-12 | **Agent-first interfaces:** our Toolbelt (MCP) for our crews; **WebMCP** on our console's and clients' forms; Stripe as a fronted connector (test mode); "Agent-ready site" becomes a client service line | §9.1 |
+| D16 | 2026-10-12 | **Agent-first interfaces:** our Toolbelt (MCP) for our crews; server-side MCP over APIs first (WebMCP optional, client sites only: D21); Stripe as a fronted connector (test mode); "Agent-ready site" becomes a client service line | §9.1 |
 | D17 | 2026-10-12 | **A Decide layer**, `decide()`, behind an adapter (Jev on AI Gateway first) for triage, rail routing, tool and skill pre-selection, model routing, pre-Judge screening and Inbox ranking. Thresholds live in the domain; it never lowers a risk class | §9.2 |
-| D18 | 2026-10-12 | **Crew writing standard:** "80% of the way to ASD-STE100" for everything written to the business expert, and for skills | §9.3 |
+| D18 | 2026-10-12 | **Crew writing standard:** "80% of the way to ASD-STE100" for everything written to the business expert, and for skills (rung 1 of D22) | §9.3 |
 | D19 | 2026-10-12 | **Live Agent Template:** a short live prompt; a backend crew specialist on the Toolbelt; non-blocking tools; server-captured facts; the voice model is a per-role setting. First uses: Boarding Interview, Discuss, the weekly briefing, Machine Shop's voice assistant | §9.4 |
 | D20 | 2026-10-12 | **Generative forms from a FormSpec:** the server decides the fields, the agent arranges and prefills, one renderer (shadcn + zod), secret fields bypass the agent | §9.5 |
+| D21 | 2026-10-12 | **Server-side MCP over real APIs is primary.** WebMCP is not relied on: there's none in our console, and it's only an optional extra on client sites. Agent-ready sites get an MCP endpoint over their API | §9.1 |
+| D22 | 2026-10-12 | **Understanding artifacts (Karpathy's ladder):** controlled-English writing → diagrams → a discardable HTML explainer page per Work item → narrated release and briefing videos, all generated from the record | §9.3 |
 
 ---
 
@@ -439,7 +441,7 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] Commit the last `CLAUDE.md` edit in `accelerator-platform`, plus the D15 branching change.
 - [x] ~~G2.0: `stage` branch and CI~~. **Deferred by D15:** for our own repos, work on `main` and gate pushes with a local `pnpm typecheck && pnpm test`.
 - [x] Machine Shop: Vercel project created (owner, 2026-10-12).
-- [ ] Machine Shop: link the Vercel project to the GitHub repo, then set its environment variables in Vercel. Its MongoDB catalog is read-only, so production and previews can share it.
+- [x] Machine Shop: Vercel project linked to GitHub and live at https://strategic-machineshop.vercel.app/ (verified 2026-10-12: 10,836 products, the shop assistant, no errors).
 - [x] Migrations 0004 and 0005 run on accelerator-test (owner, 2026-10-12). accelerator-test is the platform's only database for now.
 - [ ] Live sign-in test against accelerator-test (accounts-auth-admin.md).
 
@@ -472,8 +474,9 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] **G2.3:** add the ASD-STE100 writing standard to the Protocol skill, and a pre-Judge style check on Inbox cards and reports.
 - [ ] **G2.4 (Screens):** a `FormRenderer` plus the FormSpec catalog; start with profile and settings, then Boarding Connect (`secret` fields).
 - [ ] **G2.6 (Boarding):** the Live Agent Template for the Interview (voice layer adapter: GPT-Live-1 first, Gemini Live as the alternative).
-- [ ] **Showcase (after G2.1):** Machine Shop gets WebMCP tools on search and quote request, and a voice shop assistant, built by its crew through the rail.
-- [ ] Checkup: add an agent-readiness score (WebMCP, structured data, `llms.txt`, checkout path).
+- [ ] **Showcase (after G2.1):** Machine Shop gets its own MCP endpoint (search, product details, quote request) and a voice shop assistant, built by its crew through the rail.
+- [ ] Checkup: add an agent-readiness score (API or MCP endpoint, structured data, `llms.txt`, checkout path; WebMCP as a bonus).
+- [ ] **G2.5:** understanding artifacts. A "what changed" diagram per design and release; an HTML explainer page per Work item at the Try stop. Narrated release videos come later, behind a spend cap.
 - [ ] Verify Stripe's ACP, Shared Payment Token and MCP server details on docs.stripe.com before designing the commerce pack.
 
 ### 8.6 Open design questions (see §6)
@@ -486,9 +489,15 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 
 ## 9. Agent interfaces, decisions, live agents and generative forms (added 2026-10-12)
 
-The design is agent-first: **every capability is a tool, and every screen a human uses is one an agent could use too.** MCP is the accepted interface: our Toolbelt for our crews, and WebMCP for the web pages agents visit. Five additions follow.
+The design is agent-first: **every capability is a tool, and every screen a human uses is one an agent could use too.** **Server-side MCP over real APIs is the primary interface** for everything we control (D21). WebMCP (tools a web page exposes to browser agents) is an early browser proposal: we use it only as an optional extra on client sites, never as a dependency. Five additions follow.
 
-### 9.1 Agent-ready pages (WebMCP) and agent commerce (Stripe)
+### 9.1 Agent commerce (Stripe) and agent-ready sites: APIs first, WebMCP optional
+**Position (D21, 2026-10-12): server-side MCP over APIs first; WebMCP only as an optional extra.**
+- An agent calling an MCP server backed by a real API works with any agent framework today, runs on the server, and uses our credentials and gates.
+- WebMCP needs the agent to be in a browser that supports an early, still-changing proposal. It's useful for browser agents, but not something to build on yet.
+
+Stripe's post is still worth learning from for its *patterns*, which apply equally to server-side MCP.
+
 **What Stripe showed** ([How Stripe is designing checkout for AI agents](https://stripe.dev/blog/how-stripe-is-designing-checkout-for-ai-agents)):
 - Stripe Checkout exposes **WebMCP** tools, so a visiting agent calls `get_order_summary` or `fill_payment_form` instead of reading pixels and HTML.
 - Stripe reports 42% fewer tokens, 38% fewer tool calls and 39% faster checkout than browser-only agents.
@@ -505,14 +514,14 @@ Stripe's wider agent-commerce stack (verify against docs.stripe.com before build
 
 **For the platform:**
 - Stripe joins the Toolbelt as a fronted connector (§1.2.6), **test mode only for builders**, with restricted keys.
-- Our own console exposes WebMCP tools on its forms, so a client's own agent (§1.4) can work the Control Room.
+- A client's own agent reaches the Control Room through the member-facing MCP endpoint (§1.4), server-side, not by browsing the console. **No WebMCP in the console.**
 
 **For clients (a new service line):** "**Agent-ready site.**" Agents are becoming customers.
-- The Checkup scores agent-readiness: WebMCP on key forms, structured data, `llms.txt`, a clean checkout path.
-- A crew skill pack adds WebMCP tools to a client's forms and checkout, plus ACP/SPT support for commerce sites.
+- The Checkup scores agent-readiness: an API or MCP endpoint for key actions, structured data, `llms.txt`, a clean checkout path. WebMCP counts as a bonus, not a requirement.
+- A crew skill pack gives a client's key actions (search, quote, checkout) a **server-side MCP endpoint over the site's existing API**, plus ACP/SPT support for commerce sites. WebMCP on the same forms is optional and cheap, because it reuses the same schema.
 
   It's an easy upgrade to justify ("agents can buy from you"), and it fits the Upkeep specialist.
-- **Machine Shop is the first showcase:** an agent asks for a quote, or searches and saves a list, through WebMCP.
+- **Machine Shop is the first showcase:** an agent searches, reads product details and asks for a quote through Machine Shop's own MCP endpoint.
 
 ### 9.2 The Decide layer: fast typed decisions (Jev)
 **What Jev is** ([Vercel AI Gateway: Jev launch](https://vercel.com/blog/ai-gateway-jev-model-launch), 2026-09-15, by TypeSafe AI): a probabilistic decision model.
@@ -542,21 +551,34 @@ decide(context, questions[]) → { answer, probability }[]     // typed, logged,
 - Every decision is logged as evidence (inputs summary, answer, probability, model).
 - Money, auth and security classification are also checked **deterministically** (file paths, schema changes), and either check can raise the class. Neither can lower it.
 
-### 9.3 A writing standard for the crew: controlled English (ASD-STE100)
-Karpathy reports that LLMs know **ASD-STE100** well. That's the Simplified Technical English standard for aerospace maintenance manuals: about 900 approved words, short sentences, active voice, one instruction per sentence. He also reports that asking for it (or "80% of the way to ASD-STE100") makes explanations much more readable ([summary](https://themenonlab.blog/blog/asd-ste100-simplified-technical-english-prompting)).
+### 9.3 Output a human can understand: Karpathy's ladder
+**The post** (full text supplied by the owner, 2026-10-12): as LLMs do more of the legwork, *"a lot more of our work will rise up the abstractions into oversight and understanding."* He ranks output formats, each "even better" than the one before:
+1. **Writing in controlled English:** ASD-STE100, the Simplified Technical English of aerospace maintenance manuals. LLMs know it well, and its strict rules make text much more readable. Softened as "80% of the way to ASD-STE100", because the full spec is strict.
+2. **Diagrams:** easier to take in than prose.
+3. **Web pages:** ask for the output "in HTML" to get an interactive page.
+4. **Explainer videos:** bespoke and narrated (e.g. "3b1b style", with narration from a voice API). "This is actually starting to work."
 
-We adopt it in two places:
-- **Everything the crew writes for the business expert** (Inbox cards, plans, step reports, evidence summaries, release notes, the weekly briefing) is written "80% of the way to ASD-STE100". This makes the Protocol's "Report plainly" order concrete and checkable.
-- **Skills and specialist instructions are written in controlled English, too.** Clearer for models, and readable as the client's crew handbook (§2.4).
+Because code is now abundant, he says to ask for **"large, custom, discardable software artifacts"** that never made sense to build before.
 
-Caveat: controlled language makes text clearer; it doesn't make it true. Evidence still comes from the Judge.
+**Why this is central to our product, not just a writing tip:** the Navigator's whole job *is* oversight and understanding. The crew must hand over understanding, not just diffs and test counts.
+
+| Rung | What the crew produces | Where it appears |
+|---|---|---|
+| **1. Writing** | Inbox cards, plans, step reports, evidence summaries and release notes in "80% of the way to ASD-STE100". Skills and specialist instructions are written the same way, so they read as a clean handbook | Everywhere; it makes the Protocol's "Report plainly" checkable |
+| **2. Diagrams** | A "what changed" diagram for each design and each release: affected pages, data flow, before and after | The Design stop, the evidence, the Library |
+| **3. Web pages** | A **discardable interactive explainer page per Work item**: what was asked, the design, before/after, the evidence, links to try it | The Try stop; saved in the Library |
+| **4. Videos** | A short narrated explainer for each release and for the weekly briefing. For prospects: the Machine Shop showcase | Releases, the weekly briefing, the website |
+
+**Rules:**
+- **Artifacts are built only from the record** (the Work item, its evidence, the Site Timeline). They never state a fact the record doesn't hold, and they're labelled as generated.
+- **They're discardable:** regenerate any time; the record is what's kept.
+- **Clear isn't the same as correct.** Controlled language and polished pages don't make a claim true; the Judge's evidence still decides.
+- **Cost:** pages and diagrams are cheap. Narrated video is a per-role model setting, using the client's or our voice-API key from the vault, behind a spend cap.
 
 Related agent-design practice we follow:
-- Keep the generate → verify loop short, with the human verifying fast.
+- Keep the generate → verify loop short, with the human verifying fast; rungs 2–4 exist to speed up that verification.
 - Use an autonomy slider (our cadence and AC levels).
 - Engineer the context per step (§9.2, tool pre-selection).
-
-*(The linked post itself couldn't be fetched; this section relies on published summaries of it.)*
 
 ### 9.4 Live agents: a template for voice and real-time work
 **Sources:**
@@ -589,7 +611,7 @@ Both describe the same architecture, and it becomes our **Live Agent Template**:
 - **The weekly audio briefing** (accelerator-control-room.md §6.10).
 - **For clients (a service line):** the crew can add a live agent to a client's site from the template. **Machine Shop's shop assistant goes live (voice) as the showcase.**
 
-**Browsing agents** (the owner's resort-booking experience with the live demo) are the visitor side of §9.1: WebMCP makes them fast and reliable on our clients' sites.
+**Browsing agents** (the owner's resort-booking experience with the live demo) are the visitor side of §9.1. They work today by reading the page, which is slower and less reliable. A site's own MCP endpoint is the dependable path for them; WebMCP may help browser agents later.
 
 ### 9.5 Generative forms (GenUI): yes, if the agent fills a spec rather than writing code
 **The example is practical with today's models:** "I want to update my profile" → the agent reads the profile schema → builds the fields and validation → shows a form the human completes while the conversation continues. The part to avoid is an LLM *writing UI code* at runtime. The part that works is an LLM **filling in a declarative form spec** that we render with our own components.
@@ -601,8 +623,8 @@ Both describe the same architecture, and it becomes our **Live Agent Template**:
 3 spec          the specialist writes a FormSpec (JSON): order, labels, help text, prefill
                 from the dialogue. Only component types in our catalog are allowed
 4 render        one <FormRenderer> (shadcn + react-hook-form + the same zod schema)
-5 fill live     the form exposes WebMCP-style tools (fill_field, focus); the live agent
-                fills fields as the human talks, and the human sees and corrects each one
+5 fill live     the agent calls Toolbelt tools (form.fill_field, form.focus); the server pushes
+                each value to the open form, and the human sees and corrects each one
 6 submit        API re-validates with the same zod schema → gates (e.g. a new mobile number
                 must be verified) → audit → Site Timeline
 ```
