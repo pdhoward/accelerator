@@ -363,7 +363,7 @@ Today's code hard-wires the two-level version:
 | `acc_partner_members` | `partner_id, user_id, role (owner · admin · operator)` |
 | `acc_support_grants` | `partner_id or org_id, granted_to (platform user), reason, expires_at, granted_by`. Replaces the blanket staff bypass |
 | Scoped know-how | Skills and specialists carry `scope (platform · partner · org · site)` plus the matching id, with a check constraint that exactly the right id is set |
-| `partner_id` on audit, usage, job tokens | Rolls up metering, limits and the audit trail per partner |
+| `partner_id` on audit, usage, job tokens | Rolls up metering, limits and the audit trail per partner. *Built: audit (trigger-filled). Usage rolls up through the company for now; job tokens arrive with G2.2* |
 
 **Domain and API:**
 - `packages/domain`: `Partner` and `PartnerRole` types, and a third permission map, `PARTNER_PERMISSIONS` (`partner.view`, `clients.create`, `clients.operate`, `skills.manage`, `brand.manage`, `billing.view`, `team.manage`), with `canPartner()` and tests.
@@ -446,7 +446,20 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] Live sign-in test against accelerator-test (accounts-auth-admin.md).
 
 ### 8.2 Platform build (gen2 phases, §4.5)
-- [ ] **G2.0b** Partner seam: migration 0006; house partner; `PARTNER_PERMISSIONS` + tests; `store.access()` without the staff bypass; support grants; `partnerRoute()`; the in-memory store and fixtures updated to match.
+- [x] **G2.0b** Partner seam *(built 2026-10-12; typecheck and all 56 tests green)*:
+  - `supabase/migrations/0006_partners.sql`: `acc_partners` with the house partner seeded; `acc_orgs.partner_id` (required, backfilled); `acc_partner_members`, seeded from platform staff; `acc_support_grants`; `acc_admin_audit.partner_id`, filled by a trigger.
+  - `packages/domain`: `tenancy.ts` (`resolveSiteAccess`, `holdsGates`, support-grant window and liveness), `PARTNER_PERMISSIONS` / `canPartner`, `support.grant` platform action; 12 new tests.
+  - `apps/api`:
+    - `lib/partners.ts`: house partner, partner seats, support grants.
+    - Identity carries `partnerSeats`.
+    - `store.access()` resolves member → partner → support grant, **with no staff bypass**.
+    - `/me` lists partner clients.
+    - `caller.staff` replaced by `caller.via` + `holdsGates()`.
+    - Accounts created in Platform Admin belong to the house partner.
+    - New `/api/admin/support` (GET, POST) and `/api/admin/support/[id]` (DELETE).
+  - Console: `siteAccess` reads `via`; the sidebar labels partner and support access.
+  - **Deferred:** `partnerRoute()` (with the partner console, when partner routes exist); `partner_id` on usage (rolls up through the company for now; add when wholesale billing needs history at the time of use); skill and specialist `scope` (migration 0007, as planned).
+- [ ] **Run `0006_partners.sql` on accelerator-test before deploying the G2.0b code.** Without it, `/me` returns no accounts and creating an account fails.
 - [ ] **G2.1** One loop live on Machine Shop (Gen 1 runner): 10 real Work items, with send-back rate and time-to-live measured.
 - [ ] **G2.2** Toolbelt v0: `/mcp`, job tokens, 6–8 tools, `acc_tool_calls`; drop `envmachine` from the runner and from Machine Shop's `dev` script.
 - [ ] **G2.3** Crew v0: migration 0007; specialists as data; skill assembly across four tiers; Machine Shop's crew.
