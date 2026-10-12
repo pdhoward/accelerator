@@ -164,7 +164,7 @@ Clients get a simplified **Crew** screen (§2.4); they approve, they don't assem
 1. **Roster:** the site's specialists, with the Boarding progress beneath them.
 2. **Anatomy:** one specialist laid open in its four slots. Skills are cards with tier badges and versions; tools are toggles carrying risk badges from the Toolbelt; permissions are locks (gate policy, which can't be removed here); model is a dropdown showing typical cost per job.
 3. **Skillsmith:** a conversation ("make the Designer stricter about mobile layouts") plus the proposals queue, each proposal shown as a diff.
-4. **Test bench:** the proof. Run a draft specialist against a **replayed past Work item** or a scripted scenario in a sandbox on the test environment. Compare it with the live version on checks, send-backs, cost and time. Only a draft that does at least as well can be **promoted**. Every promotion is versioned, with rollback.
+4. **Test bench:** run live and draft configurations against replayed work and separate holdout scenarios in the test environment. Define thresholds before evaluation; compare acceptance checks, safety, send-backs, cost and time with sample sizes. Promotion needs the tier owner's approval and no invariant regression. Activation is versioned, reversible and followed by later measurement (§10.6).
 
 ### 2.4 What the client sees: Crew & Knowledge and the shared meeting
 - **Branding:** the crew carries the partner's brand (§5): the partner is named at Silver, co-branded at Gold, fully white-labelled at Platinum. The house partner's crews carry the Strategic Machines brand.
@@ -221,6 +221,8 @@ And per §1.4: *"Keep using Claude. Connect it to your Accelerator."*
 | **Toolbelt log** | Every tool call by every specialist | Platform (`acc_tool_calls`) |
 | **Releases** | A changelog in plain words, with before/after and Undo | Platform plus git tags |
 | **Health timeline** | Checkup scores over time | Platform |
+| **Capability inventory** | Business areas/capabilities, requirements, technical links, dependencies, scope history and verification evidence (§10.3) | Platform; open-format export and agreed repo documentation |
+| **Governance** | Mandate versions, decision authority, KPI definitions and approved commitments (§10.1, §10.4) | Platform; decisions and architecture records mirrored to `/docs` |
 
 **Rule of thumb:** *what the site needs in order to be understood without us* (handbook, decisions, designs, skills, tests) goes into the client's repo as open files. *What records how the work happened* (dialogues, evidence, tool logs, metrics) lives in the platform and can always be **exported**.
 
@@ -298,7 +300,8 @@ The Library is the **showroom**. Sell it with Machine Shop's live Library, not w
 | Job tokens | Minted per job, bound to org, site, work item, specialist and expiry; verified by the Toolbelt |
 | Migration 0008 (crew) | `acc_specialists`, `acc_specialist_versions`, `acc_skills` reworked with `scope` (platform · partner · org · site) and versions, `acc_skill_versions`, `acc_proposals`, `acc_bench_runs` |
 | Migration 0009 (toolbelt) | `acc_tools`, `acc_site_tools` (disabled by default), `acc_connections` (OAuth), `acc_tool_calls` (audit) |
-| Console: Inbox, Site, Crew, Crew Lab, Boarding | The four client screens, plus the operator's Lab and Boarding |
+| Console: Overview, Work, Site, Crew & Knowledge; Crew Lab, Boarding | Four client screens, shared meeting, plus operator Lab and guided Boarding (§10) |
+| Capability and governance schema (numbers assigned after reconciliation) | Stable capability/requirement/asset/dependency/evidence links, mandate versions, KPI definitions and meeting/decision events; extend existing records rather than creating parallel Work state |
 | Migration 0010 (library) | `acc_site_events` (the append-only Site Timeline, §3.3) and tenant-prefixed storage buckets |
 | Library export | A zip download, and a sync of handbook, decisions, designs and skills to the site repo's `/docs` |
 | Website (`accelerator` repo) | **Done 2026-10-10 (uncommitted):** `LibrarySection` and `ToolbeltSection` on Home and `/platform`; three FAQ entries; the Partners page rebuilt (Silver/Gold/Platinum table, pillars, Partner Playground, all "coming soon"); the home page's partner band updated |
@@ -518,11 +521,11 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 
 ### 8.5 From §9 (agent interfaces)
 - [ ] **G2.2 (Toolbelt):** progressive tool disclosure by stage and gate state; Stripe connector (test mode, restricted key).
-- [ ] **G2.3 (Crew):** `decide()` adapter with a Jev trial on AI Gateway. Measure speed, cost and agreement against an LLM on intake triage and next-step routing before relying on it.
+- [ ] **Later optimization:** `decide()` adapter with a verified provider trial. Measure speed, cost and agreement on our workload; advanced routing is not a dependency for Crew v0.
 - [ ] **G2.3:** add the ASD-STE100 writing standard to the Protocol skill, and a pre-Judge style check on Inbox cards and reports.
 - [ ] **G2.4 (Screens):** a `FormRenderer` plus the FormSpec catalog; start with profile and settings, then Boarding Connect (`secret` fields).
-- [ ] **G2.6 (Boarding):** the Live Agent Template for the Interview (voice layer adapter: GPT-Live-1 first, Gemini Live as the alternative).
-- [ ] **Showcase (after G2.1):** Machine Shop gets its own MCP endpoint (search, product details, quote request) and a voice shop assistant, built by its crew through the rail.
+- [ ] **After text-workspace validation:** optional Live Agent Template for Interview/meeting; verify provider capabilities, terms and pricing before choosing the voice adapter. Boarding works without voice.
+- [ ] **Later showcase:** Machine Shop MCP endpoint and optional voice shop assistant, built through the rail after the executive experience is validated; not a core-release dependency.
 - [ ] Checkup: add an agent-readiness score (API or MCP endpoint, structured data, `llms.txt`, checkout path; WebMCP as a bonus).
 - [ ] **G2.5:** understanding artifacts. A "what changed" diagram per design and release; an HTML explainer page per Work item at the Try stop. Narrated release videos come later, behind a spend cap.
 - [ ] Verify Stripe's ACP, Shared Payment Token and MCP server details on docs.stripe.com before designing the commerce pack.
@@ -704,3 +707,160 @@ Both describe the same architecture, and it becomes our **Live Agent Template**:
 5. **For clients:** a crew skill pack for conversational forms on their sites (Machine Shop: a quote request filled by voice).
 
 **Verdict: not hoping for too much.** Generating forms, cards and tables from a fixed catalog is reliable now. Generating whole, free-form pages at runtime is not, so we don't.
+
+---
+
+## 10. Executive governance, expert meetings and engineering assurance
+
+*Owner-directed design revision, 2026-10-12. Target behavior, not a shipped-feature declaration. This section refines D4 and applies across the existing Toolbelt, rail, Library, Crew Lab and partner design.*
+
+### 10.1 The executive and the accountable Team Lead
+
+The business leader is the **Navigator**: a wave runner who senses the site's vital signs, chooses direction and governs consequential decisions. The crew handles project coordination. The client must not assign eight agents, sequence their tasks, interpret raw logs or chase their handoffs.
+
+The Consultant configuration becomes the **Team Lead**. It understands the business, owns the recommendation and delivery commitment, delegates to specialists, reconciles findings and escalates uncertainty. It never manufactures certainty or overrides the Judge or domain policy. Specialists retain their roles, tool boundaries and evidence responsibilities.
+
+| Responsibility | Accountable party |
+|---|---|
+| Outcomes, priorities, acceptable tradeoffs and budget | Authorized client decision-maker |
+| Recommendation, coordination, updates and exception synthesis | Team Lead |
+| Architecture, design, implementation and operational findings | Relevant specialists |
+| Independent acceptance review | Judge/QA, with permissions separate from Builder |
+| Authorization, budgets, state transitions and gate enforcement | API and deterministic domain policy |
+
+**Versioned mandate:** record the approved outcome, scope, acceptance criteria, budget/time limits, protected invariants, permitted actions, decision owners and expiry/review point. Every run references the applicable mandate version. A client can pause or revise it; revisions are audited and invalidate affected pending actions where necessary.
+
+Existing cadence, AC levels and design/plan/Try/release gates remain enforced. The mandate clarifies authority; it does not introduce permission to skip existing gates. Any future reduction in gate frequency needs an explicit policy design and Owner approval. The executive sees the business decision at each gate; internal specialist handoffs need no additional approval when already authorized.
+
+Escalate for changed scope, budget exposure, missing strategic information, contradictory requirements, blocked dependencies, material architecture tradeoffs or protected money/data/auth/security actions. Each decision card states: recommendation, alternatives, business effect, cost/risk, evidence, who can decide and what that decision authorizes. Deferring has an explicit consequence. Partners can prepare decisions but cannot acquire client gates through the Team Lead.
+
+### 10.2 A shared meeting workspace
+
+Evolve the existing Work Room: keep the persistent conversation and artifacts, then add lead-led specialist contributions and a shared presentation surface. This is a meeting metaphor over real asynchronous jobs, not a requirement to run all specialists continuously.
+
+```text
+Machine Shop       Site condition · Budget · Decisions needing you
+Crew roster        Shared conversation       Shared presentation
+Team Lead          Recommendation            Customer journey / design
+Designer           Invited contribution      Before / after / preview
+Data specialist    Findings and tradeoffs    Architecture / dependencies
+Judge / QA         Acceptance findings       Checks / evidence / risks
+                   [Choose] [Revise] [Try] [Approve authorized action]
+```
+
+**Interaction contract:**
+- One lead addresses the client by default. The client can request a specialist; the lead invites one when its expertise changes a decision. Show who contributed and which artifact/evidence supports the contribution.
+- Every specialist speaks as a business advisor: what this means, its recommendation, remaining uncertainty and the required decision. Engineering detail is inspectable through progressive disclosure.
+- Presence states come from jobs/session records: available, queued, working on a named task, awaiting input, completed, blocked or unavailable. An avatar is a role identifier; “online” never implies an agent is continuously thinking.
+- Shared artifacts include requirements, option comparisons, customer journeys, diagrams, dependency maps, before/after views, previews and proof. Small catalog-rendered forms/cards are the default; free-form generated explainers remain derived artifacts under §9.3.
+- Decisions are typed server actions, not interpretations of conversational enthusiasm. The server checks caller, site, mandate, stage, artifact version and approval eligibility; it records the actual result. Pending is distinct from succeeded. Failed actions show a recoverable reason.
+- Contributions and actions have ordered, durable events. Refresh/reconnect restores the same meeting state; repeated submissions do not duplicate jobs or approvals. Polling is acceptable initially; streaming is an adapter choice, not a prerequisite.
+- Work/site/mandate context is explicit. Switching sites cannot carry a draft action or privileged context into another tenant. Keyboard access, readable transcripts, mobile use and text-only operation are supported.
+
+**Representative meeting:** the client says “Mobile visitors aren't completing quote requests.” The lead checks whether analytics substantiate that observation; missing analytics is reported. The designer presents two flows, the data specialist explains submission/storage implications, and the lead recommends one with scope and acceptance criteria. The client approves the design and plan at existing gates. The crew handles execution and QA. At Try, the shared surface shows the exact preview and customer checklist; release remains separately authorized. Learn produces an evidenced proposal after the outcome, not a celebratory assertion.
+
+Optional voice follows the same records, permissions and decisions. Rich avatars, multiple speakers and narration follow successful text-and-artifact validation. No simulated cross-talk or synthetic presence is needed to demonstrate expertise.
+
+### 10.3 The site capability inventory
+
+The executive's “component” means a **business capability**, not a React component, file or job. The durable hierarchy is **Site → business area → capability → linked technical assets**. Start with Machine Shop catalog, search and quotes. Survey proposes boundaries; the client/operator reviews them before the accepted inventory changes.
+
+| Record | Required meaning |
+|---|---|
+| Capability | Stable ID, site, business area, name, purpose, lifecycle, importance and accountable role |
+| Requirements | Versioned behaviors, constraints and independently verifiable acceptance criteria |
+| Technical links | Routes/UI modules, API contracts, schemas, services/integrations, tests and architecture decisions |
+| Dependencies | Capability/asset links, failure impact and known unknowns |
+| Evidence | Check result, source, environment, candidate commit/version, timestamp and freshness policy |
+| Work links | Many-to-many links: one change may affect several capabilities; one capability has many changes |
+| Scope history | Proposed/confirmed boundaries, estimate range, basis, confidence and reviewed revisions |
+
+Technical assets can be shared across capabilities without inflating capability counts. Rename preserves identity; split/merge/retirement records lineage and changes the versioned scope. Tenant scope, permissions, audit and export apply to all records. The Team Lead proposes inventory updates; generated discoveries do not silently become accepted assets or enable tools.
+
+**Separate dimensions:**
+- Lifecycle: proposed, accepted, retired.
+- Operational condition: verified, needs attention, unverified; show evidence age and critical failures.
+- Change progress: backlog, discovery/design, building, testing, awaiting decision, released; show each active Work item rather than collapsing overlapping changes into one misleading status.
+
+Search can be verified and live while an enhancement is in design. New planned capabilities have no operational verification until they exist. Work completion does not automatically make a capability healthy: acceptance evidence must support it.
+
+**Inventory scorecard:** show confirmed versus proposed capabilities; verified/attention/unverified counts for the defined accepted population; a separately labelled Work pipeline; and scope delivery against an approved baseline. Counts across different views do not add together. Size/effort ranges are reviewed estimates, with assumptions; no file-count completion percentage. Any weighted score must expose its formula and criticality weights, and cannot hide a critical journey failure. Start with transparent counts.
+
+### 10.4 Executive vital signs and the four screens
+
+The Overview answers: **Are we achieving the business purpose? Is the site working? Are commitments controlled? What needs my decision?** It should also reveal missing instrumentation and increasing complexity before they become surprises.
+
+| Vital sign | Definition and evidence |
+|---|---|
+| Business outcomes | Client-selected KPIs such as qualified quote requests and completion rate; explicit numerator/denominator, source, period, baseline and target |
+| Customer-journey condition | Critical acceptance scenarios, production-safe monitoring where authorized, incidents and last verification |
+| Delivery | Approved scope accepted, blockers, commitments and forecast ranges; scope changes visible |
+| Budget | Recorded spend, remaining authorized budget and estimated exposure; distinguish model costs from other delivery/service costs |
+| Risk and complexity | Protected changes, failing/stale checks, fragile dependencies, unresolved architecture decisions and growing maintenance burden |
+| Crew effectiveness | Comparable work's send-backs, first-pass acceptance, time-to-live, intervention and cost, with sample size |
+
+Every vital sign carries a definition, source, timestamp, observation window and sufficient-data rule. Zero is different from missing; small samples and stale data are explicit. Model-derived interpretations are labelled and link to underlying measurements. Goals are not measured results, and “release succeeded” is not “business KPI improved.” Report correlation without claiming causal improvement that the evidence cannot establish.
+
+| Screen | Purpose |
+|---|---|
+| **Overview** | Business vital signs, exceptions, recent outcomes and decisions needing attention; lead's concise briefing |
+| **Work** | Priorities/commitments and the shared meeting for each governed change; rail remains available as execution detail |
+| **Site** | Capability inventory, condition, dependencies and customer journeys; technical maps behind Engineer view |
+| **Crew & Knowledge** | Team remit, handbook, decisions, Library/export and evaluated learning; Crew Lab remains operator-only |
+
+Replace references to the old four-screen names in this document with this target. Existing pages may remain during migration. Setup is a guided entry flow, not permanent navigation the executive must manage. Library information also appears contextually in Site and Work. Configuration and model controls remain operator/Engineer concerns.
+
+**Operational truth first:** the source review on 2026-10-12 found the Bridge still using older request/release records, non-demo decision/signals arrays empty, some toast-only operational actions and a fixed trend array. Treat these as a dated review baseline, to reconcile with Claude's current changes. Overview and Work must read the same operational records. No approval, deployment or undo is represented as completed without its recorded result; unavailable recovery is stated honestly.
+
+**Partner portfolio:** prioritize client exceptions, blocked commitments, health, budgets and decisions; open a site meeting to prepare a client review with recommendations and proof. Client authority remains intact. Partner portfolio UI follows validated site behavior rather than delaying it.
+
+### 10.5 Engineering architecture and assurance
+
+Retain the current Next.js/React/TypeScript stack, separate API, pure domain package, typed API client and Tailwind/component foundation. Adapt shadcn patterns where appropriate; do not assume a new UI library or framework migration is required.
+
+Architecture work is explicit: module responsibilities and dependency direction, API/event contracts, state machines, tenant/credential boundaries, schema constraints, failure handling and architectural decisions. The engineering view links each business capability to these assets. Add an Architecture remit to the crew configuration (initially assigned to a qualified existing specialist); it does not require another runtime or another client-facing coordinator.
+
+**Boundaries:** console renders and requests actions; API authorizes, persists and orchestrates; domain owns pure rules; runner executes bounded jobs; Toolbelt wraps integrations; Library retains versioned decisions/evidence. Agents cannot bypass those boundaries through a generated UI. Keep release tools separate from Builder permissions; an allowlist must be enforced on invocation, not only through discovery.
+
+**Proof chain:** business requirement → approved design/architecture → typed contract/implementation → acceptance scenario → evidence at an exact candidate → authorized release → live verification and outcome observation.
+
+| Assurance layer | Required proof |
+|---|---|
+| Static checks | TypeScript, configured lint and applicable production builds; document missing scripts before establishing required checks |
+| Vitest | Meaningful domain, state-transition, authorization and behavior tests; failure cases and invariants rather than implementation mirrors |
+| API/integration | Validation, cross-tenant denial, gate enforcement, stale approval rejection, retries/idempotency and connector failures |
+| Browser QA | Critical journeys on representative desktop/mobile layouts, negative scenarios and relevant accessibility checks using a selected browser harness |
+| Independent review | Judge/QA reviews acceptance and architecture/security implications separately from Builder; missing review is visible |
+| Release/recovery | Exact candidate/preview identity, merge validation, live journey checks and a documented, exercised recovery path |
+
+Keep the established `pnpm typecheck && pnpm test` baseline. Add relevant lint/build/integration/browser checks to the release checklist as configured; no claim that those scripts or suites already exist. A test count must not stand in for coverage of a requirement. Small changes need proportionate meaningful checks, not redundant tests for their own sake.
+
+Approvals reference the actual artifact and candidate version. Rebuilds, changed requirements or changes to the release candidate invalidate affected proof/approvals. Release concurrency is controlled per site; merged changes are revalidated and materially changed candidates return for required review. Deterministic policy decides readiness; the lead summarizes it.
+
+Example assurance: “The mobile quote journey passes QA; catalog writes remain prohibited; one integration is unverified, so release is held.” Keep raw results inspectable. An HTTP probe alone cannot verify that the quote workflow works. Rollback must account for data/schema compatibility and report its actual execution; no universal 30-second undo promise.
+
+### 10.6 Measured improvement, not accumulated memories
+
+The flywheel is **observed result → proposed lesson → evaluation → authorized activation → later measurement**. Learn records failure/correction categories, acceptance results and costs; it can produce no proposal when the evidence does not justify one. Closing a Work item is not itself learning.
+
+Each proposal identifies the source cases, hypothesis, affected skill/specialist and capability, expected benefit, regression risks and evaluation plan. Compare the live and draft configurations on both replayed work and **holdout scenarios not used to draft the lesson**. Report evaluation conditions, versions, sample size, checks, interventions, cost and time; preserve non-negotiable invariants. Define promotion thresholds before evaluating. No safety regression is acceptable in exchange for cheaper output.
+
+Activation uses the existing tier approval owner (§2.2), versions and rollback. Measure later comparable jobs, report uncertainty and retire ineffective lessons. Cross-client promotion follows existing consent and anonymization requirements.
+
+Example: “Proposed: test narrow mobile quote layouts. Two recent changes hid a control. Draft caught both replay failures and passed the holdout set. Awaiting approval.” After activation, report observed results separately. “47 things known” remains a knowledge inventory; it is not a performance claim.
+
+### 10.7 Product acceptance and implementation boundary
+
+Before refactoring, reconcile Claude's current commits, migration execution and live-work status. This documentation change authorizes the target design only. The Owner separately authorizes the next code round. Preserve historical checked items; new targets remain unchecked until their evidence exists.
+
+Run a walkthrough with a business user who did not design the product: inspect vital signs, choose a priority, discuss an improvement with the lead, understand a specialist recommendation, review scope/budget, try the preview, approve an authorized release and explain the learning evidence. Record where the user needs help, the decisions they understand and any manual specialist coordination. Repeat after fixing material comprehension gaps. Run a partner/client review with distinct permissions as a separate scenario.
+
+**Core release acceptance:**
+1. The client can govern the walkthrough without assigning or sequencing agents.
+2. Every displayed status/metric/action is sourced or explicitly unavailable/demo; reconnect preserves meeting state.
+3. Accepted capabilities link to requirements, engineering assets and evidence; condition and change progress remain distinct.
+4. The critical Machine Shop journeys have meaningful automated and browser evidence, with independent acceptance review.
+5. Gates, tenant boundaries, spend limits, stale approvals and failure/recovery behavior are verified.
+6. At least one approved lesson has replay/holdout evidence and a subsequent measurement, without overstating the result.
+
+Success is executive understanding and controlled outcomes, supported by engineering precision. Presentation, model choice and skill counts serve that result.
