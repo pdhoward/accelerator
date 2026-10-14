@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
+import { isIP } from "node:net";
 import { NextResponse } from "next/server";
 import { createReviewClient } from "@/lib/supabase/server";
 import { pageVisitSchema, trafficSource } from "@/lib/traffic";
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
   if (origin && origin !== new URL(request.url).origin) return new NextResponse(null, { status: 403 });
   const parsed = pageVisitSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return new NextResponse(null, { status: 400 });
-  // Soft instance-local abuse guard; no IP or IP hash is stored with page views.
+  // Hosting must supply/overwrite these proxy headers; never accept IP from JSON.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   const key = createHash("sha256").update(salt + ip).digest("hex");
   const now = Date.now();
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
   try {
     const { error } = await createReviewClient().from("sm_page_visits").upsert({
       id: value.id, session_id: value.sessionId, page_path: value.path,
+      ip_address: isIP(ip) ? ip : null,
       referrer_host: value.referrerHost, is_landing: value.landing,
       traffic_source: trafficSource(value.referrerHost, new URL(request.url).hostname),
       suspected_bot: /bot|crawler|spider|headless|lighthouse/i.test(request.headers.get("user-agent") ?? ""),

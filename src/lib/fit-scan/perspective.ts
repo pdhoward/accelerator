@@ -6,8 +6,11 @@ export const perspectiveSchema = z.object({
   goal: z.string().trim().max(1000),
   mustPreserve: z.string().trim().max(1000),
   changeFrequency: z.enum(["unknown", "rarely", "monthly", "weekly"]),
-}).strict().refine((input) => input.goal.length > 0 || input.mustPreserve.length > 0 || input.changeFrequency !== "unknown", {
-  message: "Add a goal, a protected rule or a change frequency before saving.",
+  name: z.string().trim().max(120).default(""),
+  company: z.string().trim().max(200).default(""),
+  phone: z.string().trim().max(50).regex(/^[0-9+().\-\sxext]*$/i).default(""),
+}).strict().refine((input) => input.goal.length > 0 || input.mustPreserve.length > 0 || input.changeFrequency !== "unknown" || input.name.length > 0 || input.company.length > 0 || input.phone.length > 0, {
+  message: "Add your perspective or contact details before saving.",
 });
 
 /** Keep query strings and fragments (which can contain tokens) out of history. */

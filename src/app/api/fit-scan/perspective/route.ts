@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Submit your perspective from this website." }, { status: 403 });
   }
   const parsed = perspectiveSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Check your comments and review session, then try again." }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: "Check your comments, contact details and review session, then try again." }, { status: 400 });
   const input = parsed.data;
   try {
     const now = new Date();
@@ -20,6 +20,9 @@ export async function POST(request: Request) {
         business_goal: input.goal || null,
         must_preserve: input.mustPreserve || null,
         change_frequency: input.changeFrequency,
+        contact_name: input.name || null,
+        company_name: input.company || null,
+        phone_number: input.phone || null,
         perspective_saved_at: now.toISOString(),
       })
       .eq("id", input.reviewId)

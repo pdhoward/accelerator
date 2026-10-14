@@ -31,3 +31,11 @@ test("history accepts bare website addresses and excludes URL credentials, query
   assert.equal(historyUrl("https://user:secret@example.com/path?email=private#details"), "https://example.com/path");
   assert.throws(() => historyUrl("file:///private"));
 });
+
+test("optional contact details are accepted and bounded without requiring business comments", () => {
+  const result = perspectiveSchema.parse({ ...input, goal: "", mustPreserve: "", changeFrequency: "unknown", name: " Jane ", company: " Example Ltd ", phone: "+1 (555) 123-4567" });
+  assert.equal(result.name, "Jane");
+  assert.equal(result.company, "Example Ltd");
+  assert.equal(perspectiveSchema.safeParse({ ...input, name: "x".repeat(121) }).success, false);
+  assert.equal(perspectiveSchema.safeParse({ ...input, phone: "<script>" }).success, false);
+});

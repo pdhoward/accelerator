@@ -44,6 +44,7 @@ export type Analysis = {
 export type FitScanResult = {
   /** Minted per response, NEVER stored in the shared public-report cache. */
   review?: ReviewReceipt | null;
+  reusedReport?: boolean;
   url: string;
   finalUrl: string;
   scannedAt: string;

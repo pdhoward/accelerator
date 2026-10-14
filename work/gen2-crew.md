@@ -1,4 +1,4 @@
-# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.7)
+# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.8)
 
 *Strategic Machines · foundation 2026-10-10 · revised 2026-10-14 · **status: approved product-design direction; documentation and marketing-site implementation authorized. Platform/runner implementation still requires the Owner's separate approval after Claude's current work is reconciled.** · repo: `accelerator-platform`*
 *Implements the decisions in [newvision.md](newvision.md) §9–10. Refines [flywheel.md](flywheel.md) (the rail stays) and replaces [accelerator-control-room.md](accelerator-control-room.md) §5 (the 15 pages). Extends [accounts-auth-admin.md](accounts-auth-admin.md) with the partner layer (§5).*
@@ -468,6 +468,8 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D35 | 2026-10-14 | **Two-step review and explicit persistence:** hide perspective inputs until the public scan completes; separate submission applies the draft without a rescan. Store scan summaries/cache hits and explicitly submitted comments in private marketing Supabase history; surface failures and preserve drafts. Database table setup required before live persistence; saved via direct API update under D36 | §12.1–12.2 |
 
 | D36 | 2026-10-14 | **Website-owned data APIs:** save perspective by a direct server-side table update, with no Supabase save procedure. Add first-party page views, source/landing-page reporting and approximate tab sessions, distinct from shared scan-spend limits and Search Console metrics | §12.2 |
+
+| D37 | 2026-10-14 | **Report-first follow-up:** full public report before blank Step 2, with optional name/company/phone. Reuse a persisted public site report for seven days with original date; each visitor gets a separate private review. Store request IP with page visits as explicitly requested; update privacy disclosure | §12.3 |
 
 ---
 
@@ -1026,7 +1028,7 @@ The migration includes dashboard queries for reviewing assessments and counting 
 
 The Owner requests general page visits as well as scan activity, and explicitly prefers website API saves over a Supabase save function. The website now owns `POST /api/page-visits` (direct private-table insert/upsert) and `POST /api/fit-scan/perspective` (direct private-table update). Keep credential, validation, review-token and expiry checks on our server. No stored procedure is required for either save path. The separately existing `sm_fit_scan_admit` remains an atomic rate/spend-limit check: “shared budget” means all server instances consult the same counter to bound paid scan analysis, not a mechanism for saving comments.
 
-`sm_page_visits` records browser page views, page path, timestamp, referrer hostname, a tab-scoped session ID, first-landing flag, rough source classification and obvious-bot flag. Initial hydration, refresh and client navigation count; link prefetches do not. Event UUIDs prevent duplicate retry rows. Respect browser DNT/GPC preferences; no cookies, cross-site identifiers, query strings, referrer paths, raw IPs or raw user-agent strings are retained in this table. Use a bounded instance-local abuse guard; analytics failures never interrupt navigation. This guard is not a distributed traffic-security system.
+`sm_page_visits` records browser page views, page path, timestamp, referrer hostname, a tab-scoped session ID, first-landing flag, rough source classification and obvious-bot flag. Initial hydration, refresh and client navigation count; link prefetches do not. Event UUIDs prevent duplicate retry rows. Respect browser DNT/GPC preferences; no cookies, cross-site identifiers, query strings, referrer paths or raw user-agent strings are retained in this table. D37 adds the request IP for marketing analysis, with disclosure. Use a bounded instance-local abuse guard; analytics failures never interrupt navigation. This guard is not a distributed traffic-security system.
 
 Operators can query daily views/tab sessions, popular paths and search-origin landings in Supabase. Session IDs approximate browser-tab activity, not verified unique people. Referrer loss, blockers, privacy preferences and missed/undetected bots limit these counts. Preserve the distinction between page views, scan executions, submitted perspectives and separately provided walkthrough contacts; precise conversion attribution is not implemented by these tables.
 
@@ -1035,3 +1037,18 @@ For SEO, track search referrals and landing-page trends here. Search Console is 
 Database prerequisites are private tables/indexes/grants from the two SQL files, plus the server-only marketing service key. The current migration draft no longer creates `sm_starting_point_save_perspective`. If an older migration was applied, that unused function can be retired after confirming no earlier deployment depends on it. Do not alter the independent shared-budget function as part of this preference change.
 
 **D36 local validation (2026-10-14):** 16 focused automated checks, TypeScript, lint and production build passed. Browser/API tests against a synthetic local database verified initial views, no prefetch inflation, client navigation, refreshes, session continuity, query/fragment exclusion, DNT behavior, direct perspective PATCH with token/status/expiry filters and rejection of wrong tokens/unsafe paths. An injected search referrer tested attribution; a browser-omitted referrer remained direct/unknown. Live Supabase table setup and production collection remain pending.
+
+
+### 12.3 Report-first follow-up, seven-day reuse and requested IP capture
+
+The Owner requests the full starting record and technical evidence before the perspective form. Render the entire report first, then blank Step 2, then the separate walkthrough request. Add optional name (120 characters), company (200) and phone (50); validate/store them through the existing private perspective API with comments. They are personal follow-up input, not publicly shared capability evidence. Save remains a distinct action and does not repeat the scan.
+
+Persist full public reports in `sm_fit_scan_reports`, keyed by normalized hostname (www/non-www combined). Reuse the original snapshot for seven days from its original scan time; repeated views do not extend that window. Preserve the original page URL/date and label reuse. Look up the shared report before invoking scan budget, external fetch/analyst or PageSpeed. A new successful scan replaces an expired report. Bounded process memory is a fallback, not the durable store. If shared cache storage is unavailable, disclose that reuse may be lost after restart. Existing summary-only history cannot reconstruct past full reports.
+
+Never put perspective/contact input or private review receipts in the shared cache. Each cached response receives a new private review receipt and blank browser form so colleagues never see each other's submissions. Downloads continue to exclude receipt secrets. Normalize/redact public report URL credentials/query/fragment before caching.
+
+At the Owner's request, store page-visit `ip_address` using the validated IPv4/IPv6 address from the hosting-provided forwarding header, not client JSON. Hosting must overwrite proxy headers; unknown/invalid values store null. IPs can represent shared networks, VPNs or proxies and are not verified person/company identity. Preserve DNT/GPC handling, private-table access and privacy disclosure. This decision supersedes D36's no-stored-IP choice for page visits only.
+
+Apply `supabase/sm_marketing_followup.sql` after the two earlier private-table scripts. It adds contact columns, the IP column and the public-report cache; no stored save function is needed. Production schema application and deployment remain separate from the local implementation.
+
+**Local validation:** 20 focused checks cover week-window expiry, normalized site keys, cache receipt/URL-secret exclusion, bounded contact fields and existing invariants. Synthetic database/browser checks verified cross-request reuse without scan admission, new receipts, full-report-before-form ordering, contact persistence, blank form on revisit, no contact disclosure, proxy-IP capture and 320/390/1440 layouts. Live data was not used or modified.

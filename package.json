@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:starting-point": "node --experimental-strip-types --test src/lib/fit-scan/starting-point.test.mjs src/lib/fit-scan/perspective.test.mjs src/lib/fit-scan/review-entry.test.mjs src/lib/traffic.test.mjs"
+    "test:starting-point": "node --experimental-strip-types --test src/lib/fit-scan/starting-point.test.mjs src/lib/fit-scan/perspective.test.mjs src/lib/fit-scan/review-entry.test.mjs src/lib/traffic.test.mjs src/lib/fit-scan/report-cache-policy.test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",

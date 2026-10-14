@@ -5,17 +5,22 @@ import { admitScan } from "@/lib/fit-scan/budget";
 import { normalizeTarget, runFitScan, ScanError } from "@/lib/fit-scan/scan";
 import type { FitScanResult } from "@/lib/fit-scan/types";
 import { recordReview } from "@/lib/fit-scan/history";
+import { readSavedReport, saveReport } from "@/lib/fit-scan/report-cache";
+import { isRecentReport, publicReport, reportSiteKey } from "@/lib/fit-scan/report-cache-policy";
 
 // PageSpeed + the analyst can take ~45s on a slow site.
 export const maxDuration = 60;
 
 /**
  * Spend and abuse limits live in lib/fit-scan/budget.ts (shared, in Postgres).
- * Results are cached per URL for 10 minutes per instance, so repeat views of
- * the same report cost nothing and don't count against a visitor's limit.
+ * Reuse a site's original public report for seven days, backed by Supabase.
+ * Visitor receipts and perspective/contact details are never shared.
  */
-const CACHE_TTL_MS = 10 * 60 * 1000;
-const cache = new Map<string, { result: FitScanResult; expiresAt: number }>();
+const cache = new Map<string, FitScanResult>();
+function remember(key: string, result: FitScanResult) {
+  if (!cache.has(key) && cache.size >= 256) cache.delete(cache.keys().next().value!);
+  cache.set(key, result);
+}
 
 const bodySchema = z.object({ url: z.string().min(1).max(2048) });
 
@@ -31,16 +36,18 @@ export async function POST(request: Request) {
   try {
     const target = normalizeTarget(parsed.data.url);
     host = target.hostname;
-    key = `${target.hostname}${target.pathname.replace(/\/+$/, "")}${target.search}`;
+    key = reportSiteKey(target);
   } catch (err) {
     const message = err instanceof ScanError ? err.message : "Enter a website address.";
     return NextResponse.json({ error: message }, { status: 422 });
   }
 
-  const cached = cache.get(key);
-  if (cached && cached.expiresAt > Date.now()) {
-    const review = await recordReview(parsed.data.url, cached.result, true);
-    return NextResponse.json({ ...cached.result, review }, { headers: { "Cache-Control": "no-store" } });
+  const memory = cache.get(key);
+  const cached = memory && isRecentReport(memory) ? memory : await readSavedReport(key);
+  if (cached) {
+    remember(key, cached);
+    const review = await recordReview(parsed.data.url, cached, true);
+    return NextResponse.json({ ...cached, review, reusedReport: true }, { headers: { "Cache-Control": "no-store" } });
   }
 
   const ip =
@@ -55,10 +62,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await runFitScan(parsed.data.url, { allowAnalyst: admission.analyst });
-    cache.set(key, { result, expiresAt: Date.now() + CACHE_TTL_MS });
+    const result = publicReport(await runFitScan(parsed.data.url, { allowAnalyst: admission.analyst }));
+    remember(key, result);
+    const persisted = await saveReport(key, result);
     const review = await recordReview(parsed.data.url, result, false);
-    return NextResponse.json({ ...result, review }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ ...result, review, reusedReport: false, notes: [...result.notes, ...(!persisted ? ["The shared report cache is unavailable. This report may not be reusable after a server restart."] : [])] }, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     await recordReview(parsed.data.url, null, false);
     if (err instanceof ScanError) {

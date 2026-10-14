@@ -66,7 +66,7 @@ export function StartingPointRecord({ result, context }: { result: FitScanResult
           <ul className="mt-3 list-disc space-y-2 pl-4 text-sm leading-relaxed text-fog">{record.unknowns.map((item) => <li key={item}>{item}</li>)}</ul>
         </div>
       </div>
-      <p className="mt-5 text-xs leading-relaxed text-mist">Submit the perspective form to apply your answers to this draft. When saving is available, submitted comments are stored with this assessment in Supabase; save failures are shown explicitly above. Draft edits remain in the browser until submitted. Download includes the applied answers, but no private review token. Comments are not sent to the AI analyst or automatically attached to a walkthrough request. This record does not authorize delivery.</p>
+      <p className="mt-5 text-xs leading-relaxed text-mist">Submit the perspective form to apply your answers to this draft. When saving is available, submitted comments are stored with this assessment in Supabase; save failures are shown explicitly in the perspective form below. Draft edits remain in the browser until submitted. Download includes the applied answers, but no private review token. Comments are not sent to the AI analyst or automatically attached to a walkthrough request. This record does not authorize delivery.</p>
     </section>
   );
 }
