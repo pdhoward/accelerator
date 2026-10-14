@@ -1,94 +1,18 @@
 import type { LucideIcon } from "lucide-react";
-import {
-  Activity,
-  BookOpenCheck,
-  Gauge,
-  GitCompareArrows,
-  Lock,
-  Network,
-  Scale,
-  ShieldCheck,
-  SlidersHorizontal,
-  Target,
-} from "lucide-react";
-
-export type Feature = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  tier: "primary" | "secondary";
-};
-
-/**
- * Primary = what makes handing over custody rational (accelerator.md §3).
- * Secondary = the six Control Room surfaces an operator actually works in.
- */
+import { Activity, BookOpenCheck, Gauge, GitCompareArrows, Lock, Network, Scale, ShieldCheck, SlidersHorizontal, Target } from "lucide-react";
+export type Feature = { icon: LucideIcon; title: string; description: string; tier: "primary" | "secondary" };
+/** Product-design preview; the platform rollout is tracked in work/gen2-crew.md. */
 export const features: Feature[] = [
-  {
-    tier: "primary",
-    icon: Network,
-    title: "Application Model",
-    description:
-      "Your architecture, invariants, money and identity surfaces, and what “done” means — written down, versioned, and checked on every change. The machine reads it; so can you.",
-  },
-  {
-    tier: "primary",
-    icon: Scale,
-    title: "Independent Assurance",
-    description:
-      "The model that writes the change never grades it. Held-out tests, invariant checks, historical replay, synthetic users, and preview telemetry judge every change independently.",
-  },
-  {
-    tier: "primary",
-    icon: Lock,
-    title: "Interlocks",
-    description:
-      "No production write keys in an AI session. Money, auth, and destructive migrations never auto-promote. Spend caps, loop limits, and full provenance on every change.",
-  },
-  {
-    tier: "primary",
-    icon: BookOpenCheck,
-    title: "The Discipline Pack",
-    description:
-      "The operating habits that made Customer Zero work — a rulebook, a numbered backlog, design-before-code, every incident becomes a regression test — installed on your app.",
-  },
-  {
-    tier: "secondary",
-    icon: Target,
-    title: "Mission",
-    description: "What the application should accomplish — and the bounds it may never cross.",
-  },
-  {
-    tier: "secondary",
-    icon: Activity,
-    title: "Work",
-    description: "What the Accelerator is doing right now, queued, held, or done.",
-  },
-  {
-    tier: "secondary",
-    icon: Gauge,
-    title: "Health",
-    description: "Is the application behaving correctly — tests, invariants, and live telemetry.",
-  },
-  {
-    tier: "secondary",
-    icon: GitCompareArrows,
-    title: "Changes",
-    description: "Every change, in plain language, with the intent that caused it.",
-  },
-  {
-    tier: "secondary",
-    icon: ShieldCheck,
-    title: "Confidence",
-    description: "Why the Accelerator believes each change is safe — the evidence package.",
-  },
-  {
-    tier: "secondary",
-    icon: SlidersHorizontal,
-    title: "Controls",
-    description: "Raise or lower autonomy, hold a change, roll one back, pin a model.",
-  },
+  { icon: Network, title: "A clear picture of your website", description: "See the capabilities your business relies on, their condition, and improvements planned or underway. Technical assets remain traceable underneath.", tier: "primary" },
+  { icon: Scale, title: "Proof against the agreement", description: "Realistic customer scenarios check the proposed change and help protect existing behavior. Findings show what was demonstrated and what remains uncertain.", tier: "primary" },
+  { icon: Lock, title: "Delegate the work. Keep authority.", description: "Agree priorities, budget and boundaries. The crew coordinates execution and returns consequential decisions to the people authorized to make them.", tier: "primary" },
+  { icon: BookOpenCheck, title: "A team that helps you think it through", description: "One accountable lead brings specialists into the conversation to explore options, challenge assumptions and refine the design before work is approved.", tier: "primary" },
+  { icon: Target, title: "Your direction", description: "Set the business outcomes, priorities and rules that guide the crew.", tier: "secondary" },
+  { icon: Activity, title: "Shared workspace", description: "Review recommendations, documents and previews in one lead-led conversation.", tier: "secondary" },
+  { icon: Gauge, title: "Business vital signs", description: "See customer-journey health, commitments, budget and missing information.", tier: "secondary" },
+  { icon: GitCompareArrows, title: "A lasting decision record", description: "Connect what you intended and approved with the work delivered.", tier: "secondary" },
+  { icon: ShieldCheck, title: "Experience becomes better practice", description: "Evaluate proposed lessons before activation, then measure whether later work improves.", tier: "secondary" },
+  { icon: SlidersHorizontal, title: "Ideas saved for later", description: "Park questions and options with their context, without approving or committing them.", tier: "secondary" },
 ];
-
 export const primaryFeatures = features.filter((f) => f.tier === "primary");
 export const secondaryFeatures = features.filter((f) => f.tier === "secondary");

@@ -18,14 +18,14 @@ export function FitScanBand() {
       <FadeUp>
         <FadeUpItem>
           <div className="relative overflow-hidden rounded-3xl border border-aurora-violet/30 bg-gradient-to-br from-aurora-violet/15 via-obsidian-2 to-aurora-cyan/10 p-8 text-center sm:p-12 border-glow-aurora">
-            <SectionEyebrow className="justify-center">Fit Scan · free</SectionEyebrow>
+            <SectionEyebrow className="justify-center">Your starting point · free</SectionEyebrow>
             <h2 className="mx-auto mt-4 max-w-2xl text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              Is your site ready for an accelerator?
+              Discover your starting point.
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-fog">
-              Paste a URL. In under a minute you get a Lighthouse-style report on stack fit,
-              application depth, delivery pipeline and hygiene, plus the backlog we&apos;d
-              start with.
+              Start with your URL. Combine business priorities with public capability signals,
+              technical scores and a recommended first step. An honest assessment may suggest
+              lighter maintenance rather than an ongoing crew.
             </p>
             <form
               onSubmit={(e) => {
@@ -43,7 +43,7 @@ export function FitScanBand() {
               />
               <Button type="submit" variant="gold" size="lg" disabled={!url.trim()}>
                 <ScanSearch className="size-4" />
-                Scan my site
+                Start my review
               </Button>
             </form>
           </div>

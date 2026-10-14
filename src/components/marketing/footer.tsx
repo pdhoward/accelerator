@@ -50,7 +50,7 @@ export function Footer() {
 
         <div className="flex flex-col items-center gap-4 text-xs text-mist sm:flex-row sm:justify-between">
           <p>
-            © {year} {site.name}. {site.product}: autonomous application operations.
+            © {year} {site.name}. {site.product}: human-governed, agent-executed improvement.
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono uppercase tracking-widest opacity-70">
             {technologyPartners.slice(0, 5).map((p) => (

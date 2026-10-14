@@ -1,17 +1,14 @@
 export const site = {
   name: "Strategic Machines",
   product: "The Accelerator",
-  tagline: "You manage your website. AI delivers the outcome.",
-  /** The hero's cycling verb: "You [manage] your website." First word is the static one. */
-  verbs: ["manage", "design", "change", "validate", "inspect", "approve", "release", "govern", "improve"],
-  eyebrow: "The AI Control Room for your website",
-  subline: `At your direction, AI Agents design, build, test, and deploy
-                the work, and every change carries its proof from request to production. The first AI control room for your modern website.`,
+  tagline: "What you intended. What you approved. Delivered.",
+  eyebrow: "Your direction. Your specialized AI crew.",
+  subline: `An executable record of business intent and proof for your software assets, delivered by your specialized crew of agents.`,
   description:
-    "The Control Room for designing, building, testing, and releasing your website with AI. You direct; AI designs, builds, tests, and deploys, with evidence for every change.",
+    "An expert AI crew for your website. Set direction, explore recommendations, and approve consequential decisions, with a lasting record of intent, delivery and proof.",
   domain: "strategicmachines.ai",
   url: "https://strategicmachines.ai",
-  waitlistCtaLabel: "Commission your app",
+  waitlistCtaLabel: "Request a walkthrough",
 } as const;
 
 /**
@@ -31,7 +28,7 @@ export const brand = {
     url: `${site.url}/og`,
     width: 1200,
     height: 630,
-    alt: "Strategic Machines: You manage your website. AI delivers the outcome.",
+    alt: "Strategic Machines: What you intended. What you approved. Delivered.",
   },
 } as const;
 
@@ -47,9 +44,9 @@ export type NavItem = {
 export const blogUrl = "https://blog.strategicmachines.ai/";
 
 export const primaryNav: NavItem[] = [
-  { label: "Fit Scan", href: "/fit-scan" },
+  { label: "Starting point", href: "/fit-scan" },
   { label: "The Accelerator", href: "/platform" },
-  { label: "Commissioning", href: "/#commissioning" },
+  { label: "Getting started", href: "/#commissioning" },
   { label: "Customer Zero", href: "/customers/cypress-resort" },
   { label: "Pricing", href: "/pricing" },
   { label: "Partners", href: "/partners" },
@@ -61,10 +58,10 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
   {
     title: "Product",
     items: [
-      { label: "Fit Scan", href: "/fit-scan" },
+      { label: "Starting point", href: "/fit-scan" },
       { label: "The Accelerator", href: "/platform" },
-      { label: "Commissioning", href: "/#commissioning" },
-      { label: "Evidence, not code review", href: "/#evidence" },
+      { label: "Getting started", href: "/#commissioning" },
+      { label: "Proof of what works", href: "/#evidence" },
       { label: "Pricing", href: "/pricing" },
     ],
   },
@@ -75,7 +72,7 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
       { label: "Blog", href: blogUrl, external: true },
       { label: "Customer Zero", href: "/customers/cypress-resort" },
       { label: "Partner Program", href: "/partners" },
-      { label: "Apply for commissioning", href: "/#waitlist" },
+      { label: "Request a walkthrough", href: "/#waitlist" },
     ],
   },
   {

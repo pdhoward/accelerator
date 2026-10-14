@@ -6,12 +6,12 @@ import { FadeUp, FadeUpItem } from "@/components/motion/fade-up";
 import { SectionEyebrow } from "@/components/marketing/section-eyebrow";
 
 const judges = [
-  "Held-out tests the builder can't edit",
-  "Business invariants, checked on every change",
-  "Replay against historical behavior",
-  "Synthetic users on a test database",
-  "Preview telemetry before release",
-  "People judge outcomes, not diffs",
+  "Acceptance checks tied to the agreed design",
+  "Checks that protect your business rules",
+  "Scenarios drawn from earlier problems",
+  "Realistic customer scenarios in a test environment",
+  "A preview to try before release",
+  "Clear findings for an informed decision",
 ];
 
 export function EvidenceSection() {
@@ -19,15 +19,15 @@ export function EvidenceSection() {
     <section id="evidence" className="mx-auto max-w-7xl scroll-mt-20 px-6 py-24">
       <FadeUp className="grid items-center gap-12 lg:grid-cols-2">
         <FadeUpItem className="flex flex-col gap-5">
-          <SectionEyebrow>Evidence, not code review</SectionEyebrow>
+          <SectionEyebrow>Proof of what works</SectionEyebrow>
           <h2 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-            The builder never grades its own work.
+            See that it works the way you agreed.
           </h2>
           <p className="text-pretty text-lg leading-relaxed text-fog">
-            An AI that writes both the code and its tests can confidently prove its own
-            misunderstanding. So the Accelerator separates the <span className="text-white">actor</span> from
-            the <span className="text-white">judge</span>. Every change arrives with an evidence
-            package that answers one question: <em className="text-white">why is this safe?</em>
+            First, agree how the business process should work. Then check the change against
+            that agreement, using realistic scenarios and checks that help protect what
+            already works. Our assurance design separates implementation from independent
+            review, so you can see <em className="text-white">what was demonstrated and what remains uncertain.</em>
           </p>
           <ul className="mt-2 grid gap-2.5 sm:grid-cols-2">
             {judges.map((j) => (

@@ -8,6 +8,7 @@ import { organizationJsonLd } from "@/lib/seo";
 import { Navbar } from "@/components/marketing/navbar";
 import { Footer } from "@/components/marketing/footer";
 import { Toaster } from "@/components/ui/sonner";
+import { PageVisitTracker } from "@/components/marketing/page-visit-tracker";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         <Footer />
         <Toaster />
+        <PageVisitTracker />
       </body>
     </html>
   );

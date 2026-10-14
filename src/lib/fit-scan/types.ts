@@ -42,6 +42,8 @@ export type Analysis = {
 };
 
 export type FitScanResult = {
+  /** Minted per response, NEVER stored in the shared public-report cache. */
+  review?: ReviewReceipt | null;
   url: string;
   finalUrl: string;
   scannedAt: string;
@@ -62,3 +64,5 @@ export type FitScanResult = {
   analysis: Analysis | null;
   notes: string[];
 };
+
+export type ReviewReceipt = { id: string; token: string };

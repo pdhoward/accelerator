@@ -1,3 +1,5 @@
+> **Historical design — superseded for current product messaging (2026-10-14).** This file records an earlier hospitality-product concept; its product, installation status, commercial terms and competitive positioning are not the current marketing specification. The authoritative Accelerator foundation is [work/gen2-crew.md](work/gen2-crew.md), especially §10–12. The executive marketing update uses “What you intended. What you approved. Delivered.”, a lead-led crew workspace, capability inventory, verification evidence and saved threads. Current pricing is a proposed $2,500 Boarding target, a crew subscription with pricing to be confirmed, and separately scoped managed engagements. Retain the historical material below for context, not as implementation instructions.
+
 # Strategic Machines — Marketing Site Design
 
 **Working title:** strategicmachines.ai (placeholder domain)

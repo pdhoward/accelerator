@@ -1,6 +1,6 @@
-# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.3)
+# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.7)
 
-*Strategic Machines · foundation 2026-10-10 · revised 2026-10-12 · **status: approved product-design direction; documentation update authorized. Implementation requires the Owner's separate approval after Claude's current work is reconciled.** · repo: `accelerator-platform`*
+*Strategic Machines · foundation 2026-10-10 · revised 2026-10-14 · **status: approved product-design direction; documentation and marketing-site implementation authorized. Platform/runner implementation still requires the Owner's separate approval after Claude's current work is reconciled.** · repo: `accelerator-platform`*
 *Implements the decisions in [newvision.md](newvision.md) §9–10. Refines [flywheel.md](flywheel.md) (the rail stays) and replaces [accelerator-control-room.md](accelerator-control-room.md) §5 (the 15 pages). Extends [accounts-auth-admin.md](accounts-auth-admin.md) with the partner layer (§5).*
 
 **How to use this doc:**
@@ -10,6 +10,8 @@
 - §7 is the decisions log.
 - §8 is the action list. Tick items there as they're done.
 - §9 covers agent interfaces: APIs-first MCP (WebMCP optional), Stripe, the Decide layer (Jev), understanding artifacts (Karpathy's ladder), live voice agents and generative forms.
+- §12 defines the upgraded public starting-point assessment and the boundary between public technical evidence and business intent.
+- §11 records the 2026-10-14 decisions: collaborative requirements and TDD, synthetic QA, context selection, event-driven crews, saved threads and executive marketing.
 - §10 defines executive governance, the shared meeting workspace, the capability inventory, vital signs, engineering assurance and product validation. It governs the human experience across §1–9.
 - Code is the evidence of what is implemented; this document defines the target. Record gaps explicitly rather than treating planned behavior as shipped. Reconcile implementation and completion records in each change.
 
@@ -455,6 +457,18 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D27 | 2026-10-12 | **Engineering assurance:** retain current stack and boundaries; strengthen contracts, architecture decisions, Vitest, lint/typecheck, integration and browser QA, independent review, commit-bound approvals and verified recovery | §10.5 |
 | D28 | 2026-10-12 | **Measured flywheel and sequencing:** replay plus holdout evaluation, human-approved versioned activation and later outcomes. Reconcile Claude's current work; operational truth and inventory precede rich presentation. Documentation authorization does not authorize code refactoring | §4.5, §10.6–10.7 |
 
+| D29 | 2026-10-14 | **Collaborative requirements and TDD:** the functional expert and crew jointly refine intended behavior; versioned agreement supplies independent expected outcomes. Red → green → refactor and regression/synthetic QA are workbench concerns, expressed as business assurance in marketing | §11.1–11.2 |
+| D30 | 2026-10-14 | **Jev context selection:** separate typed routing from experimental retain/truncate/drop decisions; preserve durable records and pinned authority, evaluate fidelity and costs, with safe fallback | §11.3 |
+| D31 | 2026-10-14 | **Event-driven crew:** signed provider notifications/webhooks become durable scoped signals; deterministic dispatch starts bounded jobs. An event grants no permission; presence reflects execution | §11.4 |
+| D32 | 2026-10-14 | **Saved threads:** questions, options and unresolved topics retain source context, lifecycle and revisit triggers; saving is not approval or a delivery commitment | §11.5 |
+| D33 | 2026-10-14 | **Positioning:** human-governed, agent-executed delivery. Headline “What you intended. What you approved. Delivered.”; executable record subtext without an unsubstantiated world-first claim. Marketing updates authorized; platform code remains separately gated | §11.6 |
+
+| D34 | 2026-10-14 | **Discover your starting point:** retain deterministic technical scores and proportionate content-site findings; combine optional browser-local business perspective with a source-labelled draft record, unknowns and proposed proof. No implied approval, automatic onboarding or unsubstantiated ROI | §12 |
+
+| D35 | 2026-10-14 | **Two-step review and explicit persistence:** hide perspective inputs until the public scan completes; separate submission applies the draft without a rescan. Store scan summaries/cache hits and explicitly submitted comments in private marketing Supabase history; surface failures and preserve drafts. Database table setup required before live persistence; saved via direct API update under D36 | §12.1–12.2 |
+
+| D36 | 2026-10-14 | **Website-owned data APIs:** save perspective by a direct server-side table update, with no Supabase save procedure. Add first-party page views, source/landing-page reporting and approximate tab sessions, distinct from shared scan-spend limits and Search Console metrics | §12.2 |
+
 ---
 
 ## 8. Action list (work from the top; tick as done)
@@ -507,6 +521,8 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] Later: partner console UI, white-label domains, wholesale price lists, partner payouts, the Partner Playground, member-facing MCP (§1.4), a dedicated database option.
 
 ### 8.3 Website (`accelerator` repo)
+- [x] Executive marketing revision implemented locally (2026-10-14): Owner headline, crew workspace walkthrough, capability/vital-sign examples, business-language assurance, saved threads, revised FAQ/CTA/pricing/onboarding/company/social copy. Historical marketing design marked superseded.
+- [ ] Owner visual/commercial review of the local marketing revision, then commit/publish as separately authorized. Existing launch availability remains subject to platform verification.
 - [x] Library and Toolbelt sections, three FAQ entries, the Partners page with tiers and Playground, the partner band. *(Done 2026-10-10, uncommitted; typecheck, lint and build pass.)*
 - [ ] Review locally, then commit and deploy.
 - [ ] Bring the older copy in line with Gen 2: the commissioning timeline (6 weeks → Boarding), AC levels (internal now), pricing (Checkup free · Boarding $2,500 · Crew plans), crew language across Home and `/platform`.
@@ -591,7 +607,7 @@ Stripe's wider agent-commerce stack (verify against docs.stripe.com before build
 
 **Where it fits:** it is exactly the slot "models classify; policy decides" (§0.7) needs. accelerator.md §2 already said that any fast, typed, independent judge fills that slot. Jev is now a real candidate.
 
-**Design: one `decide()` interface, model-agnostic.** It runs behind an adapter (Jev on AI Gateway first; fallback is a small LLM with structured output), so it's swappable like every other role (F15).
+**Design: one `decide()` interface, model-agnostic.** Jev is a proposed provider, not a deployed dependency. Historical speed/cost claims below are vendor claims, not measured Accelerator performance. Context-history pruning is a separate adapter and evaluation (§11.3). It runs behind an adapter (Jev on AI Gateway first; fallback is a small LLM with structured output), so it's swappable like every other role (F15).
 
 ```
 decide(context, questions[]) → { answer, probability }[]     // typed, logged, cheap
@@ -601,7 +617,7 @@ decide(context, questions[]) → { answer, probability }[]     // typed, logged,
 |---|---|---|
 | **Intake triage** | kind (content · design · bug · feature · data), size, risk class, duplicate of #n? | Gate policy maps risk class → gates. **Low probability → ask the human** |
 | **Next step on the rail** | continue · retry · ask the Navigator · stop? | The runner, within the item's cadence (F9) |
-| **Tool and skill pre-selection** | which 5–8 tools and which skills does *this step* need? | The Toolbelt lists only those, and only those skills are loaded: **context compaction** without embeddings |
+| **Tool and skill pre-selection** | which 5–8 tools and which skills does *this step* need? | The Toolbelt lists only those, and only those skills are loaded: progressive context selection; distinct from history compaction (§11.3) |
 | **Model routing** | how hard is this step (score)? | Picks the cheap or strong model for the role, within spend caps |
 | **Pre-Judge screen** | does the diff touch money, auth or data paths? does the step report meet the Protocol? | Flags for the full Judge; **never replaces it** |
 | **Inbox ranking** | urgency, and how much work does this card unblock? | Sorts "Needs you" |
@@ -864,3 +880,158 @@ Run a walkthrough with a business user who did not design the product: inspect v
 6. At least one approved lesson has replay/holdout evidence and a subsequent measurement, without overstating the result.
 
 Success is executive understanding and controlled outcomes, supported by engineering precision. Presentation, model choice and skill counts serve that result.
+
+
+---
+
+## 11. Collaborative intent, executable proof and continuity (2026-10-14)
+
+### 11.1 Requirements are a dynamic expert interchange
+
+The functional expert explains the business process, calculations, exceptions and desired outcome. The crew reflects that understanding, challenges assumptions, offers alternatives, identifies gaps and works through examples. The Team Lead synthesizes the agreement. This continues as observations reveal new information; requirements are never frozen merely because the first interview ended.
+
+Independently defined expected results originate in that agreed business meaning, not in a separate party guessing what the client meant. Independence means the implementation cannot redefine the expected result to justify itself. Version requirements, examples, open assumptions, approvals and acceptance criteria together. A material change returns the affected design, tests, evidence and approvals for review; retain the previous agreement and rationale.
+
+### 11.2 TDD and synthetic QA are first-class workbench capabilities
+
+Cypress reference: `ts-platform/packages/domain/src/availability-engine/index.test.ts`, `packages/qa`, and the portal admin QA page. Read-only examples, never an Accelerator test target. The Owner reports 600+ unit tests and 100+ QA checks before commits/PRs; those are reported reference counts, not a new execution result or an Accelerator minimum.
+
+**Delivery contract:** agreed behavior → independently reviewed acceptance scenarios → meaningful failing behavioral test → minimal implementation → green checks → refactoring → regression and synthetic QA → independent acceptance review → exact-candidate release approval.
+
+Record red and green outcomes against code/test versions. A red test must fail for the expected missing behavior, not merely a broken fixture, import or unavailable service. Test expectations cannot be silently weakened to get green. A proposed change to approved acceptance rules needs rationale and review; the Judge has no implementation-write authority. Tests can be co-authored by agents, but use reviewed business examples, invariants and holdouts to counter shared misunderstanding.
+
+Package-local Vitest suites protect domain rules. Shared QA exercises cross-package behavior through the same production API/domain functions. Prefer one scenario definition usable from automation and the workbench UI, with server-controlled execution and scope. Add a dedicated QA package only if that boundary warrants it; do not duplicate business calculations in a test dashboard.
+
+| Check mode | Evidence and boundaries |
+|---|---|
+| Deterministic fixtures | Schema-valid inputs plus independently defined expected values, frozen/controlled clocks and repeatable seeds |
+| Generated scenarios | Valid relationships and lifecycle transitions, boundaries and negative cases; invalid-input tests are explicitly designated; seed and fixture version retained |
+| Invariant/property checks | Domain guarantees such as rate precedence, reconciliation, tenant separation and idempotency; schema validity alone is insufficient |
+| Journey/integration QA | Multi-step customer behavior through real application boundaries; distinguish mocked, database-backed, browser and external sandbox checks |
+| Payment sandbox | Verify provider/account test mode before execution; scoped credentials, unique run IDs, idempotency keys, synthetic entities and recorded cleanup; no live charges |
+| Regression | Every confirmed defect becomes a reproducible case; baseline suites remain protected and failures block the relevant promotion |
+
+Each run records scenario/version, seed, candidate, environment, expected/actual result, runner/tool version, start/end, failures, skips and cleanup status. Cleanup failures remain actionable records and use only the run's owned entities. Never let an agent re-run a side-effecting transaction as if it were a harmless read. Synthetic transactions stay in approved test environments; copying customer/production data is not an automatic fixture strategy.
+
+The engineering workbench shows coverage of agreed behavior, red/green history, synthetic journeys, sandbox receipts and regression findings. The executive sees “checked against your agreement,” what remains unverified and the release consequence. TDD, Vitest, schemas and test counts are supporting detail, not homepage vocabulary.
+
+Preserve the existing pre-push checks and add configured lint/build/QA gates. Run the full required regression suite before commits/PRs, with sandbox QA in its configured environment; focused local TDD runs do not replace those gates. Document unavailable suites as blockers where required, never as passes. Evaluation must protect meaningful behavior rather than reward growing test counts.
+
+### 11.3 Jev: typed decisions and experimental context-history selection
+
+The §9.2 `decide()` adapter proposes typed routing, triage and relevance judgments. History compaction is a distinct adapter: for eligible older tool-call/result pairs, score whether the call matters and whether the result must remain verbatim, then deterministically retain, truncate or omit it from working context. Surviving dialogue is not rewritten by that operation. Preserve valid call/result pairing and mark truncation; pin recent turns and authoritative requirements, active mandates, approvals, protected invariants, unresolved dependencies and critical action receipts.
+
+The Library/event history remains intact. Context pruning removes nothing from the durable record. Store selection decisions, scores, thresholds, model/version and references to recoverable evidence. Reconstruct context from current approved records and source-linked saved threads. Do not depend on Claude-specific plugin hooks: verify runner/harness support and implement behind an adapter. Never expose additional third-party context without the site's approved provider/data policy.
+
+Evaluate retention fidelity against questions about long-running work, unresolved decisions and earlier failures, as well as latency, reduction, cost and downstream errors. Confidence is a model signal, not guaranteed correctness. Low confidence or adapter failure uses a tested fallback that retains mandatory context; insufficient budget/context capacity must surface rather than silently dropping authority. A read may be refreshable; payments, deploys and historical receipts are not safely regenerated by blindly repeating a tool.
+
+Reference implementation description: https://typesafeai.app/use-cases/replace-compaction-summaries-with-jev-decisions/ . Treat speed and cost as workload-specific measurements, not promises. Trial remains optional after core delivery and evidence are working.
+
+### 11.4 Events can activate a crew within existing authority
+
+Add a provider-independent signal intake: **MCP Events/webhook/schedule → verify origin and resolve tenant → persist → deduplicate → classify relevance → enforce mandate/budget → queue bounded specialist job → brief Team Lead → investigate or request a decision**.
+
+MCP request/response tools, resource/session notifications and durable external event webhooks are distinct capabilities. Negotiate and verify each provider/client/transport; MCP alone does not guarantee background wake-up. Cloudflare's October 13 Workers Issues announcement is an adapter example, not a reason to move hosting or a promise that every connector supports events: https://developers.cloudflare.com/changelog/product/agents/ . Ordinary signed webhooks and scheduled reconciliation remain supported alternatives.
+
+Persist provider event ID, site/connection, type, signature-verification result, occurred/received timestamps, correlation/dedupe key and processing state. Resolve site from the trusted connection/subscription, never an untrusted payload tenant ID. Add replay protection, retries, dead-letter visibility, ordering policy, rate/debounce controls and storm/spend limits. Treat event text as untrusted evidence, not agent instructions. A queue/outbox or equivalent durable dispatch prevents lost work after acknowledgement; subscriptions and cursors survive reconnect where supported.
+
+Example: an error signal wakes Upkeep for a read-only investigation, QA reproduces in the sandbox, and the Team Lead explains the business impact. A repair follows normal governed Work. Events never bypass client gates or silently expand permissions. Avatar activity begins when a real job runs, not merely when a notification arrives. Test duplicate, delayed, out-of-order, forged and cross-tenant events plus budget exhaustion and recovery.
+
+### 11.5 Save unfinished thinking without committing work
+
+Add a first-class saved thread for an idea, question, option, unresolved decision or proposed work. Retain exact source passage/message links, author, site, related capability/outcome/work, status, owner, timestamps and optional revisit date or event trigger. Agent extraction is a proposal the human can inspect; pinning an item is explicit and reversible.
+
+Lifecycle: open/parked → exploring → resolved, superseded or dismissed; conversion to proposed Work creates a link rather than discarding context. “Approved” belongs to a separate explicit decision action. Saving never implies approval, enabling a tool, changing a mandate or accepting backlog scope.
+
+Meeting actions: Save for later, Explore now, Request recommendation, Propose work, Resolve. When an exchange raises seven points and explores two, the lead offers the five remaining topics as visible proposed threads. Preserve relationships and source evidence when deduplicating; ambiguous duplicates stay separate. A lead briefing can resurface threads by relevance, urgency or revisit trigger without interrupting every conversation.
+
+The client and agents can search/retrieve permitted threads. Respect tenant access, retention, correction and export. Superseded material remains distinguishable from the current agreement. The Library is a record of unfinished intent as well as settled knowledge; context compaction cannot erase that continuity.
+
+### 11.6 Executive marketing and commercial decisions
+
+**Headline (Owner-approved): “What you intended. What you approved. Delivered.”**
+
+**Subtext:** “An executable record of business intent and proof for your software assets, delivered by your specialized crew of agents.” The suggested “world's first” is omitted pending substantiation; it is not an established market claim.
+
+Positioning: **human-governed, agent-executed delivery**. One accountable Team Lead and specialist advisors help the client think through the business, then coordinate within explicit authority. The selling story is continuity, executive decisions, visible capabilities/vital signs, realistic verification, saved threads and measured improvement. Keep technical mechanisms in the engineering explanation.
+
+Marketing implementation authorized in `accelerator` only: update Home/platform/partners/FAQ/pricing/onboarding/company/social metadata; add an illustrative interactive executive meeting walkthrough, capability table and vital-sign explanation. Preserve visual branding. Mock decisions do not execute approvals; examples are visibly labelled, with no invented live metrics or guaranteed business gains.
+
+Cypress demonstrates the delivery practices and real business context. Machine Shop proves the coming commercial interface. Do not claim Cypress already runs every commercial feature. Historical figures retain source date; verify before updating. Avoid categorical claims that other AI products lack all memory, tools or governance. Competitor comparison is context, not unsupported exclusivity.
+
+Commercial presentation: planned $2,500 Boarding target subject to fit/scope, crew subscription pricing to be confirmed, separately quoted managed engagements. No invented subscription rate, outcome-based billing, guaranteed six-week onboarding or team-replacement savings. Final inclusions/usage limits/availability are confirmed in writing. Primary CTA: Request a walkthrough; secondary: site fit assessment. Partner message retains “Your firm. Your clients. Your crew.” and adds shared recommendations, progress and client decision authority.
+
+**Implementation boundary:** this approval covers marketing code and these design records. It does not authorize platform/runner refactoring, production deployment, database changes or actions on Cypress. Record validation results after the local marketing checks.
+
+### 11.7 Additional acceptance backlog
+
+- [ ] Package-local TDD evidence, protected expectations and shared QA execution/records, including synthetic fixture and payment-sandbox boundaries.
+- [ ] Requirements versioning and approved expected outcomes linked to capability/Work evidence.
+- [ ] Optional Jev adapter trial with pinned context, fidelity evaluation, audited selection and safe fallback.
+- [ ] Durable event intake/dispatch with security, deduplication, retry, spend limits and gate-preserving activation.
+- [ ] Source-linked saved threads, explicit lifecycle, reviewable extraction and export; no approval by implication.
+- [ ] Reconcile marketing claims against platform availability before publication; retain illustrative labels for planned experiences.
+
+**Local marketing validation (2026-10-14):** TypeScript (`pnpm exec tsc --noEmit`), ESLint and production build passed. Headless browser exercised all four meeting scenes, checked desktop/mobile layouts and horizontal overflow, and verified Home/platform/pricing/partners/company/Cypress story and social-card responses. Illustrative controls do not execute platform actions. No waitlist submission or external payment transaction was sent. Local implementation only; no commit, deployment or platform migration performed.
+
+
+---
+
+## 12. Discover your starting point — business insight and technical evidence
+
+*Owner-approved marketing assessment upgrade, 2026-10-14. Preserve the existing `/fit-scan` page and `/api/fit-scan` contract for compatibility; visitor-facing labels become “Discover your starting point.”*
+
+The first interaction should deliver a useful draft of the product's operating record. Step 1 reviews the URL. Once complete, Step 2 invites the desired outcome, what must never break and how often meaningful changes occur, with its own explicit submission. Public observations and deterministic technical scores remain useful; the business layer adds context rather than replacing or inflating them.
+
+**Mix of value and technical fit:** preserve stack fit, visible application depth, delivery signals, site-care findings and available mobile Lighthouse measures. A content-only site with occasional edits may benefit from focused maintenance rather than an ongoing crew. A highly compatible stack does not establish commercial value. If the visitor submits recurring work behind a seemingly simple public site, flag that discrepancy for review rather than silently overturning the public verdict. CMS, locked and roadmap stacks need compatibility assessment, not a migration promise.
+
+**Starting record:** distinguish visitor-provided priorities and rules, proposed capability signals, deterministic technical findings, optional AI interpretation, unverified business questions and a suggested first acceptance check. All business inputs are draft, not approved requirements. The public page cannot prove internal test coverage, approval controls, conversion outcomes or return on investment. A detected hosting service is a clue, not evidence that preview/release gates are configured.
+
+**Two-step privacy and handoff (D35 supersedes the initial browser-only approach):** hide the perspective form during scanning. After completion, edits remain drafts until the visitor chooses Save my perspective. A separate endpoint validates a private per-review receipt and stores the comments; it does not rerun the scan or forward them to the analyst. A successful save applies the answers to the starting record and explicitly confirms storage. On storage failure, retain the locally applied draft, report that comments were not saved, and allow retry/download. If history is unavailable entirely, label the local-only fallback and never imply successful persistence.
+
+Each completed public review, including a cached response, receives its own private history entry and receipt when storage is available. Failed executions have a failed summary without an invented score. Rejected input/rate-limited attempts and general page visits are not included in the new history table. Store only sanitized website URL/hostname, timestamps, status, cache use, technical score/verdict and explicitly submitted perspective; omit URL credentials, query strings and fragments. Do not store raw page HTML or raw IP in this table. Comments are not automatically linked to a contact email.
+
+A versioned JSON download contains the public report and applied business context but excludes the private receipt/token. This remains separate from account persistence and the walkthrough contact form. A new assessed site clears the old browser context. The scan result cache contains public data only; never cache or share review receipts. Responses carrying receipts use `Cache-Control: no-store`.
+
+**Analyst role:** provide a concise apparent business purpose, bounded improvement proposals with a proposed verification approach, and material unknowns needing functional-expert input, analytics or repository evidence. Treat page text as untrusted data. Preserve deterministic scores and honest low-value findings. If the model is unavailable, the deterministic assessment and browser-local starting record remain usable. Optional business text is not forwarded to this analyst in this implementation.
+
+**Experience:** business starting record first, technical scorecards and drill-down evidence second, deeper-review invitation last. Available Lighthouse results remain separate from our heuristic scores; missing provider evidence is explicit. No timed animation claims that individual server stages succeeded. Keep the free URL-only path and existing spend, caching, safe-fetch and SSRF controls. No repository connection, payment execution or agent job is initiated by this assessment.
+
+**Delivery evidence:** focused automated scenarios cover content-site proportionality, technical scoring stability, visitor/public disagreement, absence of fabricated capability claims, compatibility boundaries and draft status. Browser acceptance checks cover optional input updates, unchanged URL-only network payload, download contents, error handling and narrow layouts. Live external analyst/PageSpeed execution is a separate verification, not implied by fixture-driven UI tests.
+
+- [x] Implement starting-point entry labels, optional business questions, draft record/download and retained technical scorecards locally.
+- [x] Retain low-value content-site insight and remove unverified six-week/replatform promises from verdict wording.
+- [ ] Review the updated experience and commercial interpretation with the Owner before publication.
+
+**Starting-point validation (2026-10-14):** seven focused automated checks passed, including content-only versus transactional scoring and immutable public evidence; TypeScript, lint and production build passed. Synthetic browser checks verified the optional business input flow, URL-only API payload, no re-scan on context edits, actual JSON download contents, absent Lighthouse handling, rate-limit error/recovery, site-change clearing, and no horizontal overflow at 320/390/1440 widths. External site/model/PageSpeed calls were intercepted during UI QA; live-provider output was not revalidated. No contact form, payment, production deployment or platform job was executed.
+
+
+### 12.1 Two-step usability and private assessment history
+
+The Owner's live test found a disabled perspective form visible during scanning and no explicit way to submit the later comments. Replace that ambiguity with a completed public-review step followed by a separate, usable perspective form and Save my perspective action. Draft edits do not silently imply submission. Save success/failure and local-only fallback are distinct states.
+
+Existing `sm_fit_scans` records budget admissions (hostname, salted IP hash, time and analyst-budget reservation) when shared metering is available. It is not a full result/feedback store; cached responses previously bypassed it. Preserve it as the spend guard. New `sm_starting_point_reviews` records completed/cached/failed scan activity and submitted comments for authorized operator inspection. It is not full website analytics, verified unique-visitor attribution, a platform audit trail or evidence of business gains.
+
+**Persistence boundary:** `supabase/sm_starting_point_reviews.sql` is an additive migration for the dedicated marketing project only. Server-only `SUPABASE_SERVICE_ROLE_KEY` writes history and updates the perspective row directly; anonymous/authenticated public roles cannot read or write the table or write these records directly. The API requires the UUID and random per-review 256-bit token, stores only its SHA-256 hash and limits updates to the matching completed review within 24 hours. Strict input lengths, enumerated frequency, origin checks and expiry prevent arbitrary record updates. Tokens are not saved in shared cache, download bundles or application logs.
+
+The migration includes dashboard queries for reviewing assessments and counting cache hits/comment submissions. Operator setup and API verification steps are in `supabase/starting-point-history.md`. A 90-day retention cleanup is an operational setup item, not a scheduled feature already implemented. Privacy notices describe actual collection, storage and contact-request separation.
+
+- [x] Local two-step UI, save API, server-only history adapter, privacy copy and additive SQL prepared.
+- [x] Fourteen focused checks, TypeScript, lint and production build passed; browser/API tests with synthetic database responses verified hidden-during-scan behavior, separate save without a rescan, wrong-token/origin/input rejection, outage draft preservation, download token exclusion and 320/390/1440 layouts.
+- [ ] Apply `supabase/sm_starting_point_reviews.sql` and `supabase/sm_page_visits.sql` in the marketing Supabase project; verify private-table permissions and direct API writes. No save function is required. No DDL or real visitor record was written by this change.
+- [ ] Schedule private history retention and review operator reporting requirements. Publish only after database setup and local-change review.
+
+
+### 12.2 Page visits, SEO signals and direct website save APIs
+
+The Owner requests general page visits as well as scan activity, and explicitly prefers website API saves over a Supabase save function. The website now owns `POST /api/page-visits` (direct private-table insert/upsert) and `POST /api/fit-scan/perspective` (direct private-table update). Keep credential, validation, review-token and expiry checks on our server. No stored procedure is required for either save path. The separately existing `sm_fit_scan_admit` remains an atomic rate/spend-limit check: “shared budget” means all server instances consult the same counter to bound paid scan analysis, not a mechanism for saving comments.
+
+`sm_page_visits` records browser page views, page path, timestamp, referrer hostname, a tab-scoped session ID, first-landing flag, rough source classification and obvious-bot flag. Initial hydration, refresh and client navigation count; link prefetches do not. Event UUIDs prevent duplicate retry rows. Respect browser DNT/GPC preferences; no cookies, cross-site identifiers, query strings, referrer paths, raw IPs or raw user-agent strings are retained in this table. Use a bounded instance-local abuse guard; analytics failures never interrupt navigation. This guard is not a distributed traffic-security system.
+
+Operators can query daily views/tab sessions, popular paths and search-origin landings in Supabase. Session IDs approximate browser-tab activity, not verified unique people. Referrer loss, blockers, privacy preferences and missed/undetected bots limit these counts. Preserve the distinction between page views, scan executions, submitted perspectives and separately provided walkthrough contacts; precise conversion attribution is not implemented by these tables.
+
+For SEO, track search referrals and landing-page trends here. Search Console is separately needed for Google impressions, clicks, click-through rate and average position; no rankings or keywords are inferred from a referrer. General page-view collection is disclosed in the privacy page.
+
+Database prerequisites are private tables/indexes/grants from the two SQL files, plus the server-only marketing service key. The current migration draft no longer creates `sm_starting_point_save_perspective`. If an older migration was applied, that unused function can be retired after confirming no earlier deployment depends on it. Do not alter the independent shared-budget function as part of this preference change.
+
+**D36 local validation (2026-10-14):** 16 focused automated checks, TypeScript, lint and production build passed. Browser/API tests against a synthetic local database verified initial views, no prefetch inflation, client navigation, refreshes, session continuity, query/fragment exclusion, DNT behavior, direct perspective PATCH with token/status/expiry filters and rejection of wrong tokens/unsafe paths. An injected search referrer tested attribution; a browser-omitted referrer remained direct/unknown. Live Supabase table setup and production collection remain pending.

@@ -15,41 +15,35 @@ export type CommissioningStep = {
 
 export const commissioningSteps: CommissioningStep[] = [
   {
-    week: "Week 0",
-    title: "Connect",
-    description:
-      "Repo, CI, hosting, and a test database. Production stays read-only. The first interlocks are set before anything moves.",
+    "week": "Assess",
+    "title": "Check the fit",
+    "description": "Review your existing site and identify the scope, dependencies and readiness gaps."
   },
   {
-    week: "Week 1",
-    title: "Survey",
-    description:
-      "Map the architecture, interview your operators, read your incident and backlog history. Out comes the Application Model.",
+    "week": "Connect",
+    "title": "Set the boundaries",
+    "description": "Agree service connections, test environments and decision authority before execution."
   },
   {
-    week: "Week 2–3",
-    title: "Instrument",
-    description:
-      "Find what your tests can't see. Build a held-out suite on a test database and install the Discipline Pack.",
+    "week": "Understand",
+    "title": "Talk through the business",
+    "description": "Explain your priorities and rules. The crew challenges assumptions and surfaces open questions."
   },
   {
-    week: "Week 4",
-    title: "Shadow",
-    description:
-      "Replay your recent changes and current backlog through the Accelerator, and compare the results with what your team shipped.",
+    "week": "Agree",
+    "title": "Map the capabilities",
+    "description": "Review what the site does, what must stay true and how proposed improvements will be checked."
   },
   {
-    week: "Week 5–6",
-    title: "Custody",
-    description:
-      "Bounded autonomy goes live. Your operators are trained in the Control Room. You receive a Readiness Report.",
+    "week": "Verify",
+    "title": "Establish the baseline",
+    "description": "Run realistic scenarios, identify missing checks and confirm what is ready and what needs attention."
   },
   {
-    week: "Week 7+",
-    title: "Raise energy",
-    description:
-      "More classes of change open up as the evidence stays clean. Autonomous coverage climbs week over week.",
-  },
+    "week": "Improve",
+    "title": "Begin governed delivery",
+    "description": "Approve a bounded first change, review its preview and evidence, then observe the result."
+  }
 ];
 
 export type AutonomyLevel = {
@@ -81,7 +75,7 @@ export type EvidenceLine = {
  */
 export const exampleEvidence = {
   title: "Dashboard balances must match every folio",
-  changeClass: "Money · AC3",
+  changeClass: "Money · Owner approval",
   lines: [
     { label: "Root cause", value: "Unordered paged read repeated/skipped rows", status: "info" },
     { label: "Surfaces touched", value: "Dashboard, integrity checks, directory", status: "info" },
@@ -90,7 +84,7 @@ export const exampleEvidence = {
     { label: "Invariant", value: "Balance = Σ posted ledger rows", status: "pass" },
     { label: "Invariant", value: "One pricing function, every surface", status: "pass" },
     { label: "Preview deploy", value: "Staging data reconciled to the penny", status: "pass" },
-    { label: "Promotion", value: "Money class → operator approval", status: "gate" },
+    { label: "Promotion", value: "Money class → client Owner approval", status: "gate" },
   ] satisfies EvidenceLine[],
 };
 
@@ -101,7 +95,7 @@ export type Layer = {
 };
 
 export const fiveLayers: Layer[] = [
-  { n: "05", name: "Control Room", holds: "Mission · Work · Health · Changes · Confidence · Controls" },
+  { n: "05", name: "Control Room", holds: "Overview · Work · Site · Crew & Knowledge" },
   { n: "04", name: "Assurance", holds: "Independent judges: held-out tests, invariants, replay, synthetic users, telemetry" },
   { n: "03", name: "Execution", holds: "Model-agnostic generators in sandboxes — Claude today, the next model tomorrow" },
   { n: "02", name: "Application Model", holds: "Architecture, invariants, change classes, definition of done — versioned" },
@@ -109,12 +103,30 @@ export const fiveLayers: Layer[] = [
 ];
 
 export const readinessReport = [
-  { label: "Behaviors mapped", value: "1,842" },
-  { label: "Independently testable", value: "1,216" },
-  { label: "Production invariants", value: "94" },
-  { label: "Restricted change classes", value: "14" },
-  { label: "Human authorization gates", value: "6" },
-  { label: "Autonomous coverage", value: "71%" },
+  {
+    "label": "Capabilities",
+    "value": "Mapped"
+  },
+  {
+    "label": "Business rules",
+    "value": "Agreed"
+  },
+  {
+    "label": "Customer journeys",
+    "value": "Checked"
+  },
+  {
+    "label": "Unknowns",
+    "value": "Visible"
+  },
+  {
+    "label": "Decision authority",
+    "value": "Explicit"
+  },
+  {
+    "label": "First improvement",
+    "value": "Scoped"
+  }
 ];
 
 /**
@@ -125,35 +137,35 @@ export type ComparisonRow = { need: string; llm: string; accelerator: string };
 
 export const llmComparison: ComparisonRow[] = [
   {
-    need: "Memory",
-    llm: "Forgets between sessions. You re-explain your business every time.",
-    accelerator: "Your Library: every decision, design, conversation and change, kept and organized.",
+    "need": "Continuity",
+    "llm": "Important context can remain scattered across threads.",
+    "accelerator": "Planned Library connects business rules, decisions, work and evidence."
   },
   {
-    need: "Hands",
-    llm: "You copy code, paste keys, run commands and deploy.",
-    accelerator: "Connected to GitHub, Vercel and your database through a secured Toolbelt.",
+    "need": "Expert advice",
+    "llm": "You may need to frame and coordinate each task.",
+    "accelerator": "One accountable lead coordinates specialist recommendations."
   },
   {
-    need: "Safety",
-    llm: "Edits whatever it's pointed at, and grades its own work.",
-    accelerator: "Test data only, an independent judge, human gates, a preview before live, one-click undo.",
+    "need": "Authority",
+    "llm": "Discussion alone does not define permission to act.",
+    "accelerator": "Agreed boundaries and application-enforced gates govern execution."
   },
   {
-    need: "Team",
-    llm: "One generalist.",
-    accelerator: "A crew of specialists tuned to your site: design, build, data, test, release.",
+    "need": "Proof",
+    "llm": "A convincing explanation is not an acceptance check.",
+    "accelerator": "Verification links the delivered behavior to the approved design."
   },
   {
-    need: "Proof",
-    llm: "“Trust me, it works.”",
-    accelerator: "Evidence on every change: tests, screenshots and a full audit trail.",
+    "need": "Open threads",
+    "llm": "Unfinished questions can get buried in a long exchange.",
+    "accelerator": "Save topics with their context and return without treating them as approved work."
   },
   {
-    need: "Learning",
-    llm: "The same tomorrow as today.",
-    accelerator: "Every job teaches your crew something, with your approval.",
-  },
+    "need": "Learning",
+    "llm": "Remembering more does not prove better outcomes.",
+    "accelerator": "Evaluate lessons, approve activation and measure subsequent work."
+  }
 ];
 
 export type SkillTier = { name: string; scope: string; example: string };
@@ -161,6 +173,7 @@ export type SkillTier = { name: string; scope: string; example: string };
 /** The three tiers of crew know-how (gen2-crew.md §2.2). */
 export const skillTiers: SkillTier[] = [
   { name: "Crew skills", scope: "Ours, shared by every crew", example: "Next.js upgrade playbook · database security rules" },
+  { name: "Partner skills", scope: "Your delivery partner’s methods", example: "Accessibility standards · industry delivery practices" },
   { name: "Your company", scope: "Shared by all your sites", example: "Brand voice · pricing rules · tone with customers" },
   { name: "Your site", scope: "One site, private to you", example: "Catalog rules · checkout quirks · what must never break" },
 ];
@@ -173,7 +186,7 @@ export const libraryHomes = [
   },
   {
     where: "In your private Library with us",
-    what: "How the work happened: conversations, evidence, previews, the tool log and the release timeline. Exportable in one click, any time.",
+    what: "How the work happened: conversations, evidence, previews, the tool log and the release timeline. Open-format export is planned.",
   },
 ];
 
@@ -183,10 +196,10 @@ export const exampleLibrary = {
   knows: 47,
   entries: [
     { kind: "Decision", text: "The assistant only mentions products its search returned", ref: "from Work #4" },
-    { kind: "Release", text: "Search by brand, live with before/after screenshots", ref: "Work #7 · undo" },
+    { kind: "Release", text: "Search by brand, live with before/after screenshots", ref: "Work #7 · release record" },
     { kind: "Site skill", text: "Catalog is read-only; every query is paginated", ref: "v2 · approved" },
-    { kind: "Design", text: "Saved lists for shoppers", ref: "approved · in build" },
-    { kind: "Learned", text: "Mobile search box too small; crew proposes a layout rule", ref: "awaiting you" },
+    { kind: "Open question", text: "Should shoppers be able to share saved lists?", ref: "saved for later · not approved" },
+    { kind: "Proposal", text: "Mobile search box too small; crew proposes a layout rule", ref: "awaiting you" },
   ],
 };
 
@@ -194,7 +207,7 @@ export const exampleLibrary = {
 export const toolbeltPoints = [
   {
     title: "Agents never hold your keys",
-    body: "Your credentials sit in an encrypted vault. Agents call named tools, and the Toolbelt attaches the credential on our server. No key ever appears in a prompt, a chat or a log.",
+    body: "Your credentials sit in an encrypted vault. Agents call named tools, and the Toolbelt attaches the credential on our server. The design keeps service credentials out of prompts, chats and logs.",
   },
   {
     title: "Connect, don't paste",
@@ -206,7 +219,7 @@ export const toolbeltPoints = [
   },
   {
     title: "Each specialist sees only its tools",
-    body: "The builder can't see the release tool. The judge can't edit code. Least privilege is enforced by what exists in the agent's world, not by asking it nicely.",
+    body: "The builder can't see the release tool. The judge can't edit code. Tool invocation enforces the permission boundary; hiding a tool alone is insufficient.",
   },
   {
     title: "Gates live inside the tool",

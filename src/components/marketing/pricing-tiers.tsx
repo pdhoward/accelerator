@@ -18,13 +18,14 @@ export function PricingTiers() {
         </FadeUpItem>
         <FadeUpItem>
           <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-            Commission once. Operate continuously.
+            Get established. Keep improving.
           </h2>
         </FadeUpItem>
         <FadeUpItem>
           <p className="mt-4 leading-relaxed text-fog">
-            Priced per application, not per seat. The ranges below are indicative; every
-            engagement is scoped and quoted after an assessment call.
+            Planned offers, subject to fit and launch availability. The onboarding target
+            below is a proposal; subscription prices and inclusions are confirmed in writing
+            after an assessment. No guaranteed turnaround is implied.
           </p>
         </FadeUpItem>
       </FadeUp>

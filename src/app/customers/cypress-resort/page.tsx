@@ -9,14 +9,14 @@ import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 export const metadata = buildMetadata({
   title: "Customer Zero — Cypress Resort",
     description:
-    "A live resort booking, payments and ledger platform, built and run by the Accelerator. Real guests, real money.",
+    "A live resort booking, payments and ledger platform, built with the delivery practices behind the Accelerator. Real guests, real money.",
   path: "/customers/cypress-resort",
 });
 
 const disciplines = [
   {
     title: "An operating rulebook",
-    body: "The architecture's one rule, the money invariants, and an Always/Never list. It is checked against the code, and where they disagree the code wins.",
+    body: "The architecture's one rule, the money invariants, and an Always/Never list. Differences between intended behavior and code are investigated and reconciled explicitly.",
   },
   {
     title: "Design before code",
@@ -46,7 +46,7 @@ export default function CustomerZeroPage() {
       <PageHero
         eyebrow="Customer Zero"
         title="Cypress Resort"
-        description="Where the Accelerator was built by running a real business on it."
+        description="The live business where the delivery practices behind the Accelerator were developed."
       />
 
       <section className="mx-auto max-w-3xl px-6 pb-12">

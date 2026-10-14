@@ -20,15 +20,15 @@ export function ToolbeltSection() {
     <section id="toolbelt" className="mx-auto max-w-7xl scroll-mt-20 px-6 py-24">
       <FadeUp className="grid items-start gap-12 lg:grid-cols-[1.2fr_1fr]">
         <FadeUpItem className="flex flex-col gap-5">
-          <SectionEyebrow>The Toolbelt · secured by design</SectionEyebrow>
+          <SectionEyebrow>The Toolbelt · planned security architecture</SectionEyebrow>
           <h2 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-            Your keys never enter a prompt.
+            Connected services. Bounded authority.
           </h2>
           <p className="text-pretty text-lg leading-relaxed text-fog">
-            Your crew reaches GitHub, Vercel and your database through one governed gateway, built on
-            the open <span className="text-white">Model Context Protocol (MCP)</span>. It is the same
-            pattern large engineering organizations use to let agents act on real systems safely, sized
-            for one website.
+            The planned Toolbelt connects your crew to approved services through a governed
+            server gateway. Permissions, protected decisions and action records belong in
+            the application. The platform already includes a vault; gateway rollout and
+            service availability are being validated separately.
           </p>
           <div className="mt-2 grid gap-4 sm:grid-cols-2">
             {toolbeltPoints.map((point) => (
@@ -57,8 +57,8 @@ export function ToolbeltSection() {
               ))}
             </ol>
             <div className="border-t border-obsidian-border px-5 py-4 text-sm text-fog">
-              <span className="text-white">Bonus:</span> connect your own Claude or ChatGPT to your
-              Accelerator and ask your crew what shipped this week. You get read and request access;
+              <span className="text-white">Planned:</span> connect your own AI assistant to your
+              Accelerator and ask your crew what shipped this week. The proposed connection provides read and request access;
               every gate still needs you.
             </div>
           </div>

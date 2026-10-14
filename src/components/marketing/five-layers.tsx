@@ -8,11 +8,11 @@ export function FiveLayers() {
     <section className="mx-auto max-w-5xl px-6 py-24">
       <FadeUp className="mx-auto mb-12 max-w-2xl text-center">
         <FadeUpItem>
-          <SectionEyebrow className="mx-auto justify-center">Architecture</SectionEyebrow>
+          <SectionEyebrow className="mx-auto justify-center">Engineering behind the experience · target design</SectionEyebrow>
         </FadeUpItem>
         <FadeUpItem>
           <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Five layers. The models are the replaceable part.
+            Business intent above. Engineering precision underneath.
           </h2>
         </FadeUpItem>
       </FadeUp>

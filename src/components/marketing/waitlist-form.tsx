@@ -46,7 +46,7 @@ export function WaitlistForm({ defaultCompany, source }: { defaultCompany?: stri
       }
 
       setSubmitted(true);
-      toast.success(json.alreadyJoined ? "We already have your application." : "Application received.");
+      toast.success(json.alreadyJoined ? "We already have your application." : "Request received.");
     } catch {
       toast.error("Something went wrong. Try again.");
     }
@@ -58,8 +58,8 @@ export function WaitlistForm({ defaultCompany, source }: { defaultCompany?: stri
         <div className="flex size-10 items-center justify-center rounded-full bg-signal/15 text-signal">
           <Check className="size-5" />
         </div>
-        <p className="font-semibold text-white">Application received.</p>
-        <p className="text-sm text-fog">We&apos;ll be in touch to set up a scoping call.</p>
+        <p className="font-semibold text-white">Request received.</p>
+        <p className="text-sm text-fog">We&apos;ll be in touch to arrange your walkthrough.</p>
       </div>
     );
   }
@@ -106,7 +106,7 @@ export function WaitlistForm({ defaultCompany, source }: { defaultCompany?: stri
 
       <MagneticButton className="w-full">
         <Button type="submit" variant="gold" size="lg" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? "Sending…" : "Apply for commissioning"}
+          {isSubmitting ? "Sending…" : "Request a walkthrough"}
         </Button>
       </MagneticButton>
     </form>

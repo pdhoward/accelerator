@@ -18,15 +18,15 @@ export function CustomerSpotlight() {
             Proven on a live resort, with real guests and real money.
           </h2>
           <p className="leading-relaxed text-fog">
-            Cypress Resort&apos;s booking, payments and ledger platform was built and is operated
-            by the Accelerator. It covers reservations, taxes, refunds and guest credit, and
-            reconciled years of history to the penny at cutover. The owner runs it from the
-            control room: setting priorities, making the money decisions and challenging
-            results. Nobody hand-writes the code.
+            Cypress Resort&apos;s live booking, payments and ledger platform shaped the
+            delivery practices we are packaging into the Accelerator. The owner sets
+            priorities, makes policy decisions and challenges results. The coming commercial
+            platform brings that approach into a shared expert workspace.
           </p>
           <p className="leading-relaxed text-fog">
-            When a production bug escapes, it comes back as a root cause, a regression test and
-            a fix, with the evidence attached.
+            For example, dashboard balances must agree with the financial ledger. A paging
+            defect became a targeted regression scenario, alongside checks of pricing and
+            financial integrity. The business rule becomes a lasting verification check.
           </p>
           <Button variant="outline" asChild className="w-fit">
             <Link href="/customers/cypress-resort">Read the Customer Zero story</Link>
@@ -50,7 +50,7 @@ export function CustomerSpotlight() {
               </div>
             ))}
           </div>
-          <p className="mt-3 text-center text-xs text-mist">Measured from the Customer Zero repository.</p>
+          <p className="mt-3 text-center text-xs text-mist">Historical baseline: Customer Zero repository, September 25, 2026.</p>
         </FadeUpItem>
       </FadeUp>
     </section>

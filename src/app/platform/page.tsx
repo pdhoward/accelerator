@@ -7,13 +7,13 @@ import { FeatureGrid } from "@/components/marketing/feature-grid";
 import { EvidenceSection } from "@/components/marketing/evidence-section";
 import { LibrarySection } from "@/components/marketing/library-section";
 import { ToolbeltSection } from "@/components/marketing/toolbelt-section";
-import { AutonomyLadder } from "@/components/marketing/autonomy-ladder";
+import { ExecutiveWorkspace } from "@/components/marketing/executive-workspace";
 import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 
 export const metadata = buildMetadata({
   title: "The Accelerator",
    description:
-    "Application Model, independent assurance, interlocks and a Control Room: the machine that runs your web app.",
+    "Lead your website’s evolution with an expert AI crew, business vital signs and a lasting record of decisions, delivery and proof.",
   path: "/platform",
 });
 
@@ -22,15 +22,16 @@ export default function PlatformPage() {
     <>
       <PageHero
         eyebrow="The Accelerator"
-        title="Infrastructure for software that runs at AI speed"
-        description="Model-agnostic generators do the building. Independent judges verify the work. Interlocks limit what can reach production. Your operators steer the whole thing."
+        title="Lead your website’s evolution with an expert team at your side."
+        description="Explore options with one accountable team lead. Specialists help refine the design, verify the work and explain the evidence. You set priorities and approve consequential decisions. Platform preview: capabilities are being proven on Machine Shop."
       />
+      <ExecutiveWorkspace />
       <FiveLayers />
       <LibrarySection />
       <FeatureGrid primary={primaryFeatures} secondary={secondaryFeatures} />
       <EvidenceSection />
       <ToolbeltSection />
-      <AutonomyLadder />
+
       <ShiftSection />
       <WaitlistCta />
     </>

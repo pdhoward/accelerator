@@ -10,7 +10,7 @@ import { CommissioningTimeline } from "@/components/marketing/commissioning-time
 import { EvidenceSection } from "@/components/marketing/evidence-section";
 import { LibrarySection } from "@/components/marketing/library-section";
 import { ToolbeltSection } from "@/components/marketing/toolbelt-section";
-import { AutonomyLadder } from "@/components/marketing/autonomy-ladder";
+import { ExecutiveWorkspace } from "@/components/marketing/executive-workspace";
 import { FeatureGrid } from "@/components/marketing/feature-grid";
 import { PricingTiers } from "@/components/marketing/pricing-tiers";
 import { PartnerBand } from "@/components/marketing/partner-band";
@@ -27,6 +27,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <ExecutiveWorkspace />
       <TrustBar />
       <ShiftSection />
       <FitScanBand />
@@ -35,7 +36,7 @@ export default function Home() {
       <CommissioningTimeline />
       <EvidenceSection />
       <ToolbeltSection />
-      <AutonomyLadder />
+
       <FeatureGrid primary={primaryFeatures} secondary={secondaryFeatures} />
       <PricingTiers />
       <PartnerBand />

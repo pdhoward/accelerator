@@ -3,9 +3,9 @@ import { PageHero } from "@/components/marketing/page-hero";
 import { FitScanTool } from "@/components/marketing/fit-scan-tool";
 
 export const metadata = buildMetadata({
-  title: "Fit Scan",
+  title: "Discover your starting point",
   description:
-    "Paste a URL and get a Lighthouse-style accelerator-fit report: stack fit, app depth, pipeline, hygiene, and priority backlog.",
+    "Combine your business priorities with public-site insights and technical scores. Get a draft capability record, evidence gaps and a proportionate first step.",
   path: "/fit-scan",
 });
 
@@ -16,9 +16,9 @@ export default async function FitScanPage({ searchParams }: PageProps<"/fit-scan
   return (
     <>
       <PageHero
-        eyebrow="Fit Scan"
-        title="Is your site ready for an accelerator?"
-        description="An outside-in read of any public website: what it's built on, how much application lives behind it, how it ships, and what's already in its backlog."
+        eyebrow="Your starting point · free assessment"
+        title="Discover your starting point."
+        description="See what your site reveals, add what matters to your business, and discover where improvement should begin. Keep the technical scores, surface the unknowns, and take away a draft record of intent and proposed proof."
       />
       <section className="mx-auto max-w-5xl px-6 pb-24">
         <FitScanTool initialUrl={initialUrl} />

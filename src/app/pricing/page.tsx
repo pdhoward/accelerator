@@ -7,7 +7,7 @@ import { FaqAccordion } from "@/components/marketing/faq-accordion";
 export const metadata = buildMetadata({
   title: "Pricing",
   description:
-    "Commission your application once, then operate it on the Accelerator. Priced per application, not per seat.",
+    "Explore planned onboarding and ongoing crew services. Scope, availability and commercial terms are confirmed after an assessment.",
   path: "/pricing",
 });
 
@@ -21,8 +21,8 @@ export default function PricingPage() {
       />
       <PageHero
         eyebrow="Pricing"
-        title="Priced on outcomes, not seats"
-        description="A fixed fee to commission your application, then a monthly fee to operate it, with an operator from us until your team is ready to take over."
+        title="A clear scope. An agreed budget. Ongoing improvement."
+        description="Our planned offer combines onboarding with an ongoing crew subscription. Complex applications can use a separately scoped managed engagement. Final inclusions and pricing are confirmed before you commit."
       />
       <PricingTiers />
       <FaqAccordion />

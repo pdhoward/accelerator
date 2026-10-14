@@ -5,7 +5,6 @@ import { site } from "@/content/site";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AuroraMesh } from "@/components/motion/aurora-mesh";
-import { CyclingWord } from "@/components/motion/cycling-word";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 import { Parallax } from "@/components/motion/parallax";
 import { FadeUp, FadeUpItem } from "@/components/motion/fade-up";
@@ -22,7 +21,7 @@ export function Hero() {
           <FadeUpItem>
             <Badge variant="live">
               <span className="size-1.5 animate-pulse-slow rounded-full bg-signal" />
-              Customer Zero: live in production
+              Platform preview · approach proven at Cypress
             </Badge>
           </FadeUpItem>
 
@@ -33,9 +32,10 @@ export function Hero() {
               style={{ fontSize: "clamp(2.4rem, 5.6vw, 5.25rem)", lineHeight: 1.05 }}
             >
               <span className="block">
-                You <CyclingWord words={site.verbs} wordClassName="text-aurora-gradient" /> your website.
+                What you intended.
               </span>
-              <span className="block text-white/60">AI delivers the outcome.</span>
+              <span className="block text-white/80">What you approved.</span>
+              <span className="block text-aurora-gradient">Delivered.</span>
             </h1>
           </FadeUpItem>
 
@@ -55,7 +55,7 @@ export function Hero() {
               <Button variant="ghost" size="lg" asChild>
                 <Link href="/fit-scan">
                   <ScanSearch className="size-4" />
-                  Scan your site for fit
+                  Discover your starting point
                 </Link>
               </Button>
             </div>
@@ -63,7 +63,7 @@ export function Hero() {
 
           <FadeUpItem>
             <p className="font-mono text-[11px] uppercase tracking-widest text-mist">
-              One Control Room · Every change under your control
+              You set direction · Your crew coordinates · You keep authority
             </p>
           </FadeUpItem>
         </FadeUp>

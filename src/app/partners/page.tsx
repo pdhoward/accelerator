@@ -23,7 +23,7 @@ export default function PartnersPage() {
       <PageHero
         eyebrow="Partner Program · coming soon"
         title="Your firm. Your clients. Your crew."
-        description="Board and run your clients' websites on the Accelerator, with a crew of specialist AI agents branded to your firm. You stay the point of contact; the crew does the work and shows the evidence."
+        description="Board and run your clients' websites on the Accelerator, with a crew of specialist AI agents branded to your firm. Lead client conversations with shared recommendations, visible progress and evidence behind each proposed release. You keep the relationship; your client keeps decision authority."
       />
 
       <section className="mx-auto max-w-5xl px-6 pb-20">

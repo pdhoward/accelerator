@@ -16,15 +16,15 @@ export function LibrarySection() {
           </FadeUpItem>
           <FadeUpItem>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-              Claude is a brilliant contractor. The Accelerator is the team that remembers.
+              Your business deserves continuity.
             </h2>
           </FadeUpItem>
           <FadeUpItem>
             <p className="mt-5 text-pretty text-lg leading-relaxed text-fog">
-              On its own, a model has no memory of your business, no hands on your accounts and no
-              safety rails. Every client site gets its own <span className="text-white">crew</span> of
-              specialist agents and its own private <span className="text-white">Library</span>, which
-              grows smarter with every change.
+              The Accelerator is being built to connect expert advice, approved decisions,
+              delivery and evidence in one lasting record. Your specialized
+              <span className="text-white">crew</span> works from your business context; your private
+              <span className="text-white">Library</span> preserves how that understanding develops.
             </p>
           </FadeUpItem>
         </FadeUp>
@@ -33,7 +33,7 @@ export function LibrarySection() {
         <FadeUp className="overflow-hidden rounded-2xl border border-obsidian-border bg-obsidian-2">
           <div className="hidden grid-cols-[8rem_1fr_1fr] border-b border-obsidian-border px-5 py-3 font-mono text-[11px] uppercase tracking-widest text-mist sm:grid">
             <span />
-            <span>An AI model on its own</span>
+            <span>A conversation alone</span>
             <span className="text-aurora-cyan">The Accelerator</span>
           </div>
           {llmComparison.map((row) => (
@@ -57,16 +57,16 @@ export function LibrarySection() {
         <FadeUp className="mt-16 grid items-start gap-12 lg:grid-cols-2">
           <FadeUpItem className="flex flex-col gap-6">
             <div>
-              <h3 className="text-2xl font-semibold tracking-tight text-white">Your Library: the memory of your site</h3>
+              <h3 className="text-2xl font-semibold tracking-tight text-white">Keep the ideas you aren’t ready to pursue.</h3>
               <p className="mt-3 leading-relaxed text-fog">
-                Every decision, design, conversation, change and lesson, organized by your site and
-                private to you. Ask it why something works the way it does, and it answers with the
-                decision and the conversation where it was made.
+                Save a question, park an option, and return with its original context. The planned
+                Library connects unfinished thinking with approved decisions, designs and
+                delivery evidence. Saving an idea does not approve it or commit it to the backlog.
               </p>
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="font-mono text-[11px] uppercase tracking-widest text-mist">Three tiers of know-how</p>
+              <p className="font-mono text-[11px] uppercase tracking-widest text-mist">Know-how at every level</p>
               {skillTiers.map((tier) => (
                 <div key={tier.name} className="rounded-xl border border-obsidian-border bg-obsidian-2/50 p-4">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -101,7 +101,7 @@ export function LibrarySection() {
               </div>
               <div className="p-5 sm:p-6">
                 <p className="text-lg font-semibold text-white">
-                  Your crew knows {exampleLibrary.knows} things about {exampleLibrary.site}
+                  Decisions, open questions and evidence for {exampleLibrary.site}
                 </p>
                 <ul className="mt-5 flex flex-col divide-y divide-obsidian-border">
                   {exampleLibrary.entries.map((entry) => (
@@ -116,11 +116,11 @@ export function LibrarySection() {
               </div>
             </div>
             <p className="mt-3 text-center text-xs text-mist">
-              Machine Shop is our test site. See its real Library in a walkthrough, not on slides.
+              Illustrative Library preview. Machine Shop is the proving ground for the coming platform.
             </p>
             <div className="mt-4 flex justify-center">
               <Button variant="outline" asChild>
-                <a href="#waitlist">Ask for a Library walkthrough</a>
+                <a href="#waitlist">Request a walkthrough</a>
               </Button>
             </div>
           </FadeUpItem>

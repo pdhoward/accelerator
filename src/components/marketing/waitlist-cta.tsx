@@ -10,17 +10,17 @@ export function WaitlistCta() {
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 px-6 text-center">
         <FadeUp className="flex flex-col items-center gap-6">
           <FadeUpItem>
-            <SectionEyebrow className="justify-center">Commissioning cohort 01 · now forming</SectionEyebrow>
+            <SectionEyebrow className="justify-center">Founding clients and partners</SectionEyebrow>
           </FadeUpItem>
           <FadeUpItem>
             <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              Put your application under power.
+              See how your expert crew would work.
             </h2>
           </FadeUpItem>
           <FadeUpItem>
             <p className="max-w-md text-fog">
-              We&apos;re commissioning a small number of production web apps next. Tell us where
-              yours lives. We&apos;ll reply with a scoping call and an honest read on fit.
+              Request a walkthrough of the coming platform. Tell us about your site and
+              priorities; we&apos;ll arrange a conversation and give you an honest assessment of fit.
             </p>
           </FadeUpItem>
           <FadeUpItem className="flex w-full justify-center">

@@ -10,74 +10,70 @@ export type PricingTier = {
   features: string[];
 };
 
-/**
- * Indicative ranges from work/accelerator.md §8 — proposals, not a rate card.
- * Each engagement is quoted after a scoping call.
- */
+/** Planned offers; availability, scope and final terms are confirmed after assessment. */
 export const pricingTiers: PricingTier[] = [
   {
-    id: "commission",
-    name: "Commission",
-    positioning: "Bring your application up to speed",
-    price: "$5K–$20K",
-    cadence: "one-time · quoted by complexity and scope",
-    ctaLabel: "Apply for commissioning",
-    ctaHref: "/#waitlist",
-    features: [
-      "Application Model + invariants",
-      "Held-out test suite on a test database",
-      "Discipline Pack installed",
-      "Shadow replay of your recent work",
-      "Readiness Report + live AC1–AC2 autonomy",
-      "Complex sites: training courses so your team can lead the migration, plus a support contract",
-    ],
+    "id": "boarding",
+    "name": "Boarding",
+    "positioning": "Establish the foundations for your crew",
+    "price": "$2,500 target",
+    "cadence": "planned one-time onboarding · subject to fit and agreed scope",
+    "ctaLabel": "Discuss onboarding",
+    "ctaHref": "/#waitlist",
+    "features": [
+      "Business interview and capability survey",
+      "Connection setup and permission boundaries",
+      "Agreed priorities, business rules and acceptance checks",
+      "Initial crew and verification baseline",
+      "Final inclusions confirmed before purchase"
+    ]
   },
   {
-    id: "operate",
-    name: "Operate",
-    positioning: "The Accelerator, running your app",
-    price: "$6K–$20K",
-    cadence: "per month · by change volume and assurance level",
-    highlighted: true,
-    ctaLabel: "Apply for commissioning",
-    ctaHref: "/#waitlist",
-    features: [
-      "Continuous build, test, refactor and release",
-      "Independent assurance on every change",
-      "Evidence package for every change",
-      "Control Room seats for your operators",
-      "Model spend included — no per-token bill",
-    ],
+    "id": "crew",
+    "name": "Crew",
+    "positioning": "Ongoing improvement under your direction",
+    "price": "Pricing to be confirmed",
+    "cadence": "planned monthly subscription · scoped to your site",
+    "highlighted": true,
+    "ctaLabel": "Request a walkthrough",
+    "ctaHref": "/#waitlist",
+    "features": [
+      "One accountable team lead with specialist support",
+      "Shared recommendations, previews and decision records",
+      "Capability inventory and business vital signs",
+      "Verification evidence linked to agreed work",
+      "Usage limits and included services agreed in writing"
+    ]
   },
   {
-    id: "managed",
-    name: "Managed Operator",
-    positioning: "We run the Control Room until you're ready to",
-    price: "+$10K–$20K",
-    cadence: "per month · tapers as your team takes over",
-    ctaLabel: "Talk to us",
-    ctaHref: "/company",
-    features: [
-      "A dedicated Strategic Machines operator",
-      "Weekly mission and backlog review",
-      "Operator training for your team",
-      "Incident on-call with the Accelerator",
-      "Handover plan: managed → co-operated → yours",
-    ],
-  },
+    "id": "managed",
+    "name": "Managed engagement",
+    "positioning": "Additional support for complex applications",
+    "price": "Custom scope",
+    "cadence": "separately quoted onboarding and ongoing support",
+    "ctaLabel": "Discuss your application",
+    "ctaHref": "/#waitlist",
+    "features": [
+      "Architecture and migration assessment",
+      "Additional stabilization and integration work",
+      "Human advisory and operational support",
+      "Agreed responsibilities and service boundaries",
+      "A written scope, budget and delivery plan"
+    ]
+  }
 ];
 
 export const pricingDifferentiators = [
   {
-    title: "Priced on outcomes",
-    description: "You pay for accepted change and assurance, not seats or “AI developers.”",
+    "title": "A clear commercial agreement",
+    "description": "Onboarding and subscription fees, usage limits and service inclusions are agreed before work begins."
   },
   {
-    title: "A fraction of a team",
-    description: "A three-engineer team costs $600K+ a year. The Accelerator targets 25–50% of that.",
+    "title": "Authority stays with you",
+    "description": "Set priorities and budgets; your crew coordinates delivery and brings consequential decisions back to you."
   },
   {
-    title: "Knowledge you keep",
-    description: "The Application Model, tests and evidence history stay yours.",
-  },
+    "title": "Knowledge you keep",
+    "description": "The planned Library keeps business rules, designs and evidence connected, with open-format export."
+  }
 ];

@@ -8,10 +8,10 @@ import type { Audit, AuditStatus, CategoryScore, FitVerdict } from "./types";
  */
 
 const STACK: Record<StackTier, { score: number; label: string }> = {
-  core: { score: 100, label: "Supported today" },
+  core: { score: 100, label: "Core target stack" },
   near: { score: 75, label: "Modern JavaScript — close fit" },
   roadmap: { score: 50, label: "Server framework — on the roadmap" },
-  cms: { score: 30, label: "CMS — partial custody" },
+  cms: { score: 30, label: "CMS — compatibility review needed" },
   locked: { score: 10, label: "Hosted builder — code is locked" },
   unknown: { score: 40, label: "Not identified from outside" },
 };
@@ -43,7 +43,7 @@ export function scoreSignals(s: Signals, scanYear: number): Scored {
     s.framework ? `Built with ${s.framework}` : "Framework not identifiable",
     s.framework
       ? `${stack.label}.${s.frameworks.length > 1 ? ` Also detected: ${s.frameworks.slice(1).join(", ")}.` : ""}`
-      : "The page doesn't reveal its framework. Commissioning reads the repository directly.",
+      : "The page does not reveal its framework. A permitted repository review can confirm it.",
   );
   if (s.jqueryMajor !== null) {
     add(
@@ -81,10 +81,10 @@ export function scoreSignals(s: Signals, scanYear: number): Scored {
     s.hostingModern ? "pass" : s.hosting ? "warn" : "info",
     s.hosting ? `Hosted on ${s.hosting}` : "Hosting platform not identified",
     s.hostingModern
-      ? "A git-driven platform with preview deployments — ready for gated, automated releases."
+      ? "Hosting commonly associated with preview deployments. This does not verify that this site has previews, tests or approval gates configured."
       : s.hosting
-        ? "General cloud hosting; commissioning wires up preview environments and promotion gates."
-        : "Commissioning inventories the pipeline directly.",
+        ? "General cloud hosting detected; configured delivery controls require a deeper review."
+        : "The configured pipeline cannot be established from this page.",
   );
   add(
     "delivery",
@@ -138,9 +138,9 @@ export function scoreSignals(s: Signals, scanYear: number): Scored {
 
   const categories: CategoryScore[] = [
     { id: "stack", label: "Stack fit", score: stack.score, summary: stack.label },
-    { id: "application", label: "Application depth", score: depth, summary: depth >= 50 ? "A real web application" : depth >= 25 ? "Some application features" : "Mostly a content site" },
-    { id: "delivery", label: "Delivery pipeline", score: delivery, summary: s.hosting ?? "Not identified" },
-    { id: "hygiene", label: "Hygiene", score: hygieneScore, summary: `${dayOneBacklog} gap${dayOneBacklog === 1 ? "" : "s"} found from outside` },
+    { id: "application", label: "Application depth", score: depth, summary: depth >= 50 ? "Strong public application signals" : depth >= 25 ? "Some application features" : "Limited public application signals" },
+    { id: "delivery", label: "Delivery signals", score: delivery, summary: s.hosting ?? "Not identified" },
+    { id: "hygiene", label: "Site care", score: hygieneScore, summary: `${dayOneBacklog} gap${dayOneBacklog === 1 ? "" : "s"} found from outside` },
   ];
 
   const { verdict, verdictLabel, verdictDetail } = decide(s.stackTier, depth, fitScore);
@@ -150,20 +150,20 @@ export function scoreSignals(s: Signals, scanYear: number): Scored {
 function decide(tier: StackTier, depth: number, fit: number): Pick<Scored, "verdict" | "verdictLabel" | "verdictDetail"> {
   if (tier === "locked") {
     return depth >= 40
-      ? { verdict: "replatform", verdictLabel: "Replatform first", verdictDetail: "There's a real application here, but its code is locked inside a hosted builder. A migration to an owned codebase comes before custody, and the Accelerator can run that migration." }
+      ? { verdict: "replatform", verdictLabel: "Replatform first", verdictDetail: "There's a real application here, but its code is locked inside a hosted builder. A migration or alternative delivery approach would need a separate compatibility and scope assessment." }
       : { verdict: "not-a-fit", verdictLabel: "Not a fit today", verdictDetail: "A hosted-builder site with little application logic. The builder already does what the Accelerator would." };
   }
   if (tier === "cms") {
-    return { verdict: "cms", verdictLabel: "Partial fit (CMS)", verdictDetail: "Theme, plugin, performance and upgrade work suits the Accelerator well. Full custody depends on how much custom application code sits behind the CMS." };
+    return { verdict: "cms", verdictLabel: "Partial fit (CMS)", verdictDetail: "Theme, plugin and performance work may be useful, but CMS support and access to custom code need assessment before proposing delivery." };
   }
   if (tier === "roadmap") {
     return { verdict: "roadmap", verdictLabel: "Future candidate", verdictDetail: "A server-side framework we plan to support after our TypeScript beachhead. Talk to us if the backlog is urgent." };
   }
   if (depth < 25) {
-    return { verdict: "low-value", verdictLabel: "Low accelerator value", verdictDetail: "Mostly a content site. The Accelerator pays off on applications with accounts, transactions and a backlog. An upgrade and hygiene sprint may still be worth it." };
+    return { verdict: "low-value", verdictLabel: "Low accelerator value", verdictDetail: "The public page appears content-focused. An ongoing crew may add limited value if updates are occasional. Focused improvements may still be useful; hidden workflows or frequent changes could alter this assessment." };
   }
   if (fit >= 75) {
-    return { verdict: "strong", verdictLabel: "Strong candidate", verdictDetail: "A modern application on a stack we support today. This is the profile we commission in about six weeks." };
+    return { verdict: "strong", verdictLabel: "Strong candidate", verdictDetail: "Public signals suggest a modern application aligned with our core target stack. Confirm business priorities, repository access and verification evidence before agreeing scope or timing." };
   }
   return { verdict: "candidate", verdictLabel: "Candidate", verdictDetail: "A plausible fit. A scoping call and a look at the repository would confirm it." };
 }

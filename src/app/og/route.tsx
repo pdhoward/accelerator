@@ -35,15 +35,15 @@ export function GET() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 76, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>
-            You manage your website.
+          <div style={{ display: "flex", fontSize: 62, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>
+            What you intended.
           </div>
           <div
-            style={{ display: "flex", fontSize: 76, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, color: CYAN }}
+            style={{ display: "flex", fontSize: 62, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, color: CYAN }}
           >
-            AI delivers the outcome.
+            What you approved. Delivered.
           </div>
-          <div style={{ display: "flex", marginTop: 28, fontSize: 30, color: FOG, maxWidth: 900 }}>
+          <div style={{ display: "flex", marginTop: 24, fontSize: 25, color: FOG, maxWidth: 900 }}>
             {site.subline}
           </div>
         </div>
@@ -60,7 +60,7 @@ export function GET() {
               fontWeight: 700,
             }}
           >
-            Run a free Fit Scan
+            Discover your starting point
           </div>
           <div style={{ display: "flex", fontSize: 28, color: FOG }}>{site.domain}</div>
         </div>

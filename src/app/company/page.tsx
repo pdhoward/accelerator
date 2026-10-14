@@ -6,7 +6,7 @@ import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 export const metadata = buildMetadata({
   title: "Company",
   description:
-    "Strategic Machines builds the Accelerator — autonomous operations for production web applications.",
+    "Strategic Machines builds the Accelerator — an expert AI crew for human-governed software improvement.",
   path: "/company",
 });
 
@@ -15,17 +15,16 @@ export default function CompanyPage() {
     <>
       <PageHero
         eyebrow="Company"
-        title="We stopped touching the code."
-        description="Strategic Machines builds the Accelerator: infrastructure that lets AI operate a production application while people run the controls."
+        title="Business direction. Engineering discipline."
+        description="Strategic Machines builds the Accelerator: an expert crew that connects business intent, approved decisions, delivery and proof."
       />
       <section className="mx-auto max-w-3xl px-6 pb-24">
         <FadeUp className="flex flex-col gap-6 text-fog">
           <FadeUpItem>
             <p className="leading-relaxed">
-              The industry calls it a &ldquo;software factory,&rdquo; but software was never
-              built on a line. It loops through design, build, test, refactor and ship, again
-              and again. Now that AI can make each turn faster than anyone can read the code,
-              the job changes. You stop inspecting the parts and start running the machine.
+              Business leaders should be able to shape their software with expert advice,
+              understand the tradeoffs and see evidence of the result. The crew should own
+              the coordination. The client should keep direction and consequential decisions.
             </p>
           </FadeUpItem>
           <FadeUpItem>
@@ -45,7 +44,7 @@ export default function CompanyPage() {
           </FadeUpItem>
           <FadeUpItem>
             <p className="leading-relaxed">
-              Commissioning inquiries, partnerships, or press:{" "}
+              Walkthroughs, partnerships, or press:{" "}
               <a href="mailto:hello@strategicmachines.ai" className="text-aurora-cyan underline-offset-4 hover:underline">
                 hello@strategicmachines.ai
               </a>

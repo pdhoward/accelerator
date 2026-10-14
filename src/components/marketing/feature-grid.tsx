@@ -26,8 +26,8 @@ export function FeatureGrid({
   primary,
   secondary,
   eyebrow = "The Accelerator",
-  title = "Everything it takes to hand over the keys",
-  divider = "…and a Control Room for the people in charge",
+  title = "Delegate the work. Keep authority.",
+  divider = "A clear picture for the people in charge",
 }: {
   primary: Feature[];
   secondary: Feature[];

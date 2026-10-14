@@ -8,17 +8,18 @@ export function CommissioningTimeline() {
       <div className="mx-auto max-w-7xl px-6">
         <FadeUp className="mx-auto mb-14 max-w-2xl text-center">
           <FadeUpItem>
-            <SectionEyebrow className="mx-auto justify-center">Commissioning</SectionEyebrow>
+            <SectionEyebrow className="mx-auto justify-center">Getting started</SectionEyebrow>
           </FadeUpItem>
           <FadeUpItem>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-              Six weeks from your repo to a running accelerator.
+              Start with your business. Build confidence step by step.
             </h2>
           </FadeUpItem>
           <FadeUpItem>
             <p className="mt-4 text-pretty text-lg leading-relaxed text-fog">
-              No rewrite. We attach to the application you already have, learn it, test it,
-              and prove we could have shipped your recent work. Only then do we take custody.
+              Assess your existing site, agree what matters, connect the right services and
+              establish a verification baseline. Timing and scope are confirmed after the
+              assessment; platform onboarding is being proven on Machine Shop.
             </p>
           </FadeUpItem>
         </FadeUp>
@@ -44,8 +45,8 @@ export function CommissioningTimeline() {
           <FadeUpItem>
             <div className="rounded-2xl border border-gold/30 bg-gold/[0.04] p-6 sm:p-8">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-                <h3 className="text-lg font-semibold text-white">You leave with a Readiness Report</h3>
-                <span className="font-mono text-[11px] uppercase tracking-widest text-mist">Example report</span>
+                <h3 className="text-lg font-semibold text-white">A clear starting point for your site</h3>
+                <span className="font-mono text-[11px] uppercase tracking-widest text-mist">Illustrative assessment categories</span>
               </div>
               <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
                 {readinessReport.map((r) => (

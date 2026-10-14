@@ -12,7 +12,7 @@ export type Stat = {
  */
 export const cypressResortStats: Stat[] = [
   { label: "Automated tests guarding every change", value: 615 },
-  { label: "Commits authored by the Accelerator", value: 287 },
+  { label: "AI-assisted delivery commits", value: 287 },
   { label: "Weeks from first commit to live production", value: 12, prefix: "<" },
-  { label: "API routes under custody", value: 111 },
+  { label: "API routes in the platform", value: 111 },
 ];

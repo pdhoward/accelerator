@@ -46,7 +46,7 @@ function AcceleratorRing() {
         The Accelerator
       </text>
       <text x="210" y="177" textAnchor="middle" className="fill-[var(--sm-fog)]" style={{ fontSize: 11.5 }}>
-        every turn adds velocity
+        intent, delivery and proof connected
       </text>
     </svg>
   );
@@ -61,14 +61,14 @@ export function ShiftSection() {
         </FadeUpItem>
         <FadeUpItem>
           <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-            Software was never a factory.
+            Every improvement builds on what came before.
           </h2>
         </FadeUpItem>
         <FadeUpItem>
           <p className="mt-4 text-pretty text-lg leading-relaxed text-fog">
-            A factory moves a part down a line, with hands at every station. Software never
-            worked that way: it circles through build, test, refactor and ship. AI makes each
-            turn faster than people can inspect. So stop inspecting parts and run the machine.
+            Explain the outcome you want. Explore options with your crew, agree the work,
+            and inspect the evidence. Observations from delivery inform the next discussion,
+            while evaluated lessons can improve how the crew works.
           </p>
         </FadeUpItem>
       </FadeUp>
@@ -76,8 +76,8 @@ export function ShiftSection() {
       <FadeUp className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
         <FadeUpItem className="h-full">
           <div className="flex h-full flex-col rounded-2xl border border-obsidian-border bg-obsidian-2/50 p-7">
-            <p className="font-mono text-xs uppercase tracking-widest text-mist">The software factory</p>
-            <p className="mt-2 text-sm text-fog">Linear. Human hands at every station. Throughput limited by review.</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-mist">Without a shared operating record</p>
+            <p className="mt-2 text-sm text-fog">Intent, decisions and evidence can become scattered across tools and conversations.</p>
             <ol className="mt-6 flex flex-1 flex-col items-stretch">
               {oldLoop.map((step, i) => (
                 <li key={step} className="flex flex-col items-center">
@@ -96,8 +96,8 @@ export function ShiftSection() {
           <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-aurora-violet/30 bg-obsidian-2/70 p-7 border-glow-aurora">
             <p className="font-mono text-xs uppercase tracking-widest text-aurora-cyan">The accelerator</p>
             <p className="mt-2 text-sm text-fog">
-              A loop that gets faster each turn. Machines build, independent judges verify,
-              and people steer from the control room.
+              A connected loop: understanding, agreement, delivery, verification and learning.
+              Your crew coordinates; you govern the decisions that matter.
             </p>
             <div className="mx-auto mt-4 w-full max-w-lg flex-1">
               <AcceleratorRing />

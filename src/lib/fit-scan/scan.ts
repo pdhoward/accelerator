@@ -45,7 +45,7 @@ export async function runFitScan(rawUrl: string, { allowAnalyst }: { allowAnalys
   const scored = scoreSignals(signals, scannedAt.getUTCFullYear());
 
   const notes: string[] = [
-    "This is an outside-in scan. It sees only what any visitor's browser sees. Code quality, tests, backlog and pipeline are assessed from the repository in commissioning week 1.",
+    "This public-page scan cannot establish internal business rules, test coverage, deployment gates or customer outcomes. A deeper review needs business input and supporting records with your permission.",
   ];
   if (page.truncated) notes.push("The home page was very large, so only its first 2 MB were analyzed.");
   if (signals.visibleText.length < 200) {

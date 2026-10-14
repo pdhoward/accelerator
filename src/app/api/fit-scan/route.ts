@@ -4,6 +4,7 @@ import { z } from "zod";
 import { admitScan } from "@/lib/fit-scan/budget";
 import { normalizeTarget, runFitScan, ScanError } from "@/lib/fit-scan/scan";
 import type { FitScanResult } from "@/lib/fit-scan/types";
+import { recordReview } from "@/lib/fit-scan/history";
 
 // PageSpeed + the analyst can take ~45s on a slow site.
 export const maxDuration = 60;
@@ -38,7 +39,8 @@ export async function POST(request: Request) {
 
   const cached = cache.get(key);
   if (cached && cached.expiresAt > Date.now()) {
-    return NextResponse.json(cached.result);
+    const review = await recordReview(parsed.data.url, cached.result, true);
+    return NextResponse.json({ ...cached.result, review }, { headers: { "Cache-Control": "no-store" } });
   }
 
   const ip =
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
   if (!admission.allowed) {
     const error =
       admission.reason === "global"
-        ? "The Fit Scan is very busy right now — try again later this hour."
+        ? "The starting-point assessment is very busy right now — try again later this hour."
         : "You've reached the scan limit for now — try again in an hour.";
     return NextResponse.json({ error }, { status: 429 });
   }
@@ -55,8 +57,10 @@ export async function POST(request: Request) {
   try {
     const result = await runFitScan(parsed.data.url, { allowAnalyst: admission.analyst });
     cache.set(key, { result, expiresAt: Date.now() + CACHE_TTL_MS });
-    return NextResponse.json(result);
+    const review = await recordReview(parsed.data.url, result, false);
+    return NextResponse.json({ ...result, review }, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
+    await recordReview(parsed.data.url, null, false);
     if (err instanceof ScanError) {
       return NextResponse.json({ error: err.message }, { status: 422 });
     }
