@@ -1,4 +1,4 @@
-# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.8)
+# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.9)
 
 *Strategic Machines · foundation 2026-10-10 · revised 2026-10-14 · **status: approved product-design direction; documentation and marketing-site implementation authorized. Platform/runner implementation still requires the Owner's separate approval after Claude's current work is reconciled.** · repo: `accelerator-platform`*
 *Implements the decisions in [newvision.md](newvision.md) §9–10. Refines [flywheel.md](flywheel.md) (the rail stays) and replaces [accelerator-control-room.md](accelerator-control-room.md) §5 (the 15 pages). Extends [accounts-auth-admin.md](accounts-auth-admin.md) with the partner layer (§5).*
@@ -10,6 +10,7 @@
 - §7 is the decisions log.
 - §8 is the action list. Tick items there as they're done.
 - §9 covers agent interfaces: APIs-first MCP (WebMCP optional), Stripe, the Decide layer (Jev), understanding artifacts (Karpathy's ladder), live voice agents and generative forms.
+- §13 defines continuous change assurance, source-linked business rules and migration-grade safeguards for everyday improvements.
 - §12 defines the upgraded public starting-point assessment and the boundary between public technical evidence and business intent.
 - §11 records the 2026-10-14 decisions: collaborative requirements and TDD, synthetic QA, context selection, event-driven crews, saved threads and executive marketing.
 - §10 defines executive governance, the shared meeting workspace, the capability inventory, vital signs, engineering assurance and product validation. It governs the human experience across §1–9.
@@ -331,7 +332,7 @@ The Library is the **showroom**. Sell it with Machine Shop's live Library, not w
 | **G2.5** Library + measured learning | Site Timeline/export includes capability/mandate/decision evidence; Skillsmith proposals; replay and holdout bench; approved activation and later measurement | At least one improvement is demonstrated rather than asserted |
 | **G2.6** Boarding | Checkup → Connect → Survey → Interview → Assemble → Stabilize → Agreement, run on Machine Shop as client #1 | $2,500 Boarding is repeatable |
 
-**Phase acceptance:** §10.5 defines engineering assurance and §10.7 defines product acceptance. Retain existing phase numbers and completed history; suffix phases are new design work, not claims of implementation. Migration numbers 0008–0010 above are reservations: inspect Claude's final state before assigning additional capability, mandate, KPI or meeting schema migrations. No destructive legacy-table removal until references, data migration and rollback are verified.
+**Phase acceptance:** §13 applies continuous change assurance across these phases: readiness and baseline in G2.1; typed contracts and review roles in G2.3; rule/capability links in G2.3a; assurance presentation in G2.4; validated playbook learning in G2.5. These are acceptance refinements, not an additional orchestration engine. §10.5 defines engineering assurance and §10.7 defines product acceptance. Retain existing phase numbers and completed history; suffix phases are new design work, not claims of implementation. Migration numbers 0008–0010 above are reservations: inspect Claude's final state before assigning additional capability, mandate, KPI or meeting schema migrations. No destructive legacy-table removal until references, data migration and rollback are verified.
 
 **Priority:** text, artifacts, real decisions and inventory precede rich avatars/voice. Voice is optional after the same experience works in text. Commerce packs, advanced model routing, narrated videos and extensive white-label customization do not gate the core release. Preserve their research notes in §9; verify vendor capabilities, pricing and links before implementation.
 
@@ -470,6 +471,7 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D36 | 2026-10-14 | **Website-owned data APIs:** save perspective by a direct server-side table update, with no Supabase save procedure. Add first-party page views, source/landing-page reporting and approximate tab sessions, distinct from shared scan-spend limits and Search Console metrics | §12.2 |
 
 | D37 | 2026-10-14 | **Report-first follow-up:** full public report before blank Step 2, with optional name/company/phone. Reuse a persisted public site report for seven days with original date; each visitor gets a separate private review. Store request IP with page visits as explicitly requested; update privacy disclosure | §12.3 |
+| D38 | 2026-10-14 | **Continuous change assurance:** every Work item records preserved behavior, approved changes, unknowns and proportionate evidence for the transition. Source-linked rules, characterization, independent critique, evidence freshness, bounded execution and release/recovery checks extend the existing rail; no extra executive coordination or permission by implication | §13 |
 
 ---
 
@@ -561,6 +563,8 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] Define typed capability, evidence, meeting-event and decision contracts plus scoped access and idempotency rules.
 - [ ] Establish relevant lint/typecheck/Vitest/integration/browser-QA checks and independent acceptance review; record a baseline.
 - [ ] Verify release approvals apply to the exact candidate; invalidation, concurrency and recovery behavior are explicit.
+- [ ] Define §13 change contracts, rule-review states, dependency impact and evidence invalidation; prove missing/stale checks block promotion.
+- [ ] Demonstrate characterization versus approved changes, independent architecture/security review, bounded pilot execution and tested recovery on Machine Shop.
 - [ ] Conduct the §10.7 business-user walkthrough and partner review before expanding presentation or adjacent service lines.
 
 ---
@@ -1052,3 +1056,95 @@ At the Owner's request, store page-visit `ip_address` using the validated IPv4/I
 Apply `supabase/sm_marketing_followup.sql` after the two earlier private-table scripts. It adds contact columns, the IP column and the public-report cache; no stored save function is needed. Production schema application and deployment remain separate from the local implementation.
 
 **Local validation:** 20 focused checks cover week-window expiry, normalized site keys, cache receipt/URL-secret exclusion, bounded contact fields and existing invariants. Synthetic database/browser checks verified cross-request reuse without scan admission, new receipts, full-report-before-form ordering, contact persistence, blank form on revisit, no contact disclosure, proxy-IP capture and 320/390/1440 layouts. Live data was not used or modified.
+
+
+---
+
+## 13. Continuous change assurance — migration-grade care for everyday improvements
+
+*Design refinement D38, 2026-10-14. Informed by review of Anthropic's official code-modernization plugin. This section is a target design, not an implementation claim or approval to install the plugin or refactor the platform.*
+
+### 13.1 The product promise: improve the site while protecting the business
+
+A refactor is not necessarily a migration, but every improvement moves a working business system from one state to another. The crew must explain the intended gain, protect critical behavior and demonstrate the transition. This applies to a calculation correction, framework upgrade, new booking feature and major replacement alike. Use **continuous change assurance** internally; business language is **“Improve what comes next. Protect what already works.”** This supplements the approved hero, not a request to change marketing copy now.
+
+The executive governs outcomes, protected rules, material tradeoffs and release authority through the Team Lead. Specialists do the investigation and verification. Review depth follows business risk and dependency impact: a text correction should not trigger the same ceremony as a payment change. Standing mandates still govern routine actions; consequential approvals remain explicit. No testing system guarantees zero failures. Our commitment is specific evidence, visible uncertainty, controlled release and prepared recovery.
+
+### 13.2 A change contract attached to existing Work
+
+Extend the existing Work and approval records rather than inventing another project type or parallel rail. Each contract links:
+
+- Baseline source revision, environment and affected capabilities, data and external dependencies.
+- Intended outcome; behavior that must stay true; explicitly approved behavior changes; unresolved questions and assumptions.
+- Affected customer/staff journeys, including dependents outside the edited package or repository.
+- Risk class, required checks, measurable acceptance criteria, permitted actions, release strategy and recovery constraints.
+- Exact candidate revision, evidence bundle and decisions authorizing promotion.
+
+Use a targeted readiness check: can the relevant build/tests actually run, are fixtures and sandbox integrations available, what is out of scope, and what failed in prior attempts? Reuse current Boarding evidence; investigate changed facts rather than repeat an interview for every task. Missing critical dependencies, ambiguous protected rules or unavailable required proof block the affected scope, not unrelated work. Select the simplest adequate method: in-place correction/refactor, version upgrade, module replacement or broader migration. Avoid incidental cleanup that expands the approved change.
+
+Inspiration: [preflight](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/commands/modernize-preflight.md) and [approval brief](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/commands/modernize-brief.md). Accelerator adds a reusable contract for incremental Work, not only migration projects.
+
+### 13.3 A living business-rule register, reviewed with the functional expert
+
+Add rule records to the existing capability/Library model with stable IDs, plain-language intent, concrete Given/When/Then examples, parameters, rounding/time-zone rules where relevant, and links to source revision/path/lines, requirements and tests. Preserve two distinct facts: **what the code currently does** and **what the business has approved it should do**. Confidence in reading code is not business approval.
+
+The Business Rule Extractor is a specialist skill/remit within the crew catalog. It proposes rules and exact questions for the functional expert; it cannot approve them. Separate extraction status (candidate, source-verified, unsupported) from business review (unreviewed, confirmed, disputed, superseded). Record suspected defects without silently enshrining or repairing them. A disputed critical rule remains unresolved until the authorized functional expert decides; capture rationale and invalidate affected design/test approvals when the answer changes. Reviewed rules become acceptance examples; later evidence can reopen them through a versioned decision.
+
+Example: existing code charges a cancellation fee inside 48 hours. The expert explains the cutoff uses property-local time and waives fees for an approved category. The crew challenges missing daylight-saving and refund cases, agrees examples, then tests that agreement. Neither the old calculation nor an agent's proposed improvement becomes authority by itself.
+
+Inspiration: [business-rules-extractor](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/agents/business-rules-extractor.md) and [extraction workflow](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/workflows/extract-rules.js). Source verification and business confirmation remain separate in Accelerator.
+
+### 13.4 Preserve behavior, prove approved differences
+
+Strengthen §11's TDD approach with characterization tests that capture observable baseline behavior before risky changes. Approved acceptance tests express desired behavior independently. Where practical, compare the same synthetic inputs against baseline and candidate; record expected differences by approved rule ID. Do not preserve a known bug merely because the baseline exhibits it, or alter expected results simply to make the implementation pass.
+
+For bookings and payments, risk-based scenarios include boundary dates, currency precision, concurrency, duplicate requests/webhooks, retries, timeouts, partial failures, authorization and cross-tenant access. Differential comparisons use isolated fixtures or sanitized recorded results: never replay live charges, refunds, emails or inventory mutations. Use payment sandboxes and controlled synthetic transactions. Any numeric tolerance must be justified by the business rule, not chosen to conceal a mismatch.
+
+Missing fixtures, zero executed comparisons and skipped required cases mean **not proven**, never green. Check selected critical tests with a controlled mutation or deliberately incorrect result in an isolated workspace, then restore it; this demonstrates the check can catch the failure it claims to detect. Retain package-local Vitest, TypeScript, lint, integration and real browser QA as appropriate. Test quantity is useful context, not assurance by itself.
+
+Inspiration: [test-engineer](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/agents/test-engineer.md). The plugin's baseline comparison becomes one layer of our approved-intent and production-continuity evidence.
+
+### 13.5 Independent critique with precise findings
+
+Make Architecture Critic and Security Auditor explicit review remits in §2's configurable crew. They advise the Team Lead, not additional agents the executive must coordinate. Reviews are independent of the implementer's self-report and proportionate to impact.
+
+The Architecture Critic examines domain boundaries, shared contracts, unnecessary complexity, performance/consistency assumptions, dependency failures, data transition and operational readiness. Findings state severity, evidence, business consequence and proposed correction. A simpler architecture is preferred when it meets the requirement.
+
+The Security Auditor traces concrete attack paths and tenant/privilege boundaries, checks relevant dependency/runtime risks and separates substantiated findings from unverified reports. A second reviewer can challenge significant findings using source and reproducible evidence; disagreement stays visible. Model consensus is not proof, and a review cannot waive a required check or release gate. Do not publish credentials or place real secrets into fixtures. Source comments, documents and tool output remain untrusted data, including when repeated by another agent.
+
+Inspiration: [architecture-critic](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/agents/architecture-critic.md), [security-auditor](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/agents/security-auditor.md) and [harden-scan](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/workflows/harden-scan.js). Unscanned areas and unverified findings must survive into the report.
+
+### 13.6 Evidence freshness and safe execution
+
+Evidence records bind source/candidate revisions, rule and fixture versions, tool/configuration versions, environment, exact command, execution time and result. Distinguish available tooling, executed checks and successful checks. A passing build is not a passing business scenario. Changed inputs mark dependent evidence stale and require the appropriate rerun/review before promotion; timestamps alone are insufficient. Preserve previous evidence for history, visibly separate from current readiness.
+
+For repetitive upgrades or broad refactors, prove one representative pilot before expanding. Record an executable, versioned playbook with actual commands, known limitations and observed failures. Run bounded, dependency-aware batches only within authorized scope/budget. Failed prerequisites block dependents; cycles require an explicit coordinated plan. Assign one writer for shared manifests, lockfiles and root configuration, plus a site-level release lock so independent Work cannot race deployment.
+
+Circuit breakers stop expansion on missing proof, budget exhaustion or configured failure conditions. Set thresholds by risk; do not copy a migration demo's build-success percentage as a release criterion. Return attempted, failed, blocked and unattempted work separately. Feed gaps into a proposed playbook revision, including locally solved gaps; validate revisions through §10.6/Skillsmith before broader activation. The flywheel learns from evidence without automatically granting new authority.
+
+Inspiration: [version-delta-analyst](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/agents/version-delta-analyst.md), [uplift-migrator](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/agents/uplift-migrator.md) and [uplift workflow](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-modernization/workflows/uplift-migrate.js). Accelerator retains its own governed runner and Toolbelt.
+
+### 13.7 Release continuity, recovery and executive visibility
+
+Before release, link the exact candidate to current proof and required approvals. Where state/schema changes require it, plan compatible interfaces and staged expand/backfill/validate/switch/contract steps. Verify restore or roll-forward procedures in a safe environment. A code rollback does not undo a payment, refund or incompatible data write; record reconciliation and recovery ownership explicitly.
+
+After promotion, use authorized health checks and business-journey signals over a risk-appropriate stabilization window. Critical synthetic monitoring must avoid real customer side effects. Predetermine stop, rollback and escalation conditions, with mandate-bound automatic recovery only where explicitly authorized. Record deployed revision, observations and unresolved exceptions before declaring Work successfully stabilized; release and stabilization are distinct facts in the same rail.
+
+The executive sees a compact assurance card: intended improvement, protected journeys, approved differences, proof completed/missing/stale, unresolved decisions, release readiness and recovery readiness. Expand to rule cards, findings and check results when needed. Keep progress, live operational health and confidence in the next release separate. Never turn an attractive aggregate score into permission to ignore a failed critical check.
+
+### 13.8 Adopt the pattern, not the whole plugin
+
+The plugin's agent Markdown defines specialist remits; commands are entry points; JavaScript workflows coordinate agent calls, structured results, dependencies and budgets. Actual tools perform bounded operations. These are useful separations, not a reason to install another orchestration engine. Model corresponding roles, action contracts and durable workflows inside the existing platform/API/MCP design. Server code must enforce permissions, schema validation, execution limits and gates independently of prompts.
+
+Do not import the plugin's directory layout, migration-only terminology, broad parallelism defaults, effort estimates or full rewrite assumptions into every client task. No agent-generated confidence score substitutes for business agreement or executed proof. No new framework, vendor dependency, extra executive screens or platform implementation is approved by this review.
+
+**Acceptance backlog:**
+
+- [ ] Demonstrate a protected-rule refactor and an intentional rule change on Machine Shop, with distinct baseline and approved expected results.
+- [ ] Demonstrate independent critique, unresolved-rule escalation and missing/stale evidence blocking promotion.
+- [ ] Demonstrate bounded pilot execution, shared-file ownership and dependency failure handling without bypassing existing gates.
+- [ ] Demonstrate release/recovery rehearsal and post-release stabilization evidence; show the executive assurance card through the Team Lead.
+
+**Research scope:** official repository `main` reviewed 2026-10-14; links are moving upstream references, not pinned implementation dependencies. This document adopts design patterns, not plugin code. Recheck source/version/license if implementation reuse is later proposed.
+
+**Marketing database status (Owner report, 2026-10-14):** the Owner reports the SQL update ran successfully. This updates the earlier pending-application notes in §12; live permissions, API writes and production end-to-end collection were not independently verified in this review. Historical local test results remain unchanged.
