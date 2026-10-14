@@ -41,7 +41,7 @@ export function FitScanTool({ initialUrl = "" }: { initialUrl?: string }) {
   const [loading, setLoading] = React.useState(false);
   const [context, setContext] = React.useState<BusinessContext>({ goal: "", mustPreserve: "", changeFrequency: "unknown" });
   const [draftContext, setDraftContext] = React.useState<BusinessContext>({ goal: "", mustPreserve: "", changeFrequency: "unknown" });
-  const [contact, setContact] = React.useState({ name: "", company: "", phone: "" });
+  const [contact, setContact] = React.useState({ name: "", company: "", email: "", phone: "" });
   const [saving, setSaving] = React.useState(false);
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
   const [saveError, setSaveError] = React.useState<string | null>(null);
@@ -58,7 +58,7 @@ export function FitScanTool({ initialUrl = "" }: { initialUrl?: string }) {
     setDraftContext({ goal: "", mustPreserve: "", changeFrequency: "unknown" });
     setSaveMessage(null);
     setSaveError(null);
-    setContact({ name: "", company: "", phone: "" });
+    setContact({ name: "", company: "", email: "", phone: "" });
     try {
       const res = await fetch("/api/fit-scan", {
         method: "POST",
@@ -78,6 +78,10 @@ export function FitScanTool({ initialUrl = "" }: { initialUrl?: string }) {
   async function savePerspective(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!result || saving) return;
+    if (!contact.name.trim() || !contact.company.trim()) {
+      setSaveError("Enter your name and company before saving.");
+      return;
+    }
     setContext({ ...draftContext });
     setSaveMessage(null);
     setSaveError(null);
@@ -119,7 +123,7 @@ export function FitScanTool({ initialUrl = "" }: { initialUrl?: string }) {
         className="mx-auto flex w-full max-w-3xl flex-col gap-5"
       >
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Input value={url} onChange={(e) => { setUrl(e.target.value); if (result) { setResult(null); setContext({ goal: "", mustPreserve: "", changeFrequency: "unknown" }); setDraftContext({ goal: "", mustPreserve: "", changeFrequency: "unknown" }); setSaveMessage(null); setSaveError(null); setContact({ name: "", company: "", phone: "" }); } }} placeholder="yourapp.com" aria-label="Website address" className="h-13 min-w-0 flex-1 text-base" disabled={loading || saving} />
+          <Input value={url} onChange={(e) => { setUrl(e.target.value); if (result) { setResult(null); setContext({ goal: "", mustPreserve: "", changeFrequency: "unknown" }); setDraftContext({ goal: "", mustPreserve: "", changeFrequency: "unknown" }); setSaveMessage(null); setSaveError(null); setContact({ name: "", company: "", email: "", phone: "" }); } }} placeholder="yourapp.com" aria-label="Website address" className="h-13 min-w-0 flex-1 text-base" disabled={loading || saving} />
           <Button type="submit" variant="gold" size="lg" disabled={loading || saving || !url.trim()}>
             {loading ? <Loader2 className="size-4 animate-spin" /> : <ScanSearch className="size-4" />}
             {loading ? "Reviewing…" : "Discover my starting point"}
@@ -147,16 +151,19 @@ export function FitScanTool({ initialUrl = "" }: { initialUrl?: string }) {
             <form onSubmit={savePerspective} className="flex flex-col gap-4">
         <fieldset className="rounded-2xl border border-obsidian-border bg-obsidian-2/50 p-5" disabled={saving}>
           <legend className="px-2 text-sm font-medium text-white">Step 2 · Add your perspective</legend>
-          <p className="mb-5 text-sm leading-relaxed text-fog">You have seen the public report. Add your business context and optional contact details, then submit it separately to update your starting record without repeating the scan. Choose Save my perspective to store your comments and contact details privately with your own review in Supabase; the AI analyst does not receive them.</p>
+          <p className="mb-5 text-sm leading-relaxed text-fog">You have seen the public report. Add your business context, name, company and email (required); phone is optional, then submit it separately to update your starting record without repeating the scan. Choose Save my perspective to store your comments and contact details privately with your own review in Supabase; the AI analyst does not receive them.</p>
           <div className="flex flex-col gap-5">
             <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-              <label htmlFor="perspective-name" className="flex min-w-0 flex-col gap-2 text-sm text-white">Your name (optional)
-                <Input id="perspective-name" autoComplete="name" maxLength={120} value={contact.name} onChange={(e) => { setContact((c) => ({ ...c, name: e.target.value })); setSaveMessage(null); }} />
+              <label htmlFor="perspective-name" className="flex min-w-0 flex-col gap-2 text-sm text-white">Your name (required)
+                <Input id="perspective-name" required autoComplete="name" maxLength={120} value={contact.name} onChange={(e) => { setContact((c) => ({ ...c, name: e.target.value })); setSaveMessage(null); }} />
               </label>
-              <label htmlFor="perspective-company" className="flex min-w-0 flex-col gap-2 text-sm text-white">Company (optional)
-                <Input id="perspective-company" autoComplete="organization" maxLength={200} value={contact.company} onChange={(e) => { setContact((c) => ({ ...c, company: e.target.value })); setSaveMessage(null); }} />
+              <label htmlFor="perspective-company" className="flex min-w-0 flex-col gap-2 text-sm text-white">Company (required)
+                <Input id="perspective-company" required autoComplete="organization" maxLength={200} value={contact.company} onChange={(e) => { setContact((c) => ({ ...c, company: e.target.value })); setSaveMessage(null); }} />
               </label>
-              <label htmlFor="perspective-phone" className="flex min-w-0 flex-col gap-2 text-sm text-white sm:col-span-2">Phone number (optional)
+              <label htmlFor="perspective-email" className="flex min-w-0 flex-col gap-2 text-sm text-white">Email (required)
+                <Input id="perspective-email" required type="email" autoComplete="email" maxLength={254} value={contact.email} onChange={(e) => { setContact((c) => ({ ...c, email: e.target.value })); setSaveMessage(null); }} />
+              </label>
+              <label htmlFor="perspective-phone" className="flex min-w-0 flex-col gap-2 text-sm text-white">Phone number (optional)
                 <Input id="perspective-phone" type="tel" autoComplete="tel" maxLength={50} value={contact.phone} onChange={(e) => { setContact((c) => ({ ...c, phone: e.target.value })); setSaveMessage(null); }} />
               </label>
             </div>
@@ -180,7 +187,7 @@ export function FitScanTool({ initialUrl = "" }: { initialUrl?: string }) {
               </Button>
               {saveMessage && <p role="status" className="text-sm text-signal">{saveMessage}</p>}
               {saveError && <p role="alert" className="text-sm text-gold-bright">{saveError}</p>}
-              {result.review && <p className="text-xs text-mist">Public review saved. Submitted comments are linked to this review, not automatically to an email or walkthrough request. <a href="/legal/privacy" className="underline">How we use this information</a></p>}
+              {result.review && <p className="text-xs text-mist">Public review saved. Submitted comments are linked to the name, company and email you provide with this review. A walkthrough request is separate. <a href="/legal/privacy" className="underline">How we use this information</a></p>}
             </form>
           </div>
       {/* Lead capture */}

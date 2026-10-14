@@ -22,6 +22,7 @@ export async function POST(request: Request) {
         change_frequency: input.changeFrequency,
         contact_name: input.name || null,
         company_name: input.company || null,
+        contact_email: input.email,
         phone_number: input.phone || null,
         perspective_saved_at: now.toISOString(),
       })

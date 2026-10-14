@@ -1148,3 +1148,8 @@ Do not import the plugin's directory layout, migration-only terminology, broad p
 **Research scope:** official repository `main` reviewed 2026-10-14; links are moving upstream references, not pinned implementation dependencies. This document adopts design patterns, not plugin code. Recheck source/version/license if implementation reuse is later proposed.
 
 **Marketing database status (Owner report, 2026-10-14):** the Owner reports the SQL update ran successfully. This updates the earlier pending-application notes in §12; live permissions, API writes and production end-to-end collection were not independently verified in this review. Historical local test results remain unchanged.
+
+
+### 13.9 Starting-point contact requirement correction
+
+Owner direction: Step 2 requires name, company and email; phone remains optional. Enforce trimmed nonempty name/company and bounded, syntactically valid email in the save API as well as the form. Add private `contact_email` via `supabase/sm_perspective_email.sql`; retain nullable historical/URL-only scan rows. This supersedes optional-name/company wording in D37/§12.3. Business-email/domain and ownership verification remain future work. No contact information enters the shared report cache.

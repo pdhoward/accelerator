@@ -45,6 +45,8 @@ The report cache uses a normalized site hostname (www and non-www share a key) a
 
 Every reuse still creates a separate review record/token, and the form starts blank. The cache stores public report data only, never contact details, business comments or private receipts. Historical summary-only records cannot reconstruct earlier reports; one new full report must be saved before reuse begins.
 
-The entire report is presented before Step 2; name, company and phone are optional and saved by the perspective API to that visitor's review only. They do not enter the shared report cache or get shown to another visitor.
+The entire report is presented before Step 2; name, company and email are required on submission; phone is optional and saved by the perspective API to that visitor's review only. They do not enter the shared report cache or get shown to another visitor.
 
-Useful reporting fields are now `contact_name`, `company_name`, `phone_number` on `sm_starting_point_reviews`, and `ip_address` on `sm_page_visits`. Access remains private to authorized operators. Apply retention and deletion procedures to IP/contact data as well as comments. No production migration was applied by the coding agent.
+Useful reporting fields are now `contact_name`, `company_name`, `contact_email`, `phone_number` on `sm_starting_point_reviews`, and `ip_address` on `sm_page_visits`. Access remains private to authorized operators. Apply retention and deletion procedures to IP/contact data as well as comments. No production migration was applied by the coding agent.
+
+Apply `supabase/sm_perspective_email.sql` after the earlier scripts before deploying the required-email form. Existing scan rows remain valid; the API requires name/company and a syntactically valid email for new perspective submissions. Business-domain or email-ownership verification is a future enhancement.
