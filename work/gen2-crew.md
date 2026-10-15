@@ -1,6 +1,6 @@
-# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.9)
+# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.12)
 
-*Strategic Machines · foundation 2026-10-10 · revised 2026-10-14 · **status: approved product-design direction; documentation and marketing-site implementation authorized. Platform/runner implementation still requires the Owner's separate approval after Claude's current work is reconciled.** · repo: `accelerator-platform`*
+*Strategic Machines · foundation 2026-10-10 · revised 2026-10-15 · **status: Owner authorized staged platform construction on 2026-10-15, beginning with Executive Briefing, Delivery Studio, expandable Mission Control/Proof Lab and recorded replay. Existing gates and production-action boundaries remain.** · repo: `accelerator-platform`*
 *Implements the decisions in [newvision.md](newvision.md) §9–10. Refines [flywheel.md](flywheel.md) (the rail stays) and replaces [accelerator-control-room.md](accelerator-control-room.md) §5 (the 15 pages). Extends [accounts-auth-admin.md](accounts-auth-admin.md) with the partner layer (§5).*
 
 **How to use this doc:**
@@ -10,6 +10,7 @@
 - §7 is the decisions log.
 - §8 is the action list. Tick items there as they're done.
 - §9 covers agent interfaces: APIs-first MCP (WebMCP optional), Stripe, the Decide layer (Jev), understanding artifacts (Karpathy's ladder), live voice agents and generative forms.
+- §14 defines approved staged execution/recovery protocols; §15 records UX alternatives for review, not a selected interface.
 - §13 defines continuous change assurance, source-linked business rules and migration-grade safeguards for everyday improvements.
 - §12 defines the upgraded public starting-point assessment and the boundary between public technical evidence and business intent.
 - §11 records the 2026-10-14 decisions: collaborative requirements and TDD, synthetic QA, context selection, event-driven crews, saved threads and executive marketing.
@@ -88,6 +89,30 @@ The MCP door follows the same tenancy rule as REST: **the tenant comes from the 
 
 ### 1.4 The bonus: "Use Claude, connected to your Accelerator"
 Each site also gets a **member-facing MCP endpoint**: read the Library, ask about status, file a request and approve a card. A client can connect their *own* Claude (claude.ai, Claude Desktop) or ChatGPT to their Accelerator and say "what did the crew ship this week?" or "add a request: the search box is too small on phones". **This turns the "why not just use Claude?" objection into a feature:** use Claude, and connect it to the memory, hands and safety it doesn't have (§3.1). The tools are restricted to requests and reads, and every gate still needs the Control Room.
+
+### 1.5 Three onboarding paths for connected systems (D40)
+
+*Owner-approved design, 2026-10-15. MCP is an extensibility option, not a requirement clients must implement before onboarding. This is target design; the governed MCP Toolbelt remains implementation backlog.*
+
+| Path | Client provides | Accelerator/partner provides |
+|---|---|---|
+| Supported integration | Approved account connection and scoped authorization | Reviewed connector configuration and approved tool enablement |
+| Existing internal API | API contract, authenticated connectivity, system owner and sandbox/test access | A governed adapter exposing the required operations through the Toolbelt |
+| Proprietary system via MCP | A client- or partner-built MCP server with documented, bounded business operations | Server/tool review, governed connection, validation and approved enablement |
+
+Prefer an existing supported connector or internal API before asking a client to build anything. Client ownership/hosting of an internal connector does not change Accelerator's hosted-only commercial model. Reachability and authentication for private networks must be established during Boarding; an MCP endpoint is not automatically reachable or trusted.
+
+**Two distinct directions:** outbound crew access is **agent → Accelerator Toolbelt → approved connector/API/MCP server → connected system**. Later inbound access is **client's own agent → Accelerator member-facing MCP endpoint → permitted platform capabilities** (§1.4). Connecting an external server does not grant its agents access to Accelerator. Neither direction changes client gates; member-facing scope starts with permitted knowledge/status reads and proposed work, with approvals remaining in the Control Room under the existing design.
+
+**Review and enablement contract:** identify the owning tenant/site, system owner, approved purpose, environment, data scope and permitted read/write operations. Review tool input/output schemas, side effects, source provenance, timeout/rate/spend limits, failure behavior, operation identifiers and uncertain-outcome reconciliation (§14). Authenticate both the connection and its intended service; enforce resolved tenant scope and invocation-time permissions in the Toolbelt. An external server's discovery responses or annotations do not establish authority. Discovered tools arrive disabled; changed tool contracts require review before activation. Preserve sanitized audit/evidence receipts, explicit revocation and a tested outage/recovery path. Start read-only where sufficient; protected writes require existing Owner gates.
+
+Prefer narrow business operations such as `inventory.check_availability` and `reservations.get_policy` over unrestricted SQL, shell or environment access. Database adapters use environment-specific, least-privilege connections, bounded queries and approved data access; database connectivity alone does not authorize production writes. Treat returned text/content as untrusted evidence, never instructions or an expansion of authority.
+
+**Environment and secret boundary:** agents may inspect variable names, requirements and configured/missing status. Secret values stay in the vault and are attached server-side for an authorized operation, without returning them to the model. Do not provide a general `get_all_env` or secret-reading tool. An isolated application sandbox may require limited test-environment credentials to boot and run checks; these must not become production credentials or appear in prompts, logs, replay or exports. The current runner's vault/envmachine transition is incomplete; this section does not claim it has shipped.
+
+**Boarding acceptance:** the Connector records the selected path, owner and reviewed contract, proves authenticated connectivity and tenant isolation, runs synthetic sandbox success/denial/timeout/duplicate-outcome cases as applicable, and presents the enablement diff to the authorized approver. Record unsupported capabilities and missing prerequisites rather than implying a connection is ready. Apply the same controls to internal platform tools and external services such as Stripe; payment exercises use approved test mode, not real transactions.
+
+Client-facing description: **“Connect the systems you already use. For proprietary systems, bring an API or MCP server—we'll connect it to your crew under your permissions and approval rules.”**
 
 ---
 
@@ -190,6 +215,8 @@ Boarding replaces the $5–20K custom installation (except for the premium manag
 | 4. **Assemble** | Skillsmith | Drafts the site's crew and first site skills; the operator reviews them in the Crew Lab | — |
 | 5. **Stabilize** | Builder + Judge + Upkeep | Fixes the Checkup's critical findings, adds a baseline test suite and branch protection, and proves rollback, all through the normal rail | Approves on the rail |
 | 6. **Agreement** | Librarian | The one-page Agreement (flywheel.md §3) plus the skills-sharing clause | Signs |
+
+**Connection selection:** Connect/Survey explicitly chooses among the three paths in §1.5; no client is required to build an MCP server when a supported integration or suitable API exists. Connector readiness and enablement need the recorded acceptance evidence in that section.
 
 **Machine Shop is the first site through Boarding.** We board it as if it were a paying client and log every point where a human had to step in. Each of those points becomes a backlog item for the Boarding crew.
 
@@ -472,6 +499,8 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 
 | D37 | 2026-10-14 | **Report-first follow-up:** full public report before blank Step 2, with optional name/company/phone. Reuse a persisted public site report for seven days with original date; each visitor gets a separate private review. Store request IP with page visits as explicitly requested; update privacy disclosure | §12.3 |
 | D38 | 2026-10-14 | **Continuous change assurance:** every Work item records preserved behavior, approved changes, unknowns and proportionate evidence for the transition. Source-linked rules, characterization, independent critique, evidence freshness, bounded execution and release/recovery checks extend the existing rail; no extra executive coordination or permission by implication | §13 |
+| D39 | 2026-10-15 | **Reliable execution protocols:** adopt all six harness refinements: recoverable checkpoints, uncertain-outcome reconciliation, typed recovery, versioned execution maps, evidence-derived change receipts and evaluation/simplification of the harness itself. Implement in stages within the existing architecture | §14 |
+| D40 | 2026-10-15 | **Three connection paths:** supported integration, governed adapter for an existing internal API, or reviewed client/partner MCP server. MCP server development is not an onboarding prerequisite. Outbound/inbound directions remain distinct; Toolbelt policy, secret isolation, scoped enablement and existing gates apply to every path | §1.5 |
 
 ---
 
@@ -563,6 +592,9 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] Define typed capability, evidence, meeting-event and decision contracts plus scoped access and idempotency rules.
 - [ ] Establish relevant lint/typecheck/Vitest/integration/browser-QA checks and independent acceptance review; record a baseline.
 - [ ] Verify release approvals apply to the exact candidate; invalidation, concurrency and recovery behavior are explicit.
+- [ ] Implement §1.5 connection onboarding: three paths, reviewed contracts, credential/connectivity boundaries, disabled-by-default tools and sandbox acceptance evidence.
+- [ ] Stage §14 protocols across G2.1/G2.2/G2.3/G2.4/G2.5; demonstrate interrupted execution, ambiguous external outcomes and bounded typed recovery before expanding autonomous execution.
+- [ ] Review §15 UX alternatives with the Owner before selecting or implementing new presentation modes.
 - [ ] Define §13 change contracts, rule-review states, dependency impact and evidence invalidation; prove missing/stale checks block promotion.
 - [ ] Demonstrate characterization versus approved changes, independent architecture/security review, bounded pilot execution and tested recovery on Machine Shop.
 - [ ] Conduct the §10.7 business-user walkthrough and partner review before expanding presentation or adjacent service lines.
@@ -757,6 +789,8 @@ Existing cadence, AC levels and design/plan/Try/release gates remain enforced. T
 Escalate for changed scope, budget exposure, missing strategic information, contradictory requirements, blocked dependencies, material architecture tradeoffs or protected money/data/auth/security actions. Each decision card states: recommendation, alternatives, business effect, cost/risk, evidence, who can decide and what that decision authorizes. Deferring has an explicit consequence. Partners can prepare decisions but cannot acquire client gates through the Team Lead.
 
 ### 10.2 A shared meeting workspace
+
+**Presentation review (2026-10-15):** retain the lead-led interaction and shared artifacts. The Zoom-like meeting layout is one candidate lens, not a required default for every role. §15 proposes alternate views over the same records; final selection remains open.
 
 Evolve the existing Work Room: keep the persistent conversation and artifacts, then add lead-led specialist contributions and a shared presentation surface. This is a meeting metaphor over real asynchronous jobs, not a requirement to run all specialists continuously.
 
@@ -1153,3 +1187,105 @@ Do not import the plugin's directory layout, migration-only terminology, broad p
 ### 13.9 Starting-point contact requirement correction
 
 Owner direction: Step 2 requires name, company and email; phone remains optional. Enforce trimmed nonempty name/company and bounded, syntactically valid email in the save API as well as the form. Add private `contact_email` via `supabase/sm_perspective_email.sql`; retain nullable historical/URL-only scan rows. This supersedes optional-name/company wording in D37/§12.3. Business-email/domain and ownership verification remain future work. No contact information enters the shared report cache.
+
+
+---
+
+## 14. Reliable execution protocols — approved, staged implementation
+
+*D39, Owner-approved design refinement, 2026-10-15. All six harness-review recommendations are incorporated. This authorizes design changes, not platform coding or deployment. Existing gates and implementation approval boundaries remain.*
+
+### 14.1 Recoverable checkpoints and explicit execution state
+
+Persist a run's Work/site/mandate identity, workflow version, active step, completed action receipts, artifact revisions, pending operations, remaining budget and next permitted transitions. Keep checkpoint state separate from conversational summaries. A checkpoint is an authoritative execution record, not an agent's recollection.
+
+Use durable step transitions and a single active worker claim with expiry/renewal and an execution generation that prevents an expired worker from committing further actions. Restart must revalidate current permissions, mandate, candidate, prerequisites and budgets. Resume from a verified checkpoint; do not replay completed side effects to reconstruct context. Pause/cancellation stops new dispatch; in-flight operations require reconciliation and explicit status rather than an instant “cancelled” claim. Authority changes must affect subsequent tool invocations even if the worker retains old context.
+
+### 14.2 Unknown outcomes are not failed actions
+
+External operations carry stable operation identifiers/idempotency keys where the provider supports them. Record intent before dispatch and retain provider request/operation IDs and sanitized receipts. Distinguish pending, confirmed successful, confirmed failed and outcome unknown. A timeout after dispatch does not prove failure.
+
+Before retrying an uncertain write/deployment, query provider state or reconcile by a reliable correlation mechanism. If no safe determination is possible, block dependent effects and escalate. Do not promise exactly-once delivery across arbitrary connectors; local deduplication cannot guarantee remote behavior. A recovery attempt retains the original operation identity when appropriate, rather than creating a second independent action.
+
+### 14.3 Failure classes choose bounded recovery
+
+| Failure class | Permitted response |
+|---|---|
+| Temporary transport/provider failure | Bounded backoff with jitter, honoring provider limits; reconcile first if a side effect may have occurred |
+| Invalid arguments or schema mismatch | Return structured field errors; correct within scope, then revalidate |
+| Missing/stale context or prerequisites | Retrieve the named source or refresh readiness; invalidate affected assumptions/proof |
+| Failed acceptance check | Inspect the actual failure and propose a scoped repair; never change expectations merely to pass |
+| Permission/gate denial | Stop the protected action; surface the required authorized decision or valid alternative; never retry to bypass policy |
+| Conflicting requirements | Request the designated decision owner's resolution |
+| Repeated unchanged failure, exhausted budget or lost execution claim | Stop dispatch and return checkpoint, evidence and escalation reason |
+
+Enforce attempt, elapsed-time and spend limits in the server/runner, including across restarts and child jobs. Record failure class, selected recovery and relevant changed condition. Transient retries can be justified by elapsed backoff; deterministic repeated failures need changed inputs or a new approach. Recovery cannot widen the mandate.
+
+### 14.4 A versioned site execution map
+
+Boarding maintains a concise map of authoritative business rules, architecture/module boundaries, relevant paths, validated build/test commands, environment prerequisites, dependencies, prohibited targets and release policy. Bind it to source/configuration versions and record known gaps. Resolve precedence explicitly when instructions conflict; unresolved authority cannot be repaired by choosing the most convenient document.
+
+Jobs receive the relevant map slice first and retrieve detailed sources progressively. Pin current mandate, protected rules and action receipts; source-linked context remains recoverable. Revalidate stale commands and environment assumptions rather than trusting an old successful session. Never include production secrets. This extends §11.3 context handling and §13.2 readiness, not another memory database.
+
+### 14.5 Evidence-derived change receipts
+
+Compile one standard receipt from durable records: objective and scope; changed artifact/candidate references; checks actually executed and their outcomes; unverified/stale areas; decisions and authority; residual risks; external operation outcomes; and the next permitted action. Include run, Work and evidence links plus schema version. Preserve earlier receipts; new evidence creates a new version.
+
+A model may explain the receipt but cannot manufacture passing statuses. Mask sensitive data and apply tenant permissions. Reuse the same receipt for executive assurance cards, specialist handoffs, exports and restart context. A failed or interrupted run also produces a receipt; a receipt is not synonymous with successful completion.
+
+### 14.6 Evaluate and simplify the harness
+
+Extend Crew Lab evaluation beyond skill wording to routing, context selection, tool contracts, recovery, checkpoints and policy enforcement. Exercise synthetic interruptions before/after dispatch, duplicate delivery, expired mandates/tokens, concurrent claims, unavailable tools/providers, lost responses and budget exhaustion. Use isolated environments; do not inject failures into live client transactions.
+
+Measure first-pass acceptance, recovery success, repeat failures, unsupported completion claims, human review/intervention minutes, total run cost/latency and overhead by component, for comparable work with sample sizes. Report money and human time separately rather than adding incompatible units into a misleading ratio. Test candidate changes on replay and holdout cases; non-negotiable safety invariants remain release conditions.
+
+Each significant failure receives diagnosis; not every failure warrants permanent infrastructure. Associate added controls with the failure they prevent, maintenance owner and evidence of benefit. Periodically propose retirement or simplification of obsolete workarounds. Changes follow existing evaluation, tier approval and rollback; safety gates cannot be removed as a routine optimization.
+
+### 14.7 Graphs and implementation stages
+
+Maintain distinct typed relationships: **execution graph** (steps, dependencies, handoffs, approval waits and bounded repair loops) and **knowledge/impact graph** (capabilities, rules, assets, tests, evidence and decisions). References connect them. The existing rail remains the governing lifecycle. Deterministic state transitions authorize actions; graph edges or natural-language messages do not grant permissions. Version workflows for running jobs; migrate/checkpoint them explicitly rather than silently changing their meaning. A graph database or new orchestration framework is not required by this design.
+
+| Stage | Additions within existing phases | Acceptance evidence |
+|---|---|---|
+| A — G2.1 baseline and G2.2 runner/Toolbelt | Checkpoints, claim ownership, operation identity/outcome states, typed failure handling and budgets | Terminate/restart a worker; lose an external response; deliver a job twice. No duplicate confirmed effect, stale worker action or false completion; unknowns remain visible |
+| B — G2.2/G2.3 and capability links in G2.3a | Versioned execution maps, graph/state contracts, trace correlation and receipt schema | Restore correct context after interruption; changed mandate/source blocks stale action; trace and receipt reconstruct the run without secrets |
+| C — G2.4 executive presentation | Receipt/assurance cards, pause/recovery states and role-appropriate drill-down | User understands what happened, what remains unproven and what decision is needed without coordinating agents |
+| D — G2.5 evaluated learning | Harness fault scenarios, overhead measurement and reviewed simplification | A proposed harness improvement passes replay/holdout and later measurement without weakening invariants |
+
+Keep scope bounded: implement the smallest reliable path first, then extend it as capabilities come online. Do not delay core safety protocols until visual polish or advanced learning features.
+
+---
+
+## 15. UX exploration — several lenses, one governed workspace
+
+*Owner-requested exploration, 2026-10-15. These are proposals for review, not approval of a new UI architecture or implementation. Preserve the four-screen information architecture and lead-led governance. The earlier shared-meeting concept remains available for comparison.*
+
+**Hypothesis:** make the work and proof the main stage, with the crew visibly contributing around them. A meeting is valuable for discussion and decisions, but an always-visible grid of talking agents may obscure the actual result. Specialists run when needed; none must continuously listen or consume model tokens merely to appear present.
+
+| Candidate lens | Primary audience and task | Main surface | Crew visibility |
+|---|---|---|---|
+| Executive Briefing | Executive/partner governs outcomes | Business vital signs, Team Lead briefing, decisions and latest assurance receipt | Compact roster with real task/blocker states; expand relevant specialist contribution |
+| Delivery Studio | Cross-functional review of one improvement | Large artifact/preview canvas, before/after, acceptance criteria and decision controls | Lead conversation beside the artifact; specialist findings attached to the work |
+| Mission Control | Operator/developer supervises execution | Dependency graph, active step, queue, budgets, failures and recovery controls | Event-backed handoffs and named jobs, expandable execution trace |
+| Design Studio | Designer/functional expert resolves experience | Journey map, alternatives, responsive previews and annotated feedback | Designer leads the artifact discussion while Team Lead retains coordination |
+| Proof Lab | Tester/reviewer evaluates readiness | Requirement-to-test matrix, synthetic scenarios, differences and evidence gaps | QA findings linked to exact candidate and specialist responses |
+| Crew Meeting | Collaborative planning or a consequential decision | Shared stage, readable transcript and optional participant tiles/voice | Invited contributions, with accurate presence and no fabricated cross-talk |
+
+A possible **presentation registry** stores lens ID/version, supported tasks and artifact types, suggested audience, required data, accessibility/fallback behavior and allowed action bindings. Roles suggest defaults; users with access can choose appropriate lenses. A lens never grants a role or permission. Start with one common workspace and a few layouts; do not build six separate products. Context, drafts, artifact identity and pending decisions survive lens changes; site changes remain isolated.
+
+**Live execution as a useful visual:** optionally show a compact crew activity ribbon and an expandable graph where real dispatch, tool completion, handoff, test and approval events animate. Each event links to evidence, has time/sequence and supports reconnect/deduplication. Distinguish queued, running, waiting for provider, blocked, failed and complete. Quiet periods remain quiet; no artificial lightning, speaking avatars or claimed speed. A selectable recorded replay can compress time, clearly labelled as replay rather than live activity. Reduced motion, pause, keyboard use and text equivalents are required.
+
+**Model visibility:** an Engineer/Crew Lab inspector can show actual provider/model version by job, configured selection reason, measured latency and recorded token/cost information, with explicit unavailable/estimated labels. Show a real handoff when configuration routes a later job to a different model. Model changes are versioned configuration proposals, subject to approved providers/data policy, budget, evaluation and role authority; no arbitrary mid-operation toggle or submission of client data to an unapproved provider. Executives see outcome, spend and readiness by default, not a token-burning contest. Throughput, agent chatter and animation are not proof of quality.
+
+**Recommended prototype order, pending Owner choice:** compare Executive Briefing plus Delivery Studio against the meeting-first layout using the same Machine Shop scenario and data. Add Mission Control/Proof Lab drill-down when real execution/evidence exists; defer rich avatars and optional voice. Evaluate decision comprehension, artifact discovery, approval mistakes, time to find a blocker and whether the user feels compelled to manage agents. Visual engagement is welcome when it makes the real work legible.
+
+
+## 16. First platform construction slice — 2026-10-15
+
+The Owner selects Executive Briefing plus Delivery Studio, expandable Mission Control/Proof Lab, event-backed visual activity and clearly labelled replay. This resolves the initial presentation choice in §15 and authorizes staged platform construction. Earlier statements requiring separate approval to begin platform coding are historical and superseded by this authorization; client gates and authorization for live consequential actions remain unchanged.
+
+Implemented locally: typed pure-domain briefing/studio projections; tenant-authorized private GET APIs; typed API client; Executive Briefing replacing the legacy Bridge dashboard; Delivery Studio retaining existing action controls and conversation/artifacts; role-mapped job activity; expandable trace and proof receipt; frozen read-only replay with playback controls and reduced-motion support. Keyless demo fixtures are explicitly synthetic, with mutation controls disabled; database-backed reads use real Work records. Tests cover projection invariants and endpoint permissions; retained browser QA exercises the synthetic local experience.
+
+This is partial G2.1a/G2.4 presentation work, not completion of either phase. Configurable specialists, full capability inventory, mandates, scoped Toolbelt, complete historical event persistence, provider usage receipts and §14 durable execution/recovery protocols remain backlog. Existing job model metadata does not prove a provider invocation. See `accelerator-platform/docs/workspace-first-slice.md` for architecture, evidence limits and reviewer commands. No platform migration, production deployment or real agent job was executed as part of this slice. Machine Shop's live delivery-loop verification remains the next operational reminder.
+
+Owner reports the required-email marketing follow-up setup/test complete (2026-10-15); item 1 from the morning checklist is closed by Owner report, without implying independent live verification here.
