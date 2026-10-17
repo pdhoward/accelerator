@@ -1,6 +1,6 @@
-# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.12)
+# Gen 2 — Executive Governance, Expert Crew, Capability Inventory (Design v0.13)
 
-*Strategic Machines · foundation 2026-10-10 · revised 2026-10-15 · **status: Owner authorized staged platform construction on 2026-10-15, beginning with Executive Briefing, Delivery Studio, expandable Mission Control/Proof Lab and recorded replay. Existing gates and production-action boundaries remain.** · repo: `accelerator-platform`*
+*Strategic Machines · foundation 2026-10-10 · revised 2026-10-17 · **status: Owner authorized staged platform construction on 2026-10-15, beginning with Executive Briefing, Delivery Studio, expandable Mission Control/Proof Lab and recorded replay. Existing gates and production-action boundaries remain.** · repo: `accelerator-platform`*
 *Implements the decisions in [newvision.md](newvision.md) §9–10. Refines [flywheel.md](flywheel.md) (the rail stays) and replaces [accelerator-control-room.md](accelerator-control-room.md) §5 (the 15 pages). Extends [accounts-auth-admin.md](accounts-auth-admin.md) with the partner layer (§5).*
 
 **How to use this doc:**
@@ -10,6 +10,7 @@
 - §7 is the decisions log.
 - §8 is the action list. Tick items there as they're done.
 - §9 covers agent interfaces: APIs-first MCP (WebMCP optional), Stripe, the Decide layer (Jev), understanding artifacts (Karpathy's ladder), live voice agents and generative forms.
+- §17–§20 (2026-10-17) define the workbench fast path (complexity tiers and the TDD plane), the Change Ledger, the Cockpit and domain packs.
 - §14 defines approved staged execution/recovery protocols; §15 records UX alternatives for review, not a selected interface.
 - §13 defines continuous change assurance, source-linked business rules and migration-grade safeguards for everyday improvements.
 - §12 defines the upgraded public starting-point assessment and the boundary between public technical evidence and business intent.
@@ -501,6 +502,13 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D38 | 2026-10-14 | **Continuous change assurance:** every Work item records preserved behavior, approved changes, unknowns and proportionate evidence for the transition. Source-linked rules, characterization, independent critique, evidence freshness, bounded execution and release/recovery checks extend the existing rail; no extra executive coordination or permission by implication | §13 |
 | D39 | 2026-10-15 | **Reliable execution protocols:** adopt all six harness refinements: recoverable checkpoints, uncertain-outcome reconciliation, typed recovery, versioned execution maps, evidence-derived change receipts and evaluation/simplification of the harness itself. Implement in stages within the existing architecture | §14 |
 | D40 | 2026-10-15 | **Three connection paths:** supported integration, governed adapter for an existing internal API, or reviewed client/partner MCP server. MCP server development is not an onboarding prerequisite. Outbound/inbound directions remain distinct; Toolbelt policy, secret isolation, scoped enablement and existing gates apply to every path | §1.5 |
+| D41 | 2026-10-17 | **Complexity tiers replace the one-size rail:** Low, Medium and High, recommended by the platform against expert-agent capability and run length and confirmed or changed by the person. Low ships with no client decision; Medium needs the Brief and Ship it; High keeps the full gates. Protected risk sets a High floor; escalation only goes up. Cadence retired | §17.2 |
+| D42 | 2026-10-17 | **The TDD plane:** every shipment, every tier, passes tests-first step checks, Prove on the exact candidate and the release verdict, enforced by the API. Stale proof never ships | §17.3 |
+| D43 | 2026-10-17 | **Chat is the control surface:** the lead acts within the tier's authority; decisions are cards in the conversation; typed approval is a version-bound typed server action when exactly one eligible decision is pending; Owner-gated decisions need the button plus confirm; pause from chat. Medium's plan is crew-internal (one Brief approval) | §17.4 |
+| D44 | 2026-10-17 | **Standing approval for Medium:** optional "ship automatically when proof is green", off by default, never on High, cleared by escalation | §17.5 |
+| D45 | 2026-10-17 | **Change Ledger, GitHub stays:** adopt Scion/gitai patterns (ordered change log, land lock with compare-and-swap, API-first code reads, per-agent repo policies, conflict resolution) over git and the client's GitHub. Revisit a server-side VCS only on measured triggers | §18 |
+| D46 | 2026-10-17 | **The Cockpit:** a central conversation widget with OpenAI live voice and text borrowed from Machine Shop, a larger docked viewport, streaming everywhere, summaries first, and an instrument panel whose every reading is sourced and opens its evidence | §19 |
+| D47 | 2026-10-17 | **Domain packs:** the client picks a domain at subscription; packs carry vocabulary, skills, decision points, complexity hotspots, capability/journey/KPI templates and test scenarios. Skill tiers become crew → domain → partner → company → site. First domains: Commerce (Machine Shop) and Hospitality (Cypress knowledge, never a test target) | §20 |
 
 ---
 
@@ -599,6 +607,18 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] Demonstrate characterization versus approved changes, independent architecture/security review, bounded pilot execution and tested recovery on Machine Shop.
 - [ ] Conduct the §10.7 business-user walkthrough and partner review before expanding presentation or adjacent service lines.
 
+
+### 8.8 Workbench fast path, Change Ledger, Cockpit and domains (§17–§20)
+- [ ] **F1** complexity tiers in the domain (floors, escalation, rubric, structured assessment, next automatic action); Low ships with no decision through the TDD plane; Medium Brief + Ship it + optional standing approval; High keeps the gates; cadence retired; migration `0008_complexity_tiers.sql` (also records the site's domain).
+- [ ] Run `0008_complexity_tiers.sql` on accelerator-test before pushing F1.
+- [ ] F1 live run on Machine Shop: one Low and one Medium item end to end; record decisions, presses, time to preview and time to live.
+- [ ] **F2** decision cards in the conversation, typed approval with version binding, pause from chat; remove the "Needs you" bar and per-step buttons.
+- [ ] **F3** the Cockpit layout: central conversation, summary cards, side bar, artifact drawer, instrument panel (§19.4), starting with the instruments whose data already exists (test health, Work in flight, Lighthouse, delivery flow).
+- [ ] **F4** streaming lead turns from the API, pushed events, one agent session per Work item.
+- [ ] **F5** live voice in the cockpit widget (OpenAI realtime over WebRTC, member session instead of an access code), global composer, slash commands.
+- [ ] Change Ledger: ledger entries in the Site Timeline, per-site land lock with compare-and-swap, API-first code reads (with G2.2/G2.5).
+- [ ] Domain packs: registry, Commerce and Hospitality packs, domain-tier skills and complexity hotspots (with G2.3); domain picker in Configuration.
+- [ ] Planned migration numbers move up by one: crew 0009, toolbelt 0010, library 0011.
 ---
 
 ## 9. Agent interfaces, decisions, live agents and generative forms (added 2026-10-12)
@@ -784,7 +804,7 @@ The Consultant configuration becomes the **Team Lead**. It understands the busin
 
 **Versioned mandate:** record the approved outcome, scope, acceptance criteria, budget/time limits, protected invariants, permitted actions, decision owners and expiry/review point. Every run references the applicable mandate version. A client can pause or revise it; revisions are audited and invalidate affected pending actions where necessary.
 
-Existing cadence, AC levels and design/plan/Try/release gates remain enforced. The mandate clarifies authority; it does not introduce permission to skip existing gates. Any future reduction in gate frequency needs an explicit policy design and Owner approval. The executive sees the business decision at each gate; internal specialist handoffs need no additional approval when already authorized.
+Gate frequency follows the complexity tiers of §17 (D41, Owner-approved 2026-10-17): Low ships through the TDD plane with no client decision; Medium needs the Brief and Ship it; High keeps design, plan, Try and release gates. Cadence is retired. Protected risk classes always set the High floor and keep the Owner's gates. The mandate clarifies authority; it does not introduce permission to skip a gate the tier requires. The executive sees the business decision at each gate; internal specialist handoffs need no additional approval when already authorized.
 
 Escalate for changed scope, budget exposure, missing strategic information, contradictory requirements, blocked dependencies, material architecture tradeoffs or protected money/data/auth/security actions. Each decision card states: recommendation, alternatives, business effect, cost/risk, evidence, who can decide and what that decision authorizes. Deferring has an explicit consequence. Partners can prepare decisions but cannot acquire client gates through the Team Lead.
 
@@ -1301,3 +1321,159 @@ Owner reports the required-email marketing follow-up setup/test complete (2026-1
 
 
 **Work closure and new-scope correction (2026-10-16):** a bounded Work item must not trap the client into a production release just to end tracking or start another design. The Studio offers Start another improvement independently; idle pre-release items can Close without platform release, preserving history/code/branches/proof and retaining the existing internal cancelled disposition. Recorded released work can Close completed work. Neither path invents delivery proof or undoes externally delivered code. Terminal records stay inspectable; new scope starts fresh requirements/design/plan approvals. Active execution must settle before closure. Consultant guidance must distinguish chat claims, preview publication and actual recorded production release. Manual release reconciliation is a separate future capability.
+
+
+---
+
+## 17. The workbench fast path: complexity tiers and the TDD plane (2026-10-17)
+
+*Owner-approved, 2026-10-17 (D41–D44). Source proposal and code review: [workbench-fast-path.md](workbench-fast-path.md). This section supersedes the fixed eight-stop ceremony for every change. The rail's stops remain the record of what happened; the tier decides which stops the client sees and which need a decision.*
+
+### 17.1 Why
+
+The Gen 1/G2.1 rail made every change, however small, follow design → approve → plan → approve → each build step → prove → approve Try → release → close: about ten presses and six or more cold agent runs for a one-line fix. The domain already held a proportionate policy (`requiredGates()` in `gates.ts`), but the rail never used it. The client was asked to approve the crew's internal steps, which §10.1 says the executive should never have to do. The process should fit the work; the work should not be forced to fit the process.
+
+### 17.2 Three complexity tiers, rated for an expert agent
+
+A Work item carries a **complexity tier: Low, Medium or High.** The platform recommends it; the human sees the recommendation with its reason and can change it.
+
+Complexity is measured **against what an expert agent can do, not against how hard the task would feel to a person.** Something a person would find daunting may be routine for the crew, and the reverse. The rating must be consistent across sites and sessions, so it uses a fixed rubric based on agent capability and expected run length:
+
+| Tier | Rubric (expert-agent terms) | Client decisions | What runs on its own |
+|---|---|---|---|
+| **Low** | One builder run (roughly 15 minutes of agent time or less), a few files, one capability, behavior clearly specified, no new data model, no protected area | **None.** It simply ships, through the TDD plane (§17.3) | Understand → build with tests → prove → release → live check |
+| **Medium** | Several builder runs (up to about two hours of agent time), new behavior in one or two capabilities, assumptions worth confirming | **Two:** approve the **Brief** (the design and plan in one short document), then **Ship it** on the preview. Optional standing approval: *ship automatically when proof is green* (§17.5) | Brief draft, internal plan, every build step, prove and preview |
+| **High** | Any protected risk class (money, data, auth, security), schema or migration changes, cross-capability or architecture changes, external integrations, unclear requirements, or more than about eight runs | The full rail: approve design, approve plan, approve Try (the Owner for protected risk), then Go live | Design draft, plan draft, build steps after plan approval, prove |
+
+**Policy floors (deterministic, in `packages/domain`):**
+- Protected risk classes (`OWNER_GATED`: money, data, auth, security) set a **High floor**. Nobody can lower an item below its floor, and the Owner's gates (§0 rule 7) apply unchanged.
+- A person may choose any tier at or above the floor, including below the platform's recommendation; the recommendation and the person's choice are both recorded.
+- **Automatic escalation only goes up.** If a build touches a protected area the plan didn't anticipate (migrations, auth, payments, secrets, middleware), the crew stops automatic progress, raises the item to High and explains why. Escalation never relaxes a gate.
+- Domain packs (§20) add domain-specific complexity hotspots (e.g. availability and rate rules in Hospitality, checkout and inventory in Commerce).
+
+The Team Lead assesses complexity in the conversation and states it plainly ("Low: one file, clearly specified. I'll fix it and ship it."). The assessment travels as a structured record, not prose: tier, readiness and reason.
+
+### 17.3 The TDD plane: every shipment passes through it
+
+Fewer decisions do not mean less proof. **Every tier, including Low, ships only through the TDD plane**, a fixed sequence of deterministic checks enforced by the API (not by the model):
+
+1. **Tests first.** A behavior change adds or updates tests that express the expected behavior; a step with no test change must state an accepted reason (`protocolVerdict`). The suite never shrinks or drops below the site baseline.
+2. **Every step green.** Typecheck and the full suite pass after each build step, or the step is blocked.
+3. **Prove.** Typecheck, full suite and production build on the exact candidate; the branch is pushed and its preview must deploy (`proveVerdict`).
+4. **Release.** Merge to stage then main only after the above; production must deploy and the live site must answer (`releaseVerdict`).
+5. **Stale proof never ships.** New code clears earlier proof and Try approval; the plane runs again.
+
+For Low, the plane is the only gate. For Medium and High it sits beneath the human decisions. §11.2 and §13 extend the plane over time (characterization tests, synthetic QA, browser checks); they do not create a parallel pipeline.
+
+### 17.4 Chat as the control surface
+
+- The Team Lead acts on the conversation: it starts the brief, plan, build and prove itself within the tier's authority. People don't hunt for "Draft the design", "Write the plan" or "Build step N".
+- Each pending decision appears **in the conversation as one card**: what it is, the recommendation, evidence, who can decide, a button, and "or type *approve*".
+- **Typed approval is a typed server action** (§10.2). "Approve", "ship it" or "go" resolves only when exactly one decision is pending and the person is eligible; it binds to that decision's artifact or candidate version and rejects a stale one; ambiguity gets a one-line question. **Owner-gated decisions require the card's button plus a confirm naming the risk.**
+- "Stop", "wait" or "pause" halts new dispatch immediately.
+- On a Medium item the plan is the crew's: it is generated, checkpointed and shown, never approved step by step. High keeps separate design and plan approvals.
+
+### 17.5 Standing approval for Medium
+
+On a Medium Brief, the client may tick **ship automatically when proof is green**. It is recorded, bound to that item, off by default, never available on High, and never overrides an Owner gate. Escalation to High clears it.
+
+### 17.6 Implementation (phases F1–F5)
+
+| Phase | Scope | Acceptance |
+|---|---|---|
+| **F1** | Complexity tier, floors and escalation in the domain; the lead's structured assessment; a pure *next automatic action* function; Low runs end to end with no decision; Medium needs Brief + Ship it; High keeps the gates; steps run automatically after the governing approval; cadence retired | Domain tests for every tier, floor and escalation; typecheck, tests and builds green; one Low and one Medium item through Machine Shop |
+| **F2** | Decision cards in the conversation, typed approval with version binding, pause from chat; "Needs you" bar and per-step buttons removed | API tests for eligibility, stale-version rejection and Owner-gate refusal |
+| **F3** | The Cockpit layout (§19): central chat, summaries first, side bar, artifact drawer, instrument panel | Browser QA desktop and mobile |
+| **F4** | Streaming everywhere; API-streamed lead turns; one agent session per item; pushed events | Time to first token; time to first preview |
+| **F5** | Global composer, slash commands, live voice in the cockpit widget | Voice and text share one record and one authority model |
+
+Measure per tier: client decisions, presses, time to first preview, time to live and send-backs. Claim the speed-up only from these counters.
+
+---
+
+## 18. The Change Ledger: Scion's ideas on top of git and the client's GitHub (2026-10-17)
+
+*Owner-approved, 2026-10-17 (D45). Inspired by Anthropic's internal Scion source-control system (reported publicly; not a released product) and the independent MIT `feder-cr/git-ai` reimplementation (v0.1.0). We adopt the patterns, not the software.*
+
+**GitHub stays.** The client owns its repository (§3.3, rule 8); Vercel previews and production, the GitHub App and the stage → main path depend on it, and rule 12 (break-glass) forbids a platform-only path to our own code. Scion solves tens of thousands of merges a day in one monorepo; each client site has a handful of changes in flight. Our bottleneck is ceremony and latency, which §17 addresses.
+
+The **Change Ledger** is the crew's working view of a site's code, kept by the platform over git:
+
+| Pattern (from Scion / gitai) | Accelerator form |
+|---|---|
+| Ordered, append-only changeset log | Every landed change gets a ledger entry (Work item, candidate commit, evidence, decision, deployed revision) in the Site Timeline (`acc_site_events`, §3.3); the change receipt (§14.5) is keyed by it |
+| Server-side land with compare-and-swap on the branch reference, batching concurrent lands | A per-site **land lock**: release checks that `main` is still at the expected commit, otherwise rebases and re-proves; two Work items never race to production (§13.6) |
+| History, blame and code search through an API instead of a full clone | Lead answers read a cached site map plus GitHub's API; only build jobs clone (feeds §17 F4) |
+| Per-agent tokens, call allowlists, branch policies | `repo.*` Toolbelt tools under job tokens (§1.2): builders write only `work/<n>`; only the release tool lands |
+| Review rules weighted by change type | The complexity tiers (§17) |
+| Pluggable conflict resolver | The crew rebases and resolves conflicts between Work items, re-proves, and escalates when uncertain |
+| Test after landing with automatic bisect and revert | Our own repos only (rule 11). Client sites keep proof before release |
+| Agents following the change stream | Event-driven Upkeep (§11.4) watching each landed change |
+
+**Revisit a server-side VCS** (Scion, if released, or a matured gitai) only when measured triggers appear: sustained release races or conflicts across sites, clone/checkout time dominating job time, or GitHub API limits. An optional, sandboxed trial of gitai against a copy of Machine Shop is permitted for learning; it never touches the real repo or deployments.
+
+---
+
+## 19. The Cockpit: one central conversation, streaming, summaries first, instruments (2026-10-17)
+
+*Owner-approved, 2026-10-17 (D46). Applies to everyone who runs a workbench: a functional manager, a systems integrator running it for a client, a developer, or a business owner running their website alongside their business. Refines §15/§16: the default Delivery Studio view becomes the Cockpit; the existing lenses move under Details.*
+
+### 19.1 The central conversation widget, with live voice
+
+- One **central chat widget** is the primary way to work: ask, decide, steer. It borrows directly from Machine Shop's shop assistant (`machineshop/components/assistant.tsx` and `voice-call.tsx`): a single launcher that opens **Talk** (live voice) or **Text**, the same transcript for both, product-style cards for artifacts, and a transcript download.
+- **Live voice uses OpenAI's realtime API over WebRTC**, as Machine Shop does: the API mints a one-call pass server-side (the key never reaches the browser), the browser connects directly, and the model's tool calls run through the API under the caller's session. The access code in Machine Shop is replaced by the member's signed-in session and permissions.
+- The workbench widget needs a **bigger viewport** than a shop assistant: it docks as a full-height panel beside the cockpit and expands to full screen. Artifacts it mentions (brief, diff, preview, evidence) open beside it.
+- Voice and text share one record, one authority model and the decision rules of §17.4. Voice can't approve an Owner-gated decision; it opens the card for a confirmed tap.
+
+### 19.2 Everything streams
+
+All model text streams to the screen as it is produced: lead replies, briefs, summaries, progress. The console receives pushed events (server-sent events) rather than polling; polling remains a fallback. Stream state is durable: reconnecting restores the same conversation and decision state (§10.2).
+
+### 19.3 Summaries first, the full story on request
+
+Dense design documents and plans are not the default view. Each artifact gets a **summary card**: what it is, what it changes, what it protects, risk, and the decision needed, in a few lines. Selecting it opens the full document, diff or evidence. The Team Lead writes summaries in business language (§10.2); engineering detail is one click deeper.
+
+### 19.4 The instrument panel: a cockpit, useful not gimmicky
+
+Every instrument shows its **source, freshness and an explicit "not connected" or "insufficient data" state** (rule 14), and every reading opens its evidence. No decorative motion, no numbers without definitions.
+
+| Instrument | What it reads | Why it matters |
+|---|---|---|
+| **State integrity** (old state + changes = new state) | Required checks executed vs. required, protected rules verified, stale or missing proof, unverified areas for the current candidate | The one-glance answer to "is the new version of the app trustworthy?" |
+| **Test health** | Tests run and passing, suite size vs. baseline, trend, newly added tests, flaky or skipped tests | Proof that the TDD plane is doing real work |
+| **Uptime and response** | Live probe success rate, response time (p50/p95), last incident, from scheduled checks | Is the site up and fast for customers right now? |
+| **Delivery flow** (the DORA four keys) | Lead time from request to live, deployment frequency, change-failure rate, time to restore | The industry-standard measure of delivery speed and safety |
+| **Code complexity and hotspots** | Cyclomatic complexity trend, largest and most-changed files (churn × complexity), dependency freshness and known vulnerabilities | Where the next change gets risky or slow |
+| **Experience quality** | Lighthouse performance, accessibility, SEO and Core Web Vitals over time (`lighthouse.ts`) | What customers and search engines experience |
+| **Work in flight** | Items by tier and stage, decisions waiting on you, age of the oldest decision, items blocked | What needs attention now |
+| **Crew effectiveness** | First-pass acceptance, send-backs, escalations, share of Low items shipped with no intervention | Is the crew getting better (§10.6)? |
+| **Budget** | Spend vs. authorized budget, cost per change by tier | Control of money spent |
+| **Errors in production** | Error rate from the hosting platform's logs, where connected | Catches what tests missed |
+
+The Overview shows the site-level instruments; each Work item shows its own integrity, test and flow readings. Partners see the same instruments across their clients.
+
+---
+
+## 20. Domain packs: crews that speak the client's business (2026-10-17)
+
+*Owner-approved, 2026-10-17 (D47).*
+
+A **domain pack** is a versioned configuration bundle that equips the crew for an industry. When a client subscribes, they **pick their domain** in Configuration (during Boarding); Strategic Machines adds domains over time.
+
+**What a domain pack contains:**
+- **Vocabulary and business model:** the terms, entities and processes of the industry (Hospitality: rooms, rates, availability, reservations, folios, guests; Commerce: catalog, pricing, cart, checkout, inventory, orders, promotions).
+- **Skills and prompts:** domain best practices loaded into specialists through the skill tiers (§2.2).
+- **Decision points:** where the domain needs a human, and who (e.g. rate and cancellation policy changes, refund rules, price changes).
+- **Complexity calibration:** domain hotspots that raise the tier (§17.2), because the domain crew is best placed to judge complexity: payments and reservations in Hospitality; checkout, pricing and inventory in Commerce.
+- **Capability templates and critical journeys** for the capability inventory (§10.3) (Hospitality: search availability → book → pay → confirm; Commerce: find product → compare → quote or cart → checkout).
+- **KPI templates** for vital signs (§10.4): occupancy, RevPAR and booking conversion; conversion rate, average order value and quote completion.
+- **Test-scenario libraries** for the TDD plane and synthetic QA (§11.2): synthetic guests and stays, synthetic orders, boundary dates and currency cases.
+- **Compliance notes** (e.g. PCI scope for payments, guest personal data).
+
+**Tiering:** skills now assemble from five tiers: **crew → domain → partner → company → site.** The domain tier belongs to Strategic Machines; the Skillsmith proposes improvements from evidence across clients in the same domain, under the existing consent and anonymization rules (§2.2). A more specific tier can add to a domain pack but cannot remove a crew safety skill or a gate.
+
+**First two domains:**
+- **Commerce** (proven on Machine Shop, the DIY commerce test site).
+- **Hospitality** (modelled on Cypress Resort's business knowledge). **Cypress remains live production and is never a test target** (rule 11); the pack is exercised on synthetic data and Machine Shop-style test sites.
+
+**Implementation:** a `domain` on each company (or site), a domain-pack registry in the crew catalog (§3.3 store 5), and domain-tier skills loaded in G2.3. F1 records the selected domain as configuration only; packs ship with the crew (G2.3).

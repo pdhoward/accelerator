@@ -1,6 +1,6 @@
 # Workbench fast path: right-size the process, run it from the conversation
 
-*Proposal for Owner review, 2026-10-16. Not yet part of [gen2-crew.md](gen2-crew.md). On approval, the decisions below become §17 and amend §10.1, §10.2 and §15/§16 as listed at the end.*
+*Proposal, 2026-10-16. **Approved by the Owner 2026-10-17 with two changes, and folded into [gen2-crew.md](gen2-crew.md) §17–§20 (D41–D47):** the tracks are named **Low / Medium / High complexity**, rated by the platform against expert-agent capability and run length; and **Low simply ships** (no "Ship it" tap), always through the TDD plane. gen2-crew.md is authoritative; this file keeps the review and reasoning.*
 
 ## 1. The problem, from the code
 
