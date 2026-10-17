@@ -10,7 +10,7 @@
 - §7 is the decisions log.
 - §8 is the action list. Tick items there as they're done.
 - §9 covers agent interfaces: APIs-first MCP (WebMCP optional), Stripe, the Decide layer (Jev), understanding artifacts (Karpathy's ladder), live voice agents and generative forms.
-- §17–§20 (2026-10-17) define the workbench fast path (complexity tiers and the TDD plane), the Change Ledger, the Cockpit and domain packs.
+- §17–§21 (2026-10-17) define the workbench fast path (complexity tiers and the TDD plane), the Change Ledger, the Cockpit, domain packs and the traceability store (decisions, documents, evidence, retention and the contribution graph).
 - §14 defines approved staged execution/recovery protocols; §15 records UX alternatives for review, not a selected interface.
 - §13 defines continuous change assurance, source-linked business rules and migration-grade safeguards for everyday improvements.
 - §12 defines the upgraded public starting-point assessment and the boundary between public technical evidence and business intent.
@@ -280,6 +280,8 @@ Each client's Library is **one logical thing in five physical places**. Every pl
 
 **The Site Timeline is the spine.** Add one append-only table, `acc_site_events`: `at`, `kind` (decision · design approved · plan approved · release · rollback · refactor · incident · skill learned · connection changed), `summary`, links (Work item, commit SHA, doc version, evidence). Every Library page is a view over this spine plus the rows and files it points to. This is the "metadata that instruments a site's timeline".
 
+**Normalized records and retention:** §21 defines the decisions, documents, evidence and ledger tables behind this spine, the three storage tiers and configurable retention.
+
 **Tenancy model:** start **pooled**: one database, row-level separation, which is right for dozens to hundreds of sites. Offer a **dedicated database per client** later as a premium-tier option (same schema, same code; the store picks the connection by tenant).
 
 **Export and exit:** one click produces a bundle: Markdown for decisions, designs, skills and the timeline; JSON for threads, evidence and the tool log; the files from object storage. The repo already holds the rest. On cancellation: export, then delete after a stated retention window.
@@ -508,6 +510,8 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D44 | 2026-10-17 | **Standing approval for Medium:** optional "ship automatically when proof is green", off by default, never on High, cleared by escalation | §17.5 |
 | D45 | 2026-10-17 | **Change Ledger, GitHub stays:** adopt Scion/gitai patterns (ordered change log, land lock with compare-and-swap, API-first code reads, per-agent repo policies, conflict resolution) over git and the client's GitHub. Revisit a server-side VCS only on measured triggers | §18 |
 | D46 | 2026-10-17 | **The Cockpit:** a central conversation widget with OpenAI live voice and text borrowed from Machine Shop, a larger docked viewport, streaming everywhere, summaries first, and an instrument panel whose every reading is sourced and opens its evidence | §19 |
+| D48 | 2026-10-17 | **Traceability store:** normalized append-only decisions, per-run evidence, identified and versioned documents, and the Change Ledger as the spine; three storage tiers (Postgres, content-addressed object storage, the client's `/docs`); Gen 1 tables retired after verified migration | §21.1–21.3, §21.6 |
+| D49 | 2026-10-17 | **Retention as configuration, the crew contribution graph:** anything approved, shipped, released or referenced by a decision is kept for the subscription; drafts kept, log hot days and log/artifact retention are per-company settings with plan defaults; every pruning is recorded in the ledger. A GitHub-style contribution graph counts only evidence-backed contributions plus human decisions | §21.4–21.5, §19.4 |
 | D47 | 2026-10-17 | **Domain packs:** the client picks a domain at subscription; packs carry vocabulary, skills, decision points, complexity hotspots, capability/journey/KPI templates and test scenarios. Skill tiers become crew → domain → partner → company → site. First domains: Commerce (Machine Shop) and Hospitality (Cypress knowledge, never a test target) | §20 |
 
 ---
@@ -610,7 +614,7 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 
 ### 8.8 Workbench fast path, Change Ledger, Cockpit and domains (§17–§20)
 - [x] **F1** complexity tiers in the domain (floors, escalation, rubric, structured assessment, next automatic action); Low ships with no decision through the TDD plane; Medium Brief + Ship it + optional standing approval; High keeps the gates; cadence retired; migration `0008_complexity_tiers.sql` (also records the site's domain). *(Built 2026-10-17, committed `b318269`, not pushed: typecheck, 132 tests and the API and console builds green. Domain: `complexity.ts`, `domains.ts`, tier-aware `workActions()` and `autoAction()`. API: `drive()` takes the crew's next move after every result and approval and answers waiting messages first; `shipWork`, `beginWork`, `setComplexity`, `setAutoShip`. Runner: rubric plus domain hotspots in the lead's prompt, a Medium Brief, Low builds from the conversation. Console: complexity control, Ship it, domain picker in Setup.)*
-- [ ] Run `0008_complexity_tiers.sql` on accelerator-test before pushing F1.
+- [x] Run `0008_complexity_tiers.sql` on accelerator-test before pushing F1. *(Owner, 2026-10-17; F1 pushed `024130c..ab1c607`, including 3 new browser QA checks: 29 of 29 pass.)*
 - [ ] F1 live run on Machine Shop: one Low and one Medium item end to end; record decisions, presses, time to preview and time to live.
 - [ ] **F2** decision cards in the conversation, typed approval with version binding, pause from chat; remove the "Needs you" bar and per-step buttons.
 - [ ] **F3** the Cockpit layout: central conversation, summary cards, side bar, artifact drawer, instrument panel (§19.4), starting with the instruments whose data already exists (test health, Work in flight, Lighthouse, delivery flow).
@@ -618,7 +622,8 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] **F5** live voice in the cockpit widget (OpenAI realtime over WebRTC, member session instead of an access code), global composer, slash commands.
 - [ ] Change Ledger: ledger entries in the Site Timeline, per-site land lock with compare-and-swap, API-first code reads (with G2.2/G2.5).
 - [ ] Domain packs: registry, Commerce and Hospitality packs, domain-tier skills and complexity hotspots (with G2.3); domain picker in Configuration.
-- [ ] Planned migration numbers move up by one: crew 0009, toolbelt 0010, library 0011.
+- [ ] Planned migration numbers move up by one: crew 0009, toolbelt 0010, library 0011 (renumbered again as the §21 traceability steps take numbers).
+- [ ] **Traceability store (§21):** T1 decisions, evidence and ledger with dual writes; T2 backfill; T3 documents and versions; T4 logs to object storage plus retention settings and the nightly job; T5 `/docs` sync; T6 instruments and the contribution graph; T7 retire Gen 1 tables.
 ---
 
 ## 9. Agent interfaces, decisions, live agents and generative forms (added 2026-10-12)
@@ -1449,6 +1454,7 @@ Every instrument shows its **source, freshness and an explicit "not connected" o
 | **Crew effectiveness** | First-pass acceptance, send-backs, escalations, share of Low items shipped with no intervention | Is the crew getting better (§10.6)? |
 | **Budget** | Spend vs. authorized budget, cost per change by tier | Control of money spent |
 | **Errors in production** | Error rate from the hosting platform's logs, where connected | Catches what tests missed |
+| **Crew contribution graph** | A GitHub-style graph: one row per crew role plus one for human decisions, a square per day, counting only evidence-backed contributions from the ledger (§21.5) | An honest at-a-glance view of real work done, and of the governance behind it |
 
 The Overview shows the site-level instruments; each Work item shows its own integrity, test and flow readings. Partners see the same instruments across their clients.
 
@@ -1477,3 +1483,80 @@ A **domain pack** is a versioned configuration bundle that equips the crew for a
 - **Hospitality** (modelled on Cypress Resort's business knowledge). **Cypress remains live production and is never a test target** (rule 11); the pack is exercised on synthetic data and Machine Shop-style test sites.
 
 **Implementation:** a `domain` on each company (or site), a domain-pack registry in the crew catalog (§3.3 store 5), and domain-tier skills loaded in G2.3. F1 records the selected domain as configuration only; packs ship with the crew (G2.3).
+
+---
+
+## 21. The traceability store: decisions, documents, evidence and the ledger (2026-10-17)
+
+*Owner-approved, 2026-10-17 (D48–D49). Refines §3.2–§3.3 (the Library and its five stores) after a schema review of migrations 0001–0008. This is a target design and a migration plan; the existing tables stay until their data is migrated and verified (§4.4).*
+
+### 21.1 Why: traceability is the selling point, and the schema doesn't yet deliver it
+
+A skilled person can run the flywheel with Claude or ChatGPT directly, but they must collect the designs, decisions and test results themselves and link them by hand. The Accelerator's promise is that this structure exists automatically: **every decision, document and test result is saved, versioned and linked, so anyone can see how the site was built and why.** The review found the opposite in places:
+
+| Finding | Where | Consequence |
+|---|---|---|
+| Decisions are timestamps, not records: approving sets `plan_approved_at` / `try_approved_at`; invalidation overwrites them with null | `acc_work` | Who approved what, and why it was voided, survives only in chat text |
+| Only the latest proof is kept; step results are JSON inside steps | `acc_work.proof`, `acc_work_steps.evidence` | No test history, no queryable failures, nothing to chart |
+| Two generations of tables side by side; Gen 1 `acc_test_runs` points at `acc_changes`, not Work | 0001 vs 0004 | Two models of the same things (§4.4 retirement not yet done) |
+| Documents have no identity or kind; one approver column; no link to the commit they produced | `acc_work_docs`, `acc_docs` | Can't ask "every Brief that touched checkout" or "what code came from design v3" |
+| The bulk of the bytes, job logs, live in Postgres forever | `acc_job_events` | Database and backups grow with chatter, not with value |
+| The Site Timeline (`acc_site_events`) and the Change Ledger (§18) don't exist yet | — | No spine linking the rest |
+
+**Storage cost is not the problem.** A Brief or design is 5–20 KB of Markdown; a site's whole document history is a few megabytes. Logs are what grow. The design below fixes traceability first and keeps storage lean as a by-product.
+
+### 21.2 Three tiers of storage
+
+| Tier | Holds | Why |
+|---|---|---|
+| **Postgres** | Identities, links, decisions, evidence summaries, the ledger, and the text of current and approved document versions | Queryable, transactional, tenant-scoped with RLS |
+| **Object storage** (Supabase Storage, tenant paths `org/<org>/site/<site>/…`, §3.3) | Compressed job logs (one file per job), aged-out draft bodies, test reports, screenshots, transcripts, export bundles. Files are **content-addressed** (named by a SHA-256 of their content), so identical content is stored once | Roughly a sixth of the database cost per GB, and keeps the database and its backups lean |
+| **The client's Git repository** (`/docs`) | Approved Briefs, designs, decisions and the rulebook as Markdown, committed through the normal rail (§3.3) | Free, versioned forever, owned by the client, readable without us |
+
+### 21.3 Four normalized records
+
+- **`acc_documents` + `acc_document_versions`.** One identity per document: site, optional Work item, **kind** (brief, design, plan, decision record, requirements, rulebook, change receipt), title, linked capabilities (§10.3). Each version records author (person or model), content hash, size, parent version, and the body: inline when small, an object-storage key when large. A version links to the commit(s) it produced. Replaces `acc_work_docs` and Gen 1 `acc_docs`.
+- **`acc_decisions` (append-only).** Who decided, in what role and through which access route (§5, decision access), what kind (approve Brief, approve design, approve plan, approve Try, ship, release, tier change, standing approval, automatic policy decision such as Low shipping), the exact target (document version or candidate commit), the outcome, and, when voided later, `invalidated_at` and the reason (new code, revised Brief, escalation). Policy decisions record the policy and the evidence that satisfied it, with no human author. The `*_approved_at` columns on `acc_work` remain only as a cache derived from this table.
+- **`acc_evidence`.** One row per check run: Work item, job, exact candidate commit, kind (typecheck, unit tests, build, preview deployment, live check, browser QA, Lighthouse, review), result, passed/failed/total, duration, environment, and a link to the full report in object storage. Feeds the test-health and state-integrity instruments (§19.4) and replaces Gen 1 `acc_test_runs` and the JSON-only proof history.
+- **`acc_ledger` (the Change Ledger, §18, and the Site Timeline, §3.3).** An append-only, ordered list of everything that happened on a site, each entry linking the Work item, document version, decision, evidence, commit and deployment involved, and the actor (person, crew role or policy). Every Library page, the change receipt (§14.5), the export and the contribution graph (§21.5) are views over it.
+
+All four carry `org_id` and `site_id` (child tables get `site_id` directly so RLS needs no joins), and every write goes through the API (§0 rule 1).
+
+### 21.4 Retention: a configuration setting with one fixed rule
+
+**Kept for the life of the subscription, never pruned:** any document version that was approved, shipped, released or referenced by a decision; the current version of every document; every decision; every evidence summary; every ledger entry. These are the proof, and they are small.
+
+**Configurable per company, with defaults set by plan:**
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `drafts_kept` | 10 | Unapproved draft versions kept per document; older drafts are pruned |
+| `logs_hot_days` | 30 | Days job logs stay in Postgres before moving, compressed, to object storage |
+| `logs_retention_days` | 365 | Days compressed logs are kept in object storage |
+| `artifacts_retention_days` | 365 | Screenshots, transcripts and full reports that no kept decision references |
+
+A nightly job applies the settings and **records each pruning in the ledger** ("drafts v3–v7 of Brief #14 pruned under drafts_kept = 10"), so history is honest about what is gone. Anything a kept decision references is exempt, whatever the settings. The export bundle (§3.3) always contains everything still kept. On cancellation, the existing export-then-delete policy applies.
+
+**Rough cost:** about 100 Work items a year per site produce a few megabytes of documents, decisions and evidence, plus roughly 20–200 MB of compressed logs: well under a dollar per site per year in storage. Retention keeps the database lean and backups fast; it is not mainly about saving money.
+
+### 21.5 The crew contribution graph
+
+A GitHub-style contribution graph on the instrument panel (§19.4): one row per crew role (Team Lead, Designer, Builder, Judge, Release; named specialists after G2.3), plus **one row for the humans' decisions**, one square per day, shaded by count.
+
+- **Only evidence-backed contributions count:** a step that passed the Protocol (its commit), a proof run, a release, an independent review, an approved Brief or design, a decision. Messages, tokens and failed runs don't count; otherwise the graph rewards noise.
+- Hovering a day lists its contributions, each linking to its ledger entry and evidence. Quiet days stay quiet.
+- It is computed only from `acc_ledger`, so it is never more optimistic than the record.
+
+### 21.6 Migration plan
+
+| Step | What | Acceptance |
+|---|---|---|
+| T1 | Create `acc_decisions`, `acc_evidence` and `acc_ledger`; the API writes them alongside today's columns (dual write) | Every approval, invalidation, policy ship, Prove, release and escalation in F1 produces the matching rows; tests prove invalidation keeps history |
+| T2 | Backfill from `acc_work`, `acc_work_steps.evidence`, `acc_jobs.result` and messages, marking backfilled rows as reconstructed | Counts reconcile per Work item; reconstructed rows are labelled |
+| T3 | `acc_documents` + versions; migrate `acc_work_docs` and Gen 1 `acc_docs`; content-addressed object storage for large bodies | Every existing version readable with identical bytes |
+| T4 | Logs to object storage (compressed, per job) after `logs_hot_days`; retention settings and the nightly job, with pruning recorded in the ledger | Database size stops growing with logs; a pruned draft leaves a ledger entry |
+| T5 | `/docs` sync of approved documents to the client repo through the rail | An approved Brief appears in the repo with its decision reference |
+| T6 | Instruments: test health, state integrity and the contribution graph read from the new records (F3) | Every reading opens its evidence |
+| T7 | Retire Gen 1 tables (`acc_requests`, `acc_changes`, `acc_approvals`, `acc_releases`, `acc_docs`, `acc_consultations`, `acc_test_runs`) after references, data migration and rollback are verified (§4.4) | No code reads them; a restore drill succeeds |
+
+Migration numbers are assigned when each step starts; the crew, toolbelt and library reservations (0009–0011) are renumbered then.
