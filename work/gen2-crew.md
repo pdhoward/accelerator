@@ -627,7 +627,7 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] **F5** live voice in the cockpit widget (OpenAI realtime over WebRTC, member session instead of an access code), global composer, slash commands.
 - [ ] Change Ledger: ledger entries in the Site Timeline, per-site land lock with compare-and-swap, API-first code reads (with G2.2/G2.5).
 - [ ] Domain packs: registry, Commerce and Hospitality packs, domain-tier skills and complexity hotspots (with G2.3); domain picker in Configuration.
-- [ ] Run `0009_traceability_repair.sql` on accelerator-test, then push F2 + T1 (`99045f8`).
+- [x] Run `0009_traceability_repair.sql` on accelerator-test, then push F2 + T1 (`99045f8`). *(Owner ran 0009, 2026-10-17; pushed `ab1c607..99045f8`.)*
 - [ ] Planned migration numbers: crew 0010, toolbelt 0011, library 0012 (0009 is traceability T1 plus repairs and pause).
 - [ ] **Traceability store (§21):** ~~T1 decisions, evidence and ledger with dual writes~~ *(built in `99045f8`: `acc_decisions`, `acc_evidence`, `acc_ledger` with contribution flags; best-effort writes via `apps/api/lib/ledger.ts`)*; T2 backfill; T3 documents and versions; T4 logs to object storage plus retention settings and the nightly job; T5 `/docs` sync; T6 instruments and the contribution graph; T7 retire Gen 1 tables.
 ---
