@@ -609,7 +609,7 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 
 
 ### 8.8 Workbench fast path, Change Ledger, Cockpit and domains (§17–§20)
-- [ ] **F1** complexity tiers in the domain (floors, escalation, rubric, structured assessment, next automatic action); Low ships with no decision through the TDD plane; Medium Brief + Ship it + optional standing approval; High keeps the gates; cadence retired; migration `0008_complexity_tiers.sql` (also records the site's domain).
+- [x] **F1** complexity tiers in the domain (floors, escalation, rubric, structured assessment, next automatic action); Low ships with no decision through the TDD plane; Medium Brief + Ship it + optional standing approval; High keeps the gates; cadence retired; migration `0008_complexity_tiers.sql` (also records the site's domain). *(Built 2026-10-17, committed `b318269`, not pushed: typecheck, 132 tests and the API and console builds green. Domain: `complexity.ts`, `domains.ts`, tier-aware `workActions()` and `autoAction()`. API: `drive()` takes the crew's next move after every result and approval and answers waiting messages first; `shipWork`, `beginWork`, `setComplexity`, `setAutoShip`. Runner: rubric plus domain hotspots in the lead's prompt, a Medium Brief, Low builds from the conversation. Console: complexity control, Ship it, domain picker in Setup.)*
 - [ ] Run `0008_complexity_tiers.sql` on accelerator-test before pushing F1.
 - [ ] F1 live run on Machine Shop: one Low and one Medium item end to end; record decisions, presses, time to preview and time to live.
 - [ ] **F2** decision cards in the conversation, typed approval with version binding, pause from chat; remove the "Needs you" bar and per-step buttons.
