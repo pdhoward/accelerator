@@ -616,14 +616,20 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [x] **F1** complexity tiers in the domain (floors, escalation, rubric, structured assessment, next automatic action); Low ships with no decision through the TDD plane; Medium Brief + Ship it + optional standing approval; High keeps the gates; cadence retired; migration `0008_complexity_tiers.sql` (also records the site's domain). *(Built 2026-10-17, committed `b318269`, not pushed: typecheck, 132 tests and the API and console builds green. Domain: `complexity.ts`, `domains.ts`, tier-aware `workActions()` and `autoAction()`. API: `drive()` takes the crew's next move after every result and approval and answers waiting messages first; `shipWork`, `beginWork`, `setComplexity`, `setAutoShip`. Runner: rubric plus domain hotspots in the lead's prompt, a Medium Brief, Low builds from the conversation. Console: complexity control, Ship it, domain picker in Setup.)*
 - [x] Run `0008_complexity_tiers.sql` on accelerator-test before pushing F1. *(Owner, 2026-10-17; F1 pushed `024130c..ab1c607`, including 3 new browser QA checks: 29 of 29 pass.)*
 - [ ] F1 live run on Machine Shop: one Low and one Medium item end to end; record decisions, presses, time to preview and time to live.
-- [ ] **F2** decision cards in the conversation, typed approval with version binding, pause from chat; remove the "Needs you" bar and per-step buttons.
+- [x] **F2** decision cards in the conversation, typed approval with version binding, pause from chat; remove the "Needs you" bar and per-step buttons. *(Built 2026-10-17, commit `99045f8`, not pushed until 0009 runs.)*
+  - `decisions.ts`: `pendingDecision()` (key binds the document version or candidate commit), `readIntent()` (short exact phrases only; a bare "yes" stays conversation).
+  - Typed approval: refused when stale, Owner-gated (button plus a confirm naming the risk) or from partner staff.
+  - "stop" pauses and withdraws queued work; "resume" restarts it. The composer stays open while the crew works.
+  - **Bounded self-repair** (§14.3): a blocked step re-runs up to twice with what failed; a failed Prove gets one fix step and proves again; then it comes to a person. *(Owner report 2026-10-17: an old item sat "blocked by Protocol" with no explanation; this is the fix.)*
+  - Typecheck green; 146 tests; API and console builds; browser QA 29/29. The decision card itself needs a signed-in, real Work item to see; the synthetic sample hides controls.
 - [ ] **F3** the Cockpit layout: central conversation, summary cards, side bar, artifact drawer, instrument panel (§19.4), starting with the instruments whose data already exists (test health, Work in flight, Lighthouse, delivery flow).
 - [ ] **F4** streaming lead turns from the API, pushed events, one agent session per Work item.
 - [ ] **F5** live voice in the cockpit widget (OpenAI realtime over WebRTC, member session instead of an access code), global composer, slash commands.
 - [ ] Change Ledger: ledger entries in the Site Timeline, per-site land lock with compare-and-swap, API-first code reads (with G2.2/G2.5).
 - [ ] Domain packs: registry, Commerce and Hospitality packs, domain-tier skills and complexity hotspots (with G2.3); domain picker in Configuration.
-- [ ] Planned migration numbers move up by one: crew 0009, toolbelt 0010, library 0011 (renumbered again as the §21 traceability steps take numbers).
-- [ ] **Traceability store (§21):** T1 decisions, evidence and ledger with dual writes; T2 backfill; T3 documents and versions; T4 logs to object storage plus retention settings and the nightly job; T5 `/docs` sync; T6 instruments and the contribution graph; T7 retire Gen 1 tables.
+- [ ] Run `0009_traceability_repair.sql` on accelerator-test, then push F2 + T1 (`99045f8`).
+- [ ] Planned migration numbers: crew 0010, toolbelt 0011, library 0012 (0009 is traceability T1 plus repairs and pause).
+- [ ] **Traceability store (§21):** ~~T1 decisions, evidence and ledger with dual writes~~ *(built in `99045f8`: `acc_decisions`, `acc_evidence`, `acc_ledger` with contribution flags; best-effort writes via `apps/api/lib/ledger.ts`)*; T2 backfill; T3 documents and versions; T4 logs to object storage plus retention settings and the nightly job; T5 `/docs` sync; T6 instruments and the contribution graph; T7 retire Gen 1 tables.
 ---
 
 ## 9. Agent interfaces, decisions, live agents and generative forms (added 2026-10-12)
