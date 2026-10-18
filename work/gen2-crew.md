@@ -512,6 +512,7 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 | D46 | 2026-10-17 | **The Cockpit:** a central conversation widget with OpenAI live voice and text borrowed from Machine Shop, a larger docked viewport, streaming everywhere, summaries first, and an instrument panel whose every reading is sourced and opens its evidence | §19 |
 | D48 | 2026-10-17 | **Traceability store:** normalized append-only decisions, per-run evidence, identified and versioned documents, and the Change Ledger as the spine; three storage tiers (Postgres, content-addressed object storage, the client's `/docs`); Gen 1 tables retired after verified migration | §21.1–21.3, §21.6 |
 | D49 | 2026-10-17 | **Retention as configuration, the crew contribution graph:** anything approved, shipped, released or referenced by a decision is kept for the subscription; drafts kept, log hot days and log/artifact retention are per-company settings with plan defaults; every pruning is recorded in the ledger. A GitHub-style contribution graph counts only evidence-backed contributions plus human decisions | §21.4–21.5, §19.4 |
+| D50 | 2026-10-18 | **The Cockpit Dial:** instruments are one dial with a Site face and a Crew face; the ring's segment colours are the at-rest summary; turning brings one measure into a card with its source, freshness and evidence; Crew cards use activity rings for first-pass acceptance, contributions and repairs. Missing is never zero; no decorative motion; our own component, inspired by Arc UI's Pro time dial and activity rings, not copied or licensed. The Prove job records a code census as evidence | §19.5 |
 | D47 | 2026-10-17 | **Domain packs:** the client picks a domain at subscription; packs carry vocabulary, skills, decision points, complexity hotspots, capability/journey/KPI templates and test scenarios. Skill tiers become crew → domain → partner → company → site. First domains: Commerce (Machine Shop) and Hospitality (Cypress knowledge, never a test target) | §20 |
 
 ---
@@ -622,7 +623,11 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
   - "stop" pauses and withdraws queued work; "resume" restarts it. The composer stays open while the crew works.
   - **Bounded self-repair** (§14.3): a blocked step re-runs up to twice with what failed; a failed Prove gets one fix step and proves again; then it comes to a person. *(Owner report 2026-10-17: an old item sat "blocked by Protocol" with no explanation; this is the fix.)*
   - Typecheck green; 146 tests; API and console builds; browser QA 29/29. The decision card itself needs a signed-in, real Work item to see; the synthetic sample hides controls.
-- [ ] **F3** the Cockpit layout: central conversation, summary cards, side bar, artifact drawer, instrument panel (§19.4), starting with the instruments whose data already exists (test health, Work in flight, Lighthouse, delivery flow).
+- [ ] **F3** the Cockpit layout: central conversation, summary cards, side bar, artifact drawer, and the instruments as the **Cockpit Dial** (§19.5).
+  - F3a: domain projection `instruments()` and the API endpoints (site and Work item).
+  - F3b: the `CockpitDial` component with its Site face (integrity, tests, delivery, changes) and Crew face (activity rings and the contribution graph row), plus Show as list.
+  - F3c: code census evidence from Prove.
+  - F3d: the Work item Cockpit layout, with the side bar and summary cards.
 - [ ] **F4** streaming lead turns from the API, pushed events, one agent session per Work item.
 - [ ] **F5** live voice in the cockpit widget (OpenAI realtime over WebRTC, member session instead of an access code), global composer, slash commands.
 - [ ] Change Ledger: ledger entries in the Site Timeline, per-site land lock with compare-and-swap, API-first code reads (with G2.2/G2.5).
@@ -1462,7 +1467,64 @@ Every instrument shows its **source, freshness and an explicit "not connected" o
 | **Errors in production** | Error rate from the hosting platform's logs, where connected | Catches what tests missed |
 | **Crew contribution graph** | A GitHub-style graph: one row per crew role plus one for human decisions, a square per day, counting only evidence-backed contributions from the ledger (§21.5) | An honest at-a-glance view of real work done, and of the governance behind it |
 
-The Overview shows the site-level instruments; each Work item shows its own integrity, test and flow readings. Partners see the same instruments across their clients.
+The Overview shows the site-level instruments; each Work item shows its own integrity, test and flow readings. Partners see the same instruments across their clients. **They are presented through one dial (§19.5), not a grid of charts.**
+
+### 19.5 The Cockpit Dial: one instrument, turned to each measure
+
+*Owner-approved, 2026-10-18 (D50). Inspired by Arc UI's [time dial](https://uiarc.dev/components/time-dial) and [activity rings](https://uiarc.dev/components/activity-rings), both paid "Pro" components with no stated license. We adopt the interaction pattern and build our own component; we don't copy their code or depend on their package.*
+
+The instrument panel (§19.4) is not a wall of charts. It is **one dial**: a ring of segments, one per measure. The ring at rest is itself the summary; turning the dial brings one measure forward into its own card. Beautiful, but every pixel is a real reading.
+
+```text
+            Tests  Integrity
+        Errors  ╭───────╮  Lighthouse
+                │  248  │            turn ⟳  (drag · arrows · scroll)
+      Budget    │ tests │   Uptime
+                │ ▲ +6  │
+        Code    ╰───────╯  Delivery
+            Commits  Changes
+ ┌ Tests ───────────────────────────────────────────────┐
+ │ 248 / 248 passing · suite +6 this week · baseline 230 │
+ │ ▁▂▃▅▆▇ trend · last run 12 min ago on 4f2a91c         │
+ │ Source: Prove on work/14 · Open evidence ▸            │
+ └───────────────────────────────────────────────────────┘
+```
+
+**Anatomy**
+- **The ring:** one segment per measure. Each segment's colour is its *condition*: verified, needs attention, or unverified. A measure with no source shows **hatched grey, "not connected"**, never a zero.
+- **The centre readout:** the selected measure's headline number, which rolls to its new value, plus a one-word state and the change since last week.
+- **The card:** pops up beneath (or beside, on wide screens) with the three facts that matter, a small trend line, the source and freshness, and **Open evidence ▸**, which goes to the ledger, evidence row or report.
+- **At rest, the dial points at what needs attention first** (the worst condition, then the most stale reading). A quick look answers "is anything wrong?"; turning answers "show me."
+
+**Two faces, one dial**
+| Face | Segments | Card shows |
+|---|---|---|
+| **Site** (the app) | State integrity · Tests (passed/total, trend) · Test outcomes by layer · Lighthouse (performance, accessibility, SEO) · Uptime and response · Delivery flow (lead time, deploy frequency, change-failure rate, time to restore) · Code census (functions, components, routes, files, lines, complexity hotspots) · Changes and commits · Dependencies and vulnerabilities · Errors in production · Budget | The measure's three key facts, its trend, its source and its evidence |
+| **Crew** (the agents) | One segment per crew role (Team Lead, Designer, Planner, Builder, Judge, Release), plus **People** for human decisions | **Activity rings** for that role over the selected week: contributions against its usual pace, first-pass acceptance, and repairs and escalations, plus its contribution graph row (§21.5) and recent work |
+
+A Work item gets the same dial scoped to that item. The Site face then reads its state integrity, its tests, its candidate and its decisions; the Crew face reads who did what on it.
+
+**Trusted AI rules for the dial**
+- **Every reading has a source and a timestamp**, shown on the card. Stale readings are labelled stale and coloured by their condition, not hidden.
+- **Missing is not zero.** Hatched "not connected" and "not enough data yet (3 of 10 runs)" are first-class states (rule 14).
+- **No decorative motion.** The centre number counts only to a recorded value. Nothing pulses unless something actually happened. Reduced motion replaces rolls and sweeps with plain fades.
+- **The dial never ranks agents against each other or rewards volume.** Crew rings measure first-pass acceptance and contributions backed by evidence, not messages or tokens (§21.5).
+- **A model may summarize a card in words, but never sets a number or a condition.** Those come from records.
+
+**Interaction and accessibility**
+- **Drag** the ring with soft detents at each segment; a flick coasts to the nearest one.
+- **Arrow keys** move one segment, **Home** and **End** jump to the first and last, and the mouse wheel steps one segment.
+- **Click a segment** to jump straight to it.
+- The dial is a focusable `role="slider"` with `aria-valuetext` (for example "Tests: 248 of 248 passing, verified, 12 minutes ago").
+- Each change is announced politely.
+- **Show as list** toggles a plain table of every measure, for people who prefer it and for screen readers.
+- Mobile: tap and swipe; the card stacks below.
+
+**Build**
+- Our own `CockpitDial` in `apps/console/components/cockpit/`, in SVG with pointer events, CSS transitions and a small spring for coasting. No new UI framework; add the MIT `motion` package only if springs need it.
+- Readings come from one typed API projection (`GET /sites/:id/instruments`, and per Work item), computed in `packages/domain` from `acc_evidence`, `acc_ledger`, `acc_work` and Lighthouse records.
+- **Code census:** the Prove job records functions, components, routes, files, lines and the most complex functions as an `acc_evidence` row of kind `census` on the exact candidate, so code counts are evidence, not estimates.
+- **First faces:** Site (integrity, tests, delivery, changes, code census) and Crew. Uptime, errors and budget appear as "not connected" until their sources exist.
 
 ---
 
