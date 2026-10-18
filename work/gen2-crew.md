@@ -624,8 +624,8 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
   - **Bounded self-repair** (§14.3): a blocked step re-runs up to twice with what failed; a failed Prove gets one fix step and proves again; then it comes to a person. *(Owner report 2026-10-17: an old item sat "blocked by Protocol" with no explanation; this is the fix.)*
   - Typecheck green; 146 tests; API and console builds; browser QA 29/29. The decision card itself needs a signed-in, real Work item to see; the synthetic sample hides controls.
 - [ ] **F3** the Cockpit layout: central conversation, summary cards, side bar, artifact drawer, and the instruments as the **Cockpit Dial** (§19.5).
-  - F3a: domain projection `instruments()` and the API endpoints (site and Work item).
-  - F3b: the `CockpitDial` component with its Site face (integrity, tests, delivery, changes) and Crew face (activity rings and the contribution graph row), plus Show as list.
+  - [x] F3a: domain projection `instruments()` and the API endpoints (site and Work item). *(Deployed 2026-10-18, `7f723fb`: `packages/domain/src/instruments.ts`; `GET /sites/:id/instruments` and `/work/:n/instruments`; `pendingDecisions()` shared with the briefing.)*
+  - [x] F3b: the `CockpitDial` component with its Site face (integrity, tests, in flight, delivery, changes) and Crew face (activity rings and the contribution graph row), plus Show as list. *(Deployed `7f723fb` on the Overview, replacing the four static tiles. Spring-driven SVG dial with drag, flick, tap, keyboard and wheel; slider semantics, live announcements and reduced motion. 174 unit tests; browser QA 43/43 including drag, tap and phone widths. The Work item dial and the code census follow in F3c/F3d.)*
   - F3c: code census evidence from Prove.
   - F3d: the Work item Cockpit layout, with the side bar and summary cards.
 - [ ] **F4** streaming lead turns from the API, pushed events, one agent session per Work item.
