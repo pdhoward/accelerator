@@ -1,5 +1,31 @@
 **AT&T Extra 2.0 is the clear best option for comparable (or better) service at a meaningfully lower cost.**
 
+```
+Your AT&T Quote
+
+Thank you for your time today! As requested, here is your personalized quote. If you have questions, please contact us—we are happy to help.
+
+SIMILOLUWA SONAIKE
+972-523-8945
+
+Quote ID: TFC3KA | Prepared on 10/19/2026
+Note: Credits may take up to 3 billing cycles to appear. Quoted costs represent the anticipated typical billing cycle charges. First bill may differ from costs shown.
+
+Plan AT&T Extra 2.0
+
+Monthly Plan Cost
+$140.00
+ AutoPay & Paperless Billing Discount
+-$20.00
+ Bring Your Own Device Port-in Credit
+-$20.00
+for 36 months
+Monthly Plan Subtotal
+$100.00
+$120.00 after 36 months
+
+```
+
 Your Verizon Unlimited Welcome for 2 lines is $140/month **all-in** (base plan roughly $110 with AutoPay/paperless + ~$30 in taxes/fees). It is a basic/entry plan: unlimited talk/text/data on 5G/4G LTE that can be deprioritized (slowed) anytime the network is busy, 480p SD video streaming, **no mobile hotspot included**, Mexico/Canada talk/text/data (high-speed limited to ~2 GB/day then 3G), unlimited international texting to 200+ countries, Call Filter, Verizon Family app, and a 3-year price lock on the base rate.
 
 All three AT&T quotes exclude taxes and fees (typically $5–15 per line, or roughly $10–30 total for two lines depending on your location; AT&T’s admin/regulatory fee alone is currently ~$4.99/line). The quoted numbers already include AutoPay/paperless and BYOD port-in credits for 36 months.
