@@ -557,7 +557,14 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] **Run `0007_prove_try_release.sql` on accelerator-test before deploying the G2.1 code.**
 - [ ] **G2.1 live run on Machine Shop:** run Checkout first, then 10 real Work items, measuring send-back rate and time-to-live.
 - [ ] Console sign-in hiccup (2026-10-12): a menu link sent a signed-in owner to `/login` once; the retry worked. Likely cause: Next.js pre-loading the link while the session was expiring, and caching the proxy's sign-in redirect. Fix: don't redirect pre-load requests in `apps/console/proxy.ts`. Note the page if it happens again.
-- [ ] **G2.2** Toolbelt v0: `/mcp`, job tokens, 6–8 tools, `acc_tool_calls`; drop `envmachine` from the runner and from Machine Shop's `dev` script.
+- [x] **G2.2** Toolbelt v0: `/mcp`, job tokens, 6–8 tools, `acc_tool_calls`; drop `envmachine` from the runner and from Machine Shop's `dev` script. *(Built 2026-10-19, `44beff1`.)*
+  - MCP Streamable HTTP with JSON responses: `initialize`, `tools/list`, `tools/call`, `ping`.
+  - HMAC job tokens bound to the job, tenant, role, claim generation and expiry (`TOOLBELT_SECRET`, falling back to `RUNNER_TOKEN`).
+  - Six read/report tools, with per-role lists enforced on every call. No release or merge tool exists for any agent.
+  - Agents get a minimal environment, plus guards against dumping environment variables.
+  - `envmachine` is now a logged fallback, switched off with `RUNNER_ENVMACHINE=off` once the vault holds the site's test keys. Machine Shop's `dev` script is unchanged.
+  - **Residual risk, recorded honestly:** the agent process still needs the model key to call its model, so a determined agent could reach it. The guards make that hard, not impossible. The full fix is a model proxy in the Toolbelt (G2.2b).
+- [ ] **G2.2b** Model proxy: agents call their model through the Toolbelt with the job token, so no model key exists in any agent environment. Stripe connector (test mode) and progressive tool disclosure by stage (§8.5).
 - [ ] **G2.1a** Overview reads the real Work/proof/release records; actual actions, accurate unavailable states, measured trends and labelled demo data (§10.4).
 - [ ] **G2.3** Crew v0 plus Team Lead, versioned mandate and audited specialist handoffs; migration reservations reconciled with Claude's work (§10.1).
 - [ ] **G2.3a** Reviewed Machine Shop capability inventory, requirements/technical/evidence links and independent condition/progress views (§10.3).
@@ -606,7 +613,10 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] Establish relevant lint/typecheck/Vitest/integration/browser-QA checks and independent acceptance review; record a baseline.
 - [ ] Verify release approvals apply to the exact candidate; invalidation, concurrency and recovery behavior are explicit.
 - [ ] Implement §1.5 connection onboarding: three paths, reviewed contracts, credential/connectivity boundaries, disabled-by-default tools and sandbox acceptance evidence.
-- [ ] Stage §14 protocols across G2.1/G2.2/G2.3/G2.4/G2.5; demonstrate interrupted execution, ambiguous external outcomes and bounded typed recovery before expanding autonomous execution.
+- [ ] Stage §14 protocols across G2.1/G2.2/G2.3/G2.4/G2.5; demonstrate interrupted execution, ambiguous external outcomes and bounded typed recovery before expanding autonomous execution. *(Stage A built in `44beff1` and covered by tests; to be demonstrated live on Machine Shop.)*
+  - Claims expire and are renewed, with a generation per claim; a superseded worker can neither commit nor use the Toolbelt.
+  - A lapsed job is requeued once, then failed.
+  - A lapsed release is recorded as outcome unknown and never retried blindly.
 - [ ] Review §15 UX alternatives with the Owner before selecting or implementing new presentation modes.
 - [ ] Define §13 change contracts, rule-review states, dependency impact and evidence invalidation; prove missing/stale checks block promotion.
 - [ ] Demonstrate characterization versus approved changes, independent architecture/security review, bounded pilot execution and tested recovery on Machine Shop.
@@ -635,13 +645,21 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
     - OpenAI accepted the session (200, 5 tools). 212 unit tests; browser QA 51/51.
     - **Env:** `OPENAI_API_KEY` must be valid on the API; the platform dev key was rejected 2026-10-19. Optional `VOICE_MODEL` (default `gpt-realtime`) and `VOICE_MAX_MINUTES` (default 15).
     - Streaming the lead's *typed* replies remains F4.
-- [ ] **F4** streaming lead turns from the API, pushed events, one agent session per Work item.
-- [ ] **F5** live voice in the cockpit widget (OpenAI realtime over WebRTC, member session instead of an access code), global composer, slash commands.
-- [ ] Change Ledger: ledger entries in the Site Timeline, per-site land lock with compare-and-swap, API-first code reads (with G2.2/G2.5).
+- [x] **F4** streaming lead turns from the API, pushed events, one agent session per Work item. *(Built 2026-10-19, `44beff1`; push after migration 0010.)*
+  - The lead's typed replies stream from the API, using Anthropic over SSE with no SDK; a real stream was verified. Hidden assessment lines are filtered out. The reply is recorded as a discuss job, and the runner takes over when the lead isn't Claude or the API has no key.
+  - Prompts moved to `packages/domain`.
+  - `/work/:n/events` pushes changes, with a 30-second safety-net poll; the console proxy passes streams through.
+  - Each Work item resumes its Agent SDK session (`acc_work.agent_session_id`), falling back to a fresh one.
+- [x] **F5** live voice in the cockpit widget, global composer, slash commands. *(Voice: F3e. ⌘K composer and slash commands built in `44beff1`.)*
+- [ ] Change Ledger: ledger entries in the Site Timeline, per-site land lock with compare-and-swap, API-first code reads (with G2.2/G2.5). *(Land lock built in `44beff1`: one release per site at a time. Compare-and-swap is the release job's fast-forward-only move of main, which stops if main moved. The Site Timeline page and API-first code reads remain.)*
 - [ ] Domain packs: registry, Commerce and Hospitality packs, domain-tier skills and complexity hotspots (with G2.3); domain picker in Configuration.
 - [x] Run `0009_traceability_repair.sql` on accelerator-test, then push F2 + T1 (`99045f8`). *(Owner ran 0009, 2026-10-17; pushed `ab1c607..99045f8`.)*
 - [ ] Planned migration numbers: crew 0010, toolbelt 0011, library 0012 (0009 is traceability T1 plus repairs and pause).
-- [ ] **Traceability store (§21):** ~~T1 decisions, evidence and ledger with dual writes~~ *(built in `99045f8`: `acc_decisions`, `acc_evidence`, `acc_ledger` with contribution flags; best-effort writes via `apps/api/lib/ledger.ts`)*; T2 backfill; T3 documents and versions; T4 logs to object storage plus retention settings and the nightly job; T5 `/docs` sync; T6 instruments and the contribution graph; T7 retire Gen 1 tables.
+- [ ] **Traceability store (§21):** T1 decisions, evidence and ledger *(built in `99045f8`)*; T2, T3 and T4 *(built in `44beff1`)*; T5 `/docs` sync; T6 instruments and the contribution graph *(the dial reads them from F3)*; T7 retire Gen 1 tables.
+  - **T2:** backfill in migration 0010, every row marked reconstructed, safe to re-run.
+  - **T3:** `acc_documents` and `acc_document_versions`, dual-written with sha256, and backfilled.
+  - **T4:** `acc_retention` with defaults, `acc_log_archives`, and a private `accelerator-logs` bucket. A nightly `/api/cron/retention` call (Vercel Cron with `CRON_SECRET`) archives logs as gzipped NDJSON, deletes expired archives and prunes drafts, recording each pruning in the ledger.
+- [ ] Run `0010_stage2_stage3.sql` on accelerator-test, set `CRON_SECRET` (and optionally `TOOLBELT_SECRET`) on the API's Vercel project, then push `44beff1`.
 ---
 
 ## 9. Agent interfaces, decisions, live agents and generative forms (added 2026-10-12)
