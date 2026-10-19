@@ -31,3 +31,115 @@ Because Verizon service is poor where you live and you already have AT&T interne
 The port-in and AutoPay discounts are critical to the quoted prices; confirm they apply fully and that any activation fees are waived or minimized. Taxes vary by ZIP code, so request a final taxes-and-fees-included estimate from AT&T before committing.
 
 **Bottom line:** Go with **Extra 2.0**. It delivers better real-world performance and features than your current Verizon Unlimited Welcome at a lower (or at worst comparable) monthly cost, especially for the first three years. Value is only if you are very light users; Premium is nicer but not the cost-saving move you are looking for.
+
+### TAKE ACTION
+
+**Yes — you need a Verizon Number Transfer PIN (sometimes called a port-out or transfer PIN) plus your account number to port your number to AT&T.** Do **not** cancel your Verizon service first. Keep it active until the port finishes; the port itself closes the old line.
+
+### How to get the Verizon Number Transfer PIN
+
+You must be the Account Owner or an Account Manager. The PIN is usually valid for **7 days**, so generate it right before you start the AT&T switch.
+
+**Fastest options:**
+
+1. **Dial `#PORT`** (or `#7678`) from the Verizon phone whose number you want to port.  
+   Follow the prompts / verification. Verizon texts you a link — open it to generate the PIN. It often also shows your account number.
+
+2. **My Verizon app or website** (recommended if the dial method doesn’t work cleanly):  
+   - Sign in to the My Verizon app or at verizon.com.  
+   - Look for **Number Transfer PIN**, **Create Your Number Transfer PIN**, or something similar under Account, Security, Profile & settings, or Account Settings.  
+   - Select **Generate PIN** and complete any verification.  
+   The PIN appears on screen and is usually texted to you.
+
+3. **Call or visit a store** if needed:  
+   Call Verizon at 1-800-922-0204 (or *611 from a Verizon phone) and ask for a Number Transfer PIN / port-out PIN. Or go to a Verizon store.
+
+**Also turn off Number Lock** if it’s enabled (usually under Security settings in the app or website). A locked number can block the port.
+
+### Find your Verizon account number
+
+- On a recent bill (often top right).  
+- In the My Verizon app or website: Account → Account Settings / Account Overview / Profile & settings. It’s listed under your profile or account details.
+
+### Steps to switch to AT&T
+
+1. **Prep**  
+   - Confirm your phones are unlocked (required if you want to keep using them on AT&T).  
+   - Back up your data and note any two-factor authentication codes that rely on SMS.  
+   - Check for any remaining device payment balance on Verizon — it usually becomes due on the final bill.  
+   - Generate the fresh Number Transfer PIN and note the account number, exact account-holder name, and billing ZIP code.
+
+2. **Start with AT&T** (online at att.com, in the myAT&T app, or at an AT&T store)  
+   - Choose your plan (e.g., Extra 2.0) and the Bring Your Own Device / port-in option if you’re keeping your phones.  
+   - Select **Keep my number** / transfer existing number.  
+   - Enter the Verizon account number, Number Transfer PIN, phone number(s), name, and billing ZIP exactly as they appear on the Verizon account.  
+   - Activate the AT&T eSIM or physical SIM.
+
+3. **Wait for the port**  
+   Wireless-to-wireless ports usually complete in minutes to a few hours (sometimes longer if there’s a data mismatch). Your Verizon service stays active until the handoff finishes, then it drops and the line cancels automatically. You’ll typically get a confirmation text once it’s done.
+
+4. **Afterward**  
+   Test calls, texts, and data. Confirm the Verizon account shows the line(s) closed. Any final charges (including remaining device balances) will appear on your last Verizon bill.
+
+**Tips for a smooth switch:**  
+- Double-check that the name, ZIP, account number, and PIN match Verizon’s records exactly — mismatches are the most common reason ports fail.  
+- Generate the PIN close to when you actually submit the port so it doesn’t expire.  
+- One PIN usually covers all lines on a consumer account.  
+- If anything stalls, AT&T support can help troubleshoot the port details with you.
+
+You’re all set once you have the account number + fresh Number Transfer PIN. Start the AT&T signup/port when you’re ready.
+
+**Yes — you need a Verizon Number Transfer PIN (sometimes called a port-out or transfer PIN) plus your account number to port your number to AT&T.** Do **not** cancel your Verizon service first. Keep it active until the port finishes; the port itself closes the old line.
+
+### How to get the Verizon Number Transfer PIN
+
+You must be the Account Owner or an Account Manager. The PIN is usually valid for **7 days**, so generate it right before you start the AT&T switch.
+
+**Fastest options:**
+
+1. **Dial `#PORT`** (or `#7678`) from the Verizon phone whose number you want to port.  
+   Follow the prompts / verification. Verizon texts you a link — open it to generate the PIN. It often also shows your account number.
+
+2. **My Verizon app or website** (recommended if the dial method doesn’t work cleanly):  
+   - Sign in to the My Verizon app or at verizon.com.  
+   - Look for **Number Transfer PIN**, **Create Your Number Transfer PIN**, or something similar under Account, Security, Profile & settings, or Account Settings.  
+   - Select **Generate PIN** and complete any verification.  
+   The PIN appears on screen and is usually texted to you.
+
+3. **Call or visit a store** if needed:  
+   Call Verizon at 1-800-922-0204 (or *611 from a Verizon phone) and ask for a Number Transfer PIN / port-out PIN. Or go to a Verizon store.
+
+**Also turn off Number Lock** if it’s enabled (usually under Security settings in the app or website). A locked number can block the port.
+
+### Find your Verizon account number
+
+- On a recent bill (often top right).  
+- In the My Verizon app or website: Account → Account Settings / Account Overview / Profile & settings. It’s listed under your profile or account details.
+
+### Steps to switch to AT&T
+
+1. **Prep**  
+   - Confirm your phones are unlocked (required if you want to keep using them on AT&T).  
+   - Back up your data and note any two-factor authentication codes that rely on SMS.  
+   - Check for any remaining device payment balance on Verizon — it usually becomes due on the final bill.  
+   - Generate the fresh Number Transfer PIN and note the account number, exact account-holder name, and billing ZIP code.
+
+2. **Start with AT&T** (online at att.com, in the myAT&T app, or at an AT&T store)  
+   - Choose your plan (e.g., Extra 2.0) and the Bring Your Own Device / port-in option if you’re keeping your phones.  
+   - Select **Keep my number** / transfer existing number.  
+   - Enter the Verizon account number, Number Transfer PIN, phone number(s), name, and billing ZIP exactly as they appear on the Verizon account.  
+   - Activate the AT&T eSIM or physical SIM.
+
+3. **Wait for the port**  
+   Wireless-to-wireless ports usually complete in minutes to a few hours (sometimes longer if there’s a data mismatch). Your Verizon service stays active until the handoff finishes, then it drops and the line cancels automatically. You’ll typically get a confirmation text once it’s done.
+
+4. **Afterward**  
+   Test calls, texts, and data. Confirm the Verizon account shows the line(s) closed. Any final charges (including remaining device balances) will appear on your last Verizon bill.
+
+**Tips for a smooth switch:**  
+- Double-check that the name, ZIP, account number, and PIN match Verizon’s records exactly — mismatches are the most common reason ports fail.  
+- Generate the PIN close to when you actually submit the port so it doesn’t expire.  
+- One PIN usually covers all lines on a consumer account.  
+- If anything stalls, AT&T support can help troubleshoot the port details with you.
+
+You’re all set once you have the account number + fresh Number Transfer PIN. Start the AT&T signup/port when you’re ready.
