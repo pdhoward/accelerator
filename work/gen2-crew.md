@@ -658,8 +658,9 @@ Hosted only, with no upfront license fee, plus a certification fee. Founding par
 - [ ] **Traceability store (§21):** T1 decisions, evidence and ledger *(built in `99045f8`)*; T2, T3 and T4 *(built in `44beff1`)*; T5 `/docs` sync; T6 instruments and the contribution graph *(the dial reads them from F3)*; T7 retire Gen 1 tables.
   - **T2:** backfill in migration 0010, every row marked reconstructed, safe to re-run.
   - **T3:** `acc_documents` and `acc_document_versions`, dual-written with sha256, and backfilled.
-  - **T4:** `acc_retention` with defaults, `acc_log_archives`, and a private `accelerator-logs` bucket. A nightly `/api/cron/retention` call (Vercel Cron with `CRON_SECRET`) archives logs as gzipped NDJSON, deletes expired archives and prunes drafts, recording each pruning in the ledger.
-- [ ] Run `0010_stage2_stage3.sql` on accelerator-test, set `CRON_SECRET` (and optionally `TOOLBELT_SECRET`) on the API's Vercel project, then push `44beff1`.
+  - **T4:** `acc_retention` with defaults, `acc_log_archives`, and a private `accelerator-logs` bucket. A nightly `/api/cron/retention` call, scheduled on Supabase (`pg_cron` + `pg_net`, migration 0011, with the API's address and `CRON_SECRET` in Supabase Vault), archives logs as gzipped NDJSON, deletes expired archives and prunes drafts, recording each pruning in the ledger.
+- [x] Run `0010_stage2_stage3.sql` on accelerator-test, set `CRON_SECRET` (and optionally `TOOLBELT_SECRET`) on the API's Vercel project, then push `44beff1`. *(Owner, 2026-10-19; pushed with `203ef25`.)*
+- [ ] Create the two Vault secrets (`accelerator_api_url`, `accelerator_cron_secret`), then run `0011_retention_schedule.sql`. **All scheduled jobs run on Supabase (pg_cron), never Vercel Cron** (Owner, 2026-10-19).
 ---
 
 ## 9. Agent interfaces, decisions, live agents and generative forms (added 2026-10-12)
