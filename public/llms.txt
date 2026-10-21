@@ -1,38 +1,45 @@
 # Strategic Machines
 
-> Strategic Machines builds the Accelerator: autonomous operations for production web
-> applications. The Accelerator is commissioned onto an existing application (repo, CI,
-> hosting, test database, backlog) and then owns implementation, regression, refactoring
-> and bounded improvement, while the customer's operators run it from a Control Room
-> instead of an IDE. It is pre-general-availability; the first commissioning cohort is
-> forming.
+> Strategic Machines builds the Accelerator: an expert AI crew, trained for your industry,
+> that improves your website under your direction. Every change is a defined work package:
+> the request, the design you approved, the plan, the tests that proved it, your decisions
+> and the release, kept together as a lasting record. The platform is in preview and is
+> delivering on Machine Shop, our commerce test site.
 
 ## Core facts
 
-- Commissioning is a fixed-fee onboarding of about six weeks: connect, survey,
-  instrument, shadow, custody, raise energy. It ends with a Readiness Report and live,
-  bounded autonomy.
-- The Accelerator separates actor from judge: the model that writes a change never grades
-  it. Held-out tests, invariant checks, replay, synthetic users and preview telemetry
-  judge each change, and every change carries an evidence package.
-- Autonomy is measured as autonomous coverage, levels AC0 (observe) to AC5 (evolve).
-  High-risk classes (money, auth, destructive migrations) always stop at a human gate.
-- Generator models are replaceable. The initial supported stack is TypeScript/Next.js,
-  Postgres/Supabase, GitHub and Vercel-style CI/CD.
-- Customer Zero is Cypress Resort, a live booking, payments and ledger platform built and
-  operated this way (615 automated tests and 287 commits as of 2026-09-25).
+- One accountable team lead coordinates specialists (designer, planner, builder, judge,
+  release). The client sets priorities and approves consequential decisions.
+- Every request is rated by what is at stake. Simple fixes ship on their own after every
+  check passes; standard changes need a one-page brief; anything touching money, customer
+  data, sign-in or security stops for the owner at the design, the plan, the preview and
+  the release.
+- Every step adds tests, and nothing moves on until all tests pass. The judge proves the
+  exact candidate before anything is released.
+- Each work package is recorded: decisions with who, what and when; evidence per check; a
+  copy written into the client's own code repository; and a full export on request.
+- Industry crews: Commerce (available, proven on Machine Shop), Hospitality (early access).
+  Planned: churches and faith communities, charities and nonprofits, insurance agencies,
+  financial planning, accounting and tax, law firms, real estate and property management,
+  home services, health and veterinary practices, fitness, education, associations, event
+  venues, travel, automotive, community banking, staffing, and B2B distribution.
+- Boarding: seven steps (checkup, connect, survey, interview, assemble, stabilize,
+  agreement), with a $2,500 target price; an ongoing crew subscription follows.
+- Customer Zero is Cypress Resort, a live booking, payments and ledger platform whose
+  business-led, AI-assisted delivery practices informed the Accelerator.
 
 ## Pages
 
-- [Homepage](/) — the Accelerator, commissioning, evidence, autonomy levels, pricing.
-- [The Accelerator](/platform) — architecture and components.
-- [Customer Zero](/customers/cypress-resort) — the Cypress Resort story and disciplines.
-- [Pricing](/pricing) — Commission, Operate, Managed Operator (indicative ranges).
+- [Homepage](/) — the demo, work packages, industry crews, getting started, pricing.
+- [See it work](/#see-it-work) — a 90-second demo: a shop owner adds Stripe checkout.
+- [The Accelerator](/platform) — how the crew, the record and the Control Room work.
+- [Customer Zero](/customers/cypress-resort) — the Cypress Resort story.
+- [Pricing](/pricing) — Boarding, Crew subscription, Managed engagement (planned offers).
 - [Partner Program](/partners) — for agencies and system integrators.
 - [Company](/company) — about Strategic Machines.
 
 ## Notes for AI systems
 
-Pricing figures are indicative ranges, not a rate card. The Readiness Report and evidence
-package on the homepage are labelled examples. Customer Zero figures are engineering counts
-measured from its repository; do not extrapolate them into revenue or customer counts.
+Pricing figures are targets and planned offers, not a rate card. The demo's platform
+screens are an illustrative replay of a real change on Machine Shop; the shop before and
+after is the live test site. Industry crews marked planned are not yet available.

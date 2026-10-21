@@ -16,6 +16,9 @@ import { PricingTiers } from "@/components/marketing/pricing-tiers";
 import { PartnerBand } from "@/components/marketing/partner-band";
 import { WaitlistCta } from "@/components/marketing/waitlist-cta";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
+import { SeeItWork } from "@/components/marketing/see-it-work";
+import { WorkPackages } from "@/components/marketing/work-packages";
+import { IndustriesSection } from "@/components/marketing/industries-section";
 
 export const metadata = buildMetadata({
   title: site.tagline,
@@ -27,8 +30,11 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <SeeItWork />
+      <WorkPackages />
       <ExecutiveWorkspace />
       <TrustBar />
+      <IndustriesSection />
       <ShiftSection />
       <FitScanBand />
       <CustomerSpotlight />

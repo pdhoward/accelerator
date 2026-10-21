@@ -21,7 +21,7 @@ export function Hero() {
           <FadeUpItem>
             <Badge variant="live">
               <span className="size-1.5 animate-pulse-slow rounded-full bg-signal" />
-              Platform preview · approach proven at Cypress
+              Platform preview · now delivering on Machine Shop
             </Badge>
           </FadeUpItem>
 

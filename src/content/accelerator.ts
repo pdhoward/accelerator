@@ -14,52 +14,13 @@ export type CommissioningStep = {
 };
 
 export const commissioningSteps: CommissioningStep[] = [
-  {
-    "week": "Assess",
-    "title": "Check the fit",
-    "description": "Review your existing site and identify the scope, dependencies and readiness gaps."
-  },
-  {
-    "week": "Connect",
-    "title": "Set the boundaries",
-    "description": "Agree service connections, test environments and decision authority before execution."
-  },
-  {
-    "week": "Understand",
-    "title": "Talk through the business",
-    "description": "Explain your priorities and rules. The crew challenges assumptions and surfaces open questions."
-  },
-  {
-    "week": "Agree",
-    "title": "Map the capabilities",
-    "description": "Review what the site does, what must stay true and how proposed improvements will be checked."
-  },
-  {
-    "week": "Verify",
-    "title": "Establish the baseline",
-    "description": "Run realistic scenarios, identify missing checks and confirm what is ready and what needs attention."
-  },
-  {
-    "week": "Improve",
-    "title": "Begin governed delivery",
-    "description": "Approve a bounded first change, review its preview and evidence, then observe the result."
-  }
-];
-
-export type AutonomyLevel = {
-  code: string;
-  name: string;
-  scope: string;
-  gate: string;
-};
-
-export const autonomyLevels: AutonomyLevel[] = [
-  { code: "AC0", name: "Observe", scope: "Map, test and report. No changes.", gate: "—" },
-  { code: "AC1", name: "Repair", scope: "Bugs, flaky tests, dependencies, copy", gate: "Auto to staging" },
-  { code: "AC2", name: "Implement", scope: "Well-specified backlog features", gate: "Operator OKs the evidence" },
-  { code: "AC3", name: "Refactor", scope: "Changes across modules and architecture", gate: "Replay + held-out suite" },
-  { code: "AC4", name: "Operate", scope: "Incidents, performance, data fixes", gate: "Interlocked prod path" },
-  { code: "AC5", name: "Evolve", scope: "Bounded experiments behind flags", gate: "Your mission bounds" },
+  { week: "Checkup", title: "See where you stand", description: "A scan of your live site and a read-only look at the code: speed, freshness, tests and fit." },
+  { week: "Connect", title: "Connect safely", description: "Your code, previews, a test database and test payment keys. The crew never touches live customer data." },
+  { week: "Survey", title: "Map what your site does", description: "The crew proposes your site's capabilities from the code. You confirm what's right." },
+  { week: "Interview", title: "Talk through the business", description: "Your outcomes, the customer journeys that matter, what must never break, and who decides what." },
+  { week: "Assemble", title: "Fit the crew to you", description: "Your industry crew, with the first rules written for your site, reviewed before it starts." },
+  { week: "Stabilize", title: "Prove the first change", description: "Fix what the checkup found and release one change through the full path, with your approval." },
+  { week: "Agreement", title: "Agree how you'll work", description: "A one-page agreement: what the crew may do, what always comes to you, and what you keep." },
 ];
 
 export type EvidenceLine = {

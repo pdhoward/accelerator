@@ -1,0 +1,97 @@
+WEBVTT
+
+1
+00:00:00.200 --> 00:00:00.911
+Meet Sally.
+
+2
+00:00:00.911 --> 00:00:09.706
+She sells home and hardware products online, and she has grown her site one step at a time with the Accelerator from Strategic Machines.
+
+3
+00:00:09.706 --> 00:00:11.193
+She doesn't write code.
+
+4
+00:00:11.193 --> 00:00:12.616
+She knows how to sell.
+
+5
+00:00:13.016 --> 00:00:18.189
+Today's step: let shoppers pick a product, pay with Stripe, and have it shipped.
+
+6
+00:00:18.189 --> 00:00:19.418
+Sally just says so.
+
+7
+00:00:19.418 --> 00:00:26.272
+Her Team Lead rates it High, because money moves, and tells her exactly where she will be asked to decide.
+
+8
+00:00:26.672 --> 00:00:37.271
+The Designer writes it up in plain English: a Buy now button, Stripe Checkout, the price always from the catalog, flat-rate shipping, and test mode only.
+
+9
+00:00:37.271 --> 00:00:39.280
+Sally reads it, and approves.
+
+10
+00:00:39.680 --> 00:00:44.665
+She sets the mandate: what's in scope, what must never break, and a budget.
+
+11
+00:00:44.665 --> 00:00:49.650
+The Planner breaks the work into four small steps, each with its own tests.
+
+12
+00:00:49.650 --> 00:00:50.248
+Approved.
+
+13
+00:00:50.648 --> 00:00:51.905
+Now the crew works.
+
+14
+00:00:51.905 --> 00:00:56.868
+Every step adds its own tests, and nothing moves on until all of them pass.
+
+15
+00:00:56.868 --> 00:01:00.904
+Two hundred forty-three tests became two hundred seventy-six.
+
+16
+00:01:01.304 --> 00:01:05.104
+The Judge proves the exact candidate and opens a preview.
+
+17
+00:01:05.104 --> 00:01:10.637
+Sally buys a cordless drill with Stripe's test card, and the order lands in Stripe.
+
+18
+00:01:10.637 --> 00:01:12.304
+She approves the release.
+
+19
+00:01:12.704 --> 00:01:13.365
+It's live.
+
+20
+00:01:13.365 --> 00:01:21.160
+And every decision, every test run and every handoff is on the record: on Sally's timeline, and in her own repository.
+
+21
+00:01:21.560 --> 00:01:22.444
+Sally sells.
+
+22
+00:01:22.444 --> 00:01:23.622
+The crew builds.
+
+23
+00:01:23.622 --> 00:01:26.348
+And nothing ships without her say-so.
+
+24
+00:01:26.348 --> 00:01:29.368
+The Accelerator, from Strategic Machines.

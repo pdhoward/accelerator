@@ -23,23 +23,23 @@ export const faqItems: FaqItem[] = [
   },
   {
     "question": "What can the crew do without my approval?",
-    "answer": "Only work within the agreed scope, permissions and deterministic gate policy. Money, data, sign-in and security changes require the client Owner. Material scope or budget changes are escalated. Internal coordination does not grant additional authority."
+    "answer": "It depends on what is at stake. A simple fix (a broken link, a blurry image) is built, tested and shipped on its own, and you see it in the record. A standard change needs your approval of a one-page brief, and you decide when it ships. Anything touching money, customer data, sign-in or security stops for you at the design, the plan, the preview and the release. Every change is a defined work package, so you can always see what was decided and by whom."
   },
   {
     "question": "How are credentials protected?",
-    "answer": "The platform includes an encrypted vault. The planned Toolbelt will attach service credentials on the server and issue short-lived, scoped job tokens. This transition is still in the roadmap; a walkthrough distinguishes current controls from planned ones."
+    "answer": "Keys live in an encrypted vault and never leave the server. Each crew job gets a short-lived token scoped to that one job, its site and its role; the crew uses test keys and test data only, and live payment keys are refused. A walkthrough shows the controls in place."
   },
   {
     "question": "Can I keep my business knowledge?",
-    "answer": "The design provides open-format records for business rules, decisions, approved designs and verification history. Library synchronization and export are planned capabilities, with availability and retention terms confirmed before an engagement."
+    "answer": "Yes. Every work package is recorded: the request, the approved design, the plan, the tests, the decisions and the release. A copy of each record is written into your own code repository, and you can export your site's whole record as one file at any time. Retention terms are agreed before an engagement."
   },
   {
     "question": "Which sites are a fit?",
-    "answer": "The Accelerator and the AI agents are calibrated for a technical stack of Next.js, TypeScript or Python, with API servers and a wide range of security protocols. Other language technologies, database integrations and deployment platforms are assessed for each site. Is your site running on a framework reaching end-of-life, or unable to support your business requirements? The Accelerator supports platform migrations."
+    "answer": "Businesses that run on their website, in an industry we have a crew for: Commerce today, Hospitality in early access, and more planned. The crew is calibrated for Next.js and TypeScript sites with a GitHub repository and Vercel-style hosting; other stacks are assessed site by site. Is your site on a framework reaching end-of-life? The Accelerator supports platform migrations."
   },
   {
     "question": "How do I get started?",
-    "answer": "Request a walkthrough or assess your site’s fit. Planned offers include standard Boarding with a $2,500 target, an ongoing crew subscription with pricing to be confirmed, and separately scoped managed engagements. Availability, scope and final terms are agreed in writing."
+    "answer": "Request a walkthrough or discover your starting point. Boarding takes your site through seven steps (checkup, connect, survey, interview, assemble, stabilize, agreement) with a $2,500 target price; an ongoing crew subscription follows, with pricing to be confirmed. Availability, scope and final terms are agreed in writing."
   },
   {
     "question": "Who is Customer Zero?",

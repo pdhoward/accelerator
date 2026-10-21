@@ -46,7 +46,8 @@ export const blogUrl = "https://blog.strategicmachines.ai/";
 export const primaryNav: NavItem[] = [
   { label: "Starting point", href: "/fit-scan" },
   { label: "The Accelerator", href: "/platform" },
-  { label: "Getting started", href: "/#commissioning" },
+  { label: "See it work", href: "/#see-it-work" },
+  { label: "Industries", href: "/#industries" },
   { label: "Customer Zero", href: "/customers/cypress-resort" },
   { label: "Pricing", href: "/pricing" },
   { label: "Partners", href: "/partners" },
@@ -60,6 +61,9 @@ export const footerColumns: { title: string; items: NavItem[] }[] = [
     items: [
       { label: "Starting point", href: "/fit-scan" },
       { label: "The Accelerator", href: "/platform" },
+      { label: "See it work", href: "/#see-it-work" },
+      { label: "Work packages", href: "/#work-packages" },
+      { label: "Industries", href: "/#industries" },
       { label: "Getting started", href: "/#commissioning" },
       { label: "Proof of what works", href: "/#evidence" },
       { label: "Pricing", href: "/pricing" },

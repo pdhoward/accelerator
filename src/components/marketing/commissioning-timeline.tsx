@@ -8,7 +8,7 @@ export function CommissioningTimeline() {
       <div className="mx-auto max-w-7xl px-6">
         <FadeUp className="mx-auto mb-14 max-w-2xl text-center">
           <FadeUpItem>
-            <SectionEyebrow className="mx-auto justify-center">Getting started</SectionEyebrow>
+            <SectionEyebrow className="mx-auto justify-center">Getting started · Boarding</SectionEyebrow>
           </FadeUpItem>
           <FadeUpItem>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">
@@ -17,9 +17,9 @@ export function CommissioningTimeline() {
           </FadeUpItem>
           <FadeUpItem>
             <p className="mt-4 text-pretty text-lg leading-relaxed text-fog">
-              Assess your existing site, agree what matters, connect the right services and
-              establish a verification baseline. Timing and scope are confirmed after the
-              assessment; platform onboarding is being proven on Machine Shop.
+              Seven steps, at a fixed onboarding price. Each one is checked off against real
+              records, not a to-do list, and every point where a person had to step in is
+              logged so the next site boards faster. Boarding is being proven on Machine Shop.
             </p>
           </FadeUpItem>
         </FadeUp>
