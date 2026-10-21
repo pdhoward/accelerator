@@ -35,7 +35,10 @@ export function WaitlistForm({ defaultCompany, source }: { defaultCompany?: stri
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
-          source: source ?? (typeof document !== "undefined" ? document.referrer : undefined),
+          source: source ?? "walkthrough",
+          // Where the request was made, and where the visitor came from (the route trims the referrer).
+          page: typeof window !== "undefined" ? window.location.pathname : undefined,
+          referrer: typeof document !== "undefined" && document.referrer ? document.referrer : undefined,
         }),
       });
       const json = await res.json();

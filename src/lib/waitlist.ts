@@ -14,6 +14,10 @@ export const waitlistSchema = z.object({
   // validation error.
   company: z.string().optional(),
   source: z.string().max(200).optional(),
+  /** The page the form was on (path only). */
+  page: z.string().max(300).optional(),
+  /** The page the visitor arrived from; the route keeps only its hostname and path. */
+  referrer: z.string().max(2000).optional(),
 });
 
 export type WaitlistInput = z.infer<typeof waitlistSchema>;
