@@ -1,12 +1,18 @@
-# Gen 3: The Cradle (Design v0.1)
+# Gen 3: The Cradle (Design v0.2)
 
-*Strategic Machines · started 2026-10-28 · **status: direction set by the Owner; design in progress; Pilot 1 (policy extraction from ts-platform, read-only) authorized** · builds on [gen2-crew.md](gen2-crew.md) §13.3 (business-rule register), §20 (domain packs) and §21 (traceability store)*
+*Strategic Machines · started 2026-10-28 · revised 2026-10-29 · **status: direction set by the Owner; design in progress; Pilot 1 (policy extraction from ts-platform, read-only) authorized** · builds on [gen2-crew.md](gen2-crew.md) §13.3 (business-rule register), §20 (domain packs), §21 (traceability store) and §9.2 (the Decide layer, Jev)*
 
 **How to use this doc:**
 - §0 says what Gen 3 is and what stays from Gen 2.
-- §1 is the execution model, including the question "can agents run the transactions?"
-- §2 is the policy graph, the platform's proprietary core.
-- §3 covers industry packs.
+- §1 is the execution model:
+  - "can agents run the transactions?" (§1.1);
+  - criticality (§1.3);
+  - the request path with Jev (§1.4);
+  - generative surfaces (§1.5).
+- §2 is the policy graph, the platform's proprietary core:
+  - storage and indexes, and when a graph database would be needed (§2.5);
+  - how kernels run against the graph (§2.7).
+- §3 covers industry packs, roles (§3.1), the Policy Walk where a crew helps the steward tune the pack (§3.2), and Karpathy's ladder for the steward's understanding (§3.3).
 - §4 covers test-driven policy.
 - §5 is Pilot 1: extracting the policy book from ts-platform.
 - §6 covers the advantage, honestly stated. §7 covers risks.
@@ -68,17 +74,69 @@ Code gets written only when a policy needs **a kernel or connector that doesn't 
 
 ts-platform already shows the pattern. Its calendar rule set (`ts_calendar_rule_sets`, typed in `packages/domain/src/shared/calendar-rule-set.ts`) is policy as versioned data: blackouts, seasons, stay restrictions, lead time, cancellation bands, instant-cancel windows. Its engines are the kernels that interpret it. Gen 3 generalizes what the Cypress build arrived at by necessity.
 
-### 1.3 The complexity rating gains a second job
+### 1.3 Criticality, separate from complexity (2026-10-29)
 
-The rating already decides how a change gets *built*. Now it also decides how a policy gets *carried out*:
+Gen 2's single rating mixed two different questions. Gen 3 separates them:
+- **Criticality** is a property of a **policy**: *what happens if we get this wrong?* It sets how closely we pay attention, how deep the proof must go, who must approve, and how the policy may run.
+- **Complexity** is a property of a **work order**: *how hard is this change to build?* It keeps its Gen 2 job of planning effort and checkpoints.
 
-| Rating | How the policy runs | Human role |
-|---|---|---|
-| **High** (money, personal data, sign-in, security, law) | Kernel or guard only. Deterministic and fully tested. | The steward approves the policy and every change to it |
-| **Medium** | Kernel where one exists; otherwise agent guidance, with the result checked against the policy's examples | The steward approves the policy; the crew proposes the form |
-| **Low / judgment** (tone, recommendations, service recovery inside limits) | Agent guidance at runtime | The steward reviews outcomes, not each action |
+A simple change to a critical policy is common. Lowering a deposit percentage is one line, and it is critical. The two axes must not be confused.
 
-**The app may propose but never legislate.** Observed needs (failed searches, unanswered questions, abandoned checkouts) become *proposed* policies or work orders. Nothing the app proposes takes effect in a High area without the steward.
+**How criticality is set:**
+- the pack's default for that kind of policy, plus
+- the policy's **reach**, computed from the graph: how many kernels, surfaces and transactions depend on it.
+
+Either can raise criticality; nothing lowers it except a recorded steward decision, and never below the pack's floor. Money, personal data, sign-in, security, law and guest safety have a floor of Critical.
+
+| Criticality | How the policy runs | Proof required | Human role |
+|---|---|---|---|
+| **Critical** | Kernel or guard only. Deterministic. | Boundary examples, 100% kernel pass, agent conformance on every run | The steward confirms the policy and every change |
+| **Important** | Kernel where one exists; otherwise agent guidance, checked against the examples | Examples, sampled conformance | The steward confirms; the crew proposes the form |
+| **Routine** | Agent guidance at runtime (tone, recommendations, service recovery inside limits) | Examples | The steward reviews outcomes, not each action |
+
+**The app may propose but never legislate.** Observed needs (failed searches, unanswered questions, abandoned checkouts) become *proposed* policies or work orders. Nothing the app proposes takes effect for a Critical policy without the steward.
+
+### 1.4 The request path: Route, Ground, Adjudicate, Execute, Record (2026-10-29)
+
+Every request follows the same five steps, whether it comes from a guest message, a staff action, an API call or an event from a connector:
+
+1. **Route (Jev, through `decide()`).** Fast typed decisions with probabilities:
+   - What is this about? Which concepts and lifecycle events ("Reservation · cancel")?
+   - Which policy nodes are probably triggered? Candidates come from the graph's search indexes (§2.5). Jev ranks and selects among them; it doesn't search the whole graph.
+   - Which agent and which tools (connectors and kernels) are needed?
+   - What is the highest criticality among the triggered policies?
+
+   Thresholds live in `packages/domain`. High confidence routes directly. Low confidence escalates to a stronger model or asks a person.
+2. **Ground.** Load only the triggered policies, at the version in force for this case (Decision 8 generalized). Include their parameters, precedents and examples. The agent's context stays small and exact.
+3. **Adjudicate (the agent).** Reason over the grounded policies: which apply, in what order, and what the outcome should be. Then produce a **transaction plan**: the kernel and connector calls, with their parameters.
+4. **Execute (kernels and guards).** Kernels compute. Guards check every connector call against the governing policies before it runs. A plan that a guard rejects goes back to the agent with the reason, or to a person.
+5. **Record.** Store the request, the routing decisions with their probabilities, the policy versions applied, the plan, the results and the explanation, all linked in the graph.
+
+**Rules carried from Gen 2 §9.2:**
+- Jev classifies; policy decides. Jev never lowers criticality.
+- A deterministic check runs alongside it: any request touching a money-bearing or personal-data concept is treated as Critical, whatever Jev's estimate.
+- Jev remains a *proposed* provider behind the `decide()` adapter. Speed and cost are measured on our own workloads before we rely on them, and the fallback is a small model with structured output.
+
+The Policy Walk (§3.2) uses Jev too: to choose the next most valuable question, and to screen cheaply for candidate contradictions before an agent confirms them.
+
+### 1.5 Generative surfaces: agents compose, components render (2026-10-29)
+
+Screens follow the same pattern as kernels. Each industry pack ships a **component registry**: pre-built, tested, accessible components such as an availability calendar, a refund quote, a payment schedule, a policy explainer or a waiver form. Each component declares:
+- its props schema;
+- which concepts and policies it **expresses**, so it is a Surface node in the graph.
+
+At runtime an agent selects a component and fills its props from the grounded policies. The app renders it. Gen 2's FormSpec and FormRenderer are the first instance of this.
+
+**Rules by criticality:**
+- Anything that states a **Critical** policy to a person (prices, refunds, terms) renders only through a registry component bound to that policy's version. That way the screen can never disagree with the kernel.
+- Free generation (wording, layout within the design system, follow-up suggestions) is allowed for **Routine** content.
+
+Generative AI earns its keep across the cradle, not only in the UI:
+- extracting policies from code and documents (Pilot 1);
+- drafting pack policies from regulations;
+- writing examples and explanations;
+- producing the guest-facing text of a policy, which drift checks keep honest;
+- running the Policy Walk conversation.
 
 ---
 
@@ -106,7 +164,7 @@ The graph is the proprietary element. Old business-rules engines stored rules as
 
 `governs` (Policy → Concept) · `parameterizes` (Parameter → Policy) · `implements` (Kernel → Policy) · `expresses` (Surface → Policy) · `proves` (Example → Policy) · `derives_from` (Policy → Regulation or Decision) · `overrides` (client Policy → pack Policy, with a reason) · `conflicts_with` (Policy ↔ Policy, with the kind and its status) · `supersedes` (Policy → Policy) · `depends_on` · `owned_by` (→ Role) · `found_in` (→ Source).
 
-Every node and edge carries an **effective period** (`effective_from`, `effective_to`) and a **version**. Every Policy carries a **review-by or sunset date**; this is mandatory (G3-D5). Statuses follow Gen 2 §13.3 and stay separate:
+Every node and edge carries an **effective period** (`effective_from`, `effective_to`) and a **version**. Every Policy carries a **criticality** (§1.3) and a **review-by or sunset date**; both are mandatory (G3-D5). Statuses follow Gen 2 §13.3 and stay separate:
 - **extraction status:** candidate, source-verified or unsupported;
 - **business status:** unreviewed, confirmed, disputed or superseded.
 
@@ -122,9 +180,47 @@ The graph is assembled in layers, like the skill tiers: **industry pack → part
 
 The third kind is where we're unique. Every surface and kernel links to its policy, so drift is a graph query, not an audit project. The platform states each contradiction with both sides, the evidence and a proposed resolution. It routes the contradiction to the **referee** (the policy's owner role). The ruling becomes a Decision node, so the same conflict never needs refereeing twice.
 
-### 2.5 Storage
+### 2.5 Storage and indexes
 
-Start in Postgres (Supabase): `cradle_nodes` and `cradle_edges`, with typed `jsonb` bodies, effective periods and versions, scoped by tenant like everything else. No graph database until we need one. The graph is mirrored into the client's repository as readable files (`docs/policy/…`), the same pattern as the Gen 2 Library sync, so the client owns their policy book outright. Agents navigate the graph through Toolbelt tools: `policy.find`, `policy.impact`, `policy.explain`, `policy.conflicts`.
+Start in Postgres (Supabase), with two tables scoped by tenant like everything else.
+
+**`cradle_nodes`** has these columns:
+- `id`, `tenant_id`, `layer` (pack, partner, company or site), `kind`;
+- `key`: a stable name such as `P-CXL-3`, kept across versions;
+- `version`, and `effective` as a `tstzrange`;
+- `criticality`, `extraction_status`, `business_status`;
+- `body` (`jsonb`), a full-text `search` column (`tsvector`) and an `embedding` (`vector`).
+
+Pack rows are shared, read-only content.
+
+**`cradle_edges`** has `id`, `tenant_id`, `src`, `dst`, `kind`, `effective` and `body`.
+
+**Indexes:**
+
+| Index | Serves |
+|---|---|
+| `edges (tenant_id, src, kind)` and `edges (tenant_id, dst, kind)` | Walking in both directions: "what implements this policy?" and "what does this kernel implement?" These two matter most. |
+| Unique `nodes (tenant_id, key, version)` | Version lookup |
+| GiST on `effective`, plus an **exclusion constraint** so two versions of the same key can never overlap in time (uses `btree_gist`) | "As of" queries, such as the policy in force at booking (Decision 8). The database guarantees there is exactly one answer. |
+| Partial index `nodes (tenant_id, kind) WHERE upper_inf(effective)` | The current book, which is the hot path |
+| GIN on `body` (`jsonb_path_ops`) | Parameter lookups ("every policy with `windowHours`") |
+| GIN on `search`, and HNSW on `embedding` (pgvector) | Finding candidate policies for a request, by words and by meaning (§1.4) |
+| Row-level security on `tenant_id` | Tenancy, as in Gen 2 |
+
+Traversals use recursive CTEs with Postgres's `CYCLE` clause. If one traversal becomes hot (for example "policy → every surface that states it"), we keep a materialized closure table for it.
+
+The graph is mirrored into the client's repository as readable files (`docs/policy/…`), the same pattern as the Gen 2 Library sync, so the client owns their policy book outright. Agents navigate it only through Toolbelt tools: `policy.find`, `policy.asOf`, `policy.impact`, `policy.explain`, `policy.conflicts`, `policy.gaps`. Because nothing queries the tables directly, the storage can be swapped later without changing an agent.
+
+**When would we need a graph database?** Probably not for any single client. One client's graph is likely hundreds to tens of thousands of nodes. The ts-platform pilot should land in the hundreds. Postgres answers multi-hop queries at that size in milliseconds.
+
+The likely trigger is **cross-client pack learning**: running graph algorithms (similarity, centrality, clustering of overrides) across every client in an industry. Even then, that could run as a separate analytics copy rather than replacing Postgres as the system of record.
+
+Revisit when any of these is measured:
+- p95 latency for impact or "as of" queries above about 200 ms;
+- a tenant above about a million edges;
+- graph algorithms needed inside a live request.
+
+The `policy.*` tool interface is what keeps that move cheap.
 
 ### 2.6 Why this isn't the old business-rules platforms again
 
@@ -137,6 +233,25 @@ Those systems failed for five reasons. Each has an answer here:
 | Rules never died | A sunset or review date is mandatory; retiring a policy retires its code and tests |
 | Rules drifted from the real system | Every kernel and surface links to its policy; drift shows up as a query |
 | They tried to run *everything* as rules | Kernels stay code; the graph governs them through parameters |
+
+### 2.7 Kernels run against the graph through projections (2026-10-29)
+
+ts-platform's kernels were written against a specific shape, the calendar rule set. In Gen 3, kernels must take their policy from the graph, but they should **not walk the graph themselves**. Walking the graph in the middle of a refund calculation would make the calculation slow, and harder to test and replay. Instead:
+
+- **Each kernel declares a contract in its pack:**
+  - the concepts and policy kinds it implements;
+  - a typed **parameter schema** (its input shape);
+  - its fixed evaluation order;
+  - the explanation it returns.
+- **A projection compiles the graph into that input.** It takes the relevant policies *as of* a date and produces the kernel's typed input, hashed and versioned. The kernel stays pure and fast. Evidence binds to the projection hash, so any result can be replayed exactly.
+- **The calendar rule set *is* a projection.** ts-platform already has this split: the rule-set JSON is the compiled view, and the engines are the kernels. Gen 3 adds the graph *above* the rule set as the place where policies are authored, governed and explained. The rule-set shape can survive as the hospitality pack's parameter schema for those kernels.
+- **Kernels return explanation traces.** Each trace names the rule that fired (for example the matched band's id), and the projection maps it back to policy node ids. That is how "why is my refund 50%?" gets answered.
+
+**Policies come in two kinds**, and extraction must label them:
+- **Parametric:** the kernel reads the policy as data, so changing it needs no code. Examples: band percentages, instant-cancel windows, minimum stays.
+- **Structural:** the policy lives in the kernel's code. Examples: evaluation order (no-show, then gate, then instant cancel, then bands), "no schedule means full payment at booking", "the last instalment takes the rounding remainder". These are still Policy nodes, `implemented_by` the kernel, but changing one is a code change to the kernel, made by the pack and released as a new kernel version.
+
+The parametric share is a headline measure (§6). Lifting a common structural policy into a parameter is how the pack gets better over time.
 
 ---
 
@@ -155,7 +270,60 @@ Boarding selects the closest industry. Then the steward and the crew walk the st
 
 Packs improve from clients' rulings and overrides, under the Gen 2 consent and anonymization rules. The tenth hotel boards onto a far better book than the first. That compounding is the moat.
 
-**Open question (G3-D7):** ts-platform's engines are the natural seed kernels for the hospitality pack. Before any of that code goes into a pack sold to others, we must confirm the IP position under the Cypress Resort agreement and the ts-platform license. Until then, Pilot 1 extracts *policies* (knowledge), not code.
+**Open question (G3-D7):** ts-platform's engines are the natural seed kernels for the hospitality pack. As §2.7 explains, they would take their input through projections from the graph. Before any of that code goes into a pack sold to others, we must confirm the IP position under the Cypress Resort agreement and the ts-platform license. Until then, Pilot 1 extracts *policies* (knowledge), not code.
+
+### 3.1 Roles (2026-10-29)
+
+- **Pack curator** (Strategic Machines, with domain experts and partners): owns the industry pack itself (its ontology, starter policies, kernels and regulations) and releases versions of it.
+- **Steward** (the client): the accountable business expert who tunes *their binding* of the pack. They adopt, adjust parameters, override with reasons and add what's missing. A steward never edits the pack directly. Their rulings and overrides flow back to the curators as anonymized, consented proposals (Gen 2 §2.2).
+- **Area stewards:** in a real business, stewardship is split by area. The revenue manager owns rates, the general manager owns cancellation and guest experience, the controller owns tax and the ledger. Every Policy has an owner role, which is also its **referee** for contradictions. One person may hold every role in a small business.
+
+### 3.2 The Policy Walk: a crew that tunes the pack with the steward (2026-10-29)
+
+Tuning is not a form to fill in. A crew of specialists works through the graph with the steward, asks questions, finds holes and contradictions, builds tests as answers arrive, and keeps going until the book is complete. It is the /vision scene pointed at the policy book instead of the codebase.
+
+**The crew:**
+
+| Specialist | Job |
+|---|---|
+| **Team Lead** | Runs the session, one question at a time, in plain language; keeps the steward's time for what matters |
+| **Cartographer** | Walks the graph in order: Critical first, then dependency order (policies others depend on before the policies that depend on them); tracks coverage |
+| **Gap Finder** | Finds **holes**. The pack ontology lists each concept's lifecycle events (Reservation: create, modify, cancel, no-show, check-in, overbook, chargeback…). Any concept and event with no governing policy is a hole. Completeness becomes computable, not a matter of opinion. |
+| **Referee's Clerk** | Finds contradictions (policy against policy, regulation or surface), prepares both sides and the evidence, and puts them to the steward |
+| **Regulation Checker** | Binds the applicable regulations for the client's jurisdiction, and flags policies that need one |
+| **Example Builder** | Turns each answer into Given/When/Then examples **right away**, runs them against the kernel, and shows the consequence as a story: "With this answer, a guest who cancels 10 days out on a $2,400 stay gets $1,200 back as a credit voucher valid 12 months." It also shows what changed: "This answer changes the outcome of 14 of 200 standard cases." |
+| **Librarian** | Records every ruling as a Decision node, with who, when, why and the version |
+| **Judge** | Checks independently that the book passes the graph checks (§4) before it is declared complete |
+
+**When the walk is done** (stated as checks, not as a feeling):
+- every Critical policy is confirmed, with boundary examples;
+- no holes in Critical concepts and events;
+- no open contradictions;
+- every required regulation is bound;
+- every Policy has an owner role and a sunset date.
+
+The walk ends with a signed **policy book** and a compliance-suite report. It reopens whenever the pack releases a new version, a regulation changes, or the app proposes new work.
+
+**The Policy Walk is also Boarding.** For a client with an existing app, the walk starts from the policies extracted from their code (Pilot 1's method), laid over the pack, rather than from the bare pack.
+
+### 3.3 Understanding: Karpathy's ladder for the steward (2026-10-29)
+
+Andrej Karpathy's observation (also in Gen 2 §9.3): as models do more of the legwork, *"a lot more of our work will rise up the abstractions into oversight and understanding."* That is exactly the steward's job in the cradle: they don't write code or read it; they govern policy. Karpathy's second point makes this practical. Code is now abundant, so we can produce *"large, custom, discardable software artifacts"* that would never have been worth building before.
+
+His ladder ranks output formats, each better than the one before. In the cradle every rung has a defined use:
+
+| Rung | In the cradle |
+|---|---|
+| **1. Controlled writing** (about 80% of the way to ASD-STE100, the aerospace maintenance language) | **Every policy statement is written in controlled English**: one idea per sentence, an approved vocabulary from the pack's ontology, active voice, no ambiguous words. This serves people *and* machines. A controlled statement is easier for a steward to read, and far easier for an agent to compare, so contradictions and holes are found more reliably. Guest-facing wording can be warmer; it is *generated from* the controlled statement and drift-checked against it. |
+| **2. Diagrams** | Every policy can be drawn on demand: the evaluation order as a flowchart (no-show, then gate, then instant cancel, then bands), refund bands as a timeline counting back from arrival, a policy's neighbourhood in the graph (what implements it, what states it, what it conflicts with). |
+| **3. Web pages** | **Interactive, discardable pages** for decisions. A refund simulator with a slider for days before arrival. A side-by-side of a proposed amendment against the current policy, over the 200 standard cases. The impact of a pack upgrade on this client's bindings. The Policy Walk's consequence previews (§3.2) are pages of this kind. |
+| **4. Explainer videos** | Short narrated explainers, generated from the graph: the morning briefing as a 60-second video, a policy change explained for the staff who must apply it, a new steward's tour of their policy book. Our existing pipeline (scripted page, then Playwright capture, then text-to-speech narration, as used for the Machine Shop demo) already produces this. |
+
+**Rules for these artifacts:**
+- **Views, never the source.** Every artifact is generated from the graph and carries the versions (and projection hash) of the policies it shows. The graph stays the only truth.
+- **Discardable and regenerated.** Nobody maintains them. When a policy they show changes, they are marked stale and regenerated on request. This is the same drift check that applies to surfaces (§2.4).
+- **Chosen by criticality and audience.** A Critical change offered for approval comes with at least a controlled statement, a diagram and an interactive consequence page. Video is for briefings and training, not for approval itself.
+- **Understanding is evidence.** Gen 2's behavioral monitoring applies: the record notes which artifacts the steward opened before deciding. Approvals of Critical changes made without opening the evidence get flagged.
 
 ---
 
@@ -268,18 +436,35 @@ Where it isn't worth it: a small brochure site with almost no policy. The cradle
 | G3-D7 | 2026-10-28 | Confirm the IP position before any ts-platform code seeds a commercial pack; until then extract knowledge only | Open: Owner |
 | G3-D8 | 2026-10-28 | Industry packs ship as versioned private npm packages | Proposed |
 | G3-D9 | 2026-10-28 | The owner's role in Gen 3 is called the **steward** | Proposed |
+| G3-D10 | 2026-10-29 | **Criticality** (consequence of being wrong, per policy) is separate from **complexity** (build effort, per work order). Criticality = pack floor raised by graph reach; it is only lowered by a recorded steward decision, and never below the floor | Owner direction |
+| G3-D11 | 2026-10-29 | Postgres stays the system of record. Revisit a graph database only on the measured triggers in §2.5; the likely first use is cross-client pack analytics. Agents reach the graph only through `policy.*` tools | Proposed |
+| G3-D12 | 2026-10-29 | Kernels never walk the graph. **Projections** compile policies as-of a date into each kernel's typed input; evidence binds to the projection hash; kernels return traces that map back to policy ids | Proposed |
+| G3-D13 | 2026-10-29 | Extraction labels every policy **parametric** or **structural**; the parametric share is a headline measure | Proposed |
+| G3-D14 | 2026-10-29 | **The Policy Walk** is the tuning and Boarding experience: a specialist crew, gaps computed from ontology lifecycles, live examples showing consequences, and completion defined by checks | Owner direction |
+| G3-D15 | 2026-10-29 | The request path is **Route (Jev) → Ground → Adjudicate (agent) → Execute (kernels and guards) → Record**. Jev classifies and selects; it never lowers criticality; a deterministic check runs alongside it | Owner direction (Jev measured before relied on) |
+| G3-D16 | 2026-10-29 | **Generative surfaces:** packs ship a component registry; agents compose, components render. Critical policies are shown to people only through registry components bound to the policy version | Proposed |
+| G3-D17 | 2026-10-29 | Roles: **pack curator** (Strategic Machines) owns the pack; **stewards** (the client, possibly one per area) own their binding; every policy's owner role is its referee | Proposed |
+| G3-D18 | 2026-10-29 | **Karpathy's ladder for the steward:** policy statements are written in controlled English (about 80% of ASD-STE100). Diagrams, interactive pages and explainer videos are generated from the graph as version-bound, discardable views. Critical approvals come with a statement, a diagram and a consequence page, and the record notes what the steward opened | Owner direction |
 
 ---
 
 ## 9. Action list
 
-1. [ ] Owner: review this doc; settle G3-D3 to D9; answer G3-D7.
-2. [ ] Define the graph schema: node and edge types, statuses and effective dating, as domain types in `packages/domain`. Pure, with tests.
-3. [ ] **Pilot 1:** extract the ts-platform policy book (§5). Start with cancellation and payment schedule, then rates, availability, tax, waivers and the ledger.
-4. [ ] Steward review session on the pilot output; record precision, recall and conflicts.
-5. [ ] Draft the `pack-hospitality` starter book from the industry-general part of the pilot.
-6. [ ] Graph checks and the compliance-suite report (§4.4).
-7. [ ] Policy-change flow: amend a policy → impact analysis → shadow run → steward approval → promotion. Prove it on Machine Shop.
-8. [ ] App-originated work: Machine Shop files its own proposals (the next version of the /vision prototype).
-9. [ ] Runtime presence (the agent at the edges, guards on connectors): last, after the above are proven.
-10. [ ] Regulation feeds per industry.
+1. [ ] Owner: review this doc; settle G3-D3 to D18; answer G3-D7.
+2. [ ] Define the graph schema as domain types in `packages/domain`, pure and with tests:
+   - node and edge types, statuses, criticality, effective dating;
+   - the hospitality ontology's lifecycle events, needed for gap finding;
+   - the kernel contract and projection shape (§2.7).
+3. [ ] **Pilot 1:** extract the ts-platform policy book (§5), labelling each policy parametric or structural. Start with cancellation and payment schedule, then rates, availability, tax, waivers and the ledger.
+4. [ ] **Prototype the Policy Walk** as a scripted page, like /vision: the crew walks the extracted cancellation policies with a steward, finds a hole and a contradiction, and builds examples live. Prototype it before building it.
+5. [ ] Steward review session on the pilot output, run as a real Policy Walk; record precision, recall and conflicts.
+6. [ ] Migration for `cradle_nodes` and `cradle_edges`, with the §2.5 indexes. The Owner runs it on accelerator-test first.
+7. [ ] Jev trial on routing: measure accuracy, speed and cost on Pilot 1 policies against a small-model fallback (Gen 2 §9.2 action).
+8. [ ] Draft the `pack-hospitality` starter book from the industry-general part of the pilot.
+9. [ ] Graph checks and the compliance-suite report (§4.4).
+10. [ ] Policy-change flow: amend a policy → impact analysis → shadow run → steward approval → promotion. Prove it on Machine Shop.
+11. [ ] App-originated work: Machine Shop files its own proposals (the next version of the /vision prototype).
+12. [ ] Runtime presence (the agent at the edges, guards on connectors): last, after the above are proven.
+13. [ ] Regulation feeds per industry.
+14. [ ] Controlled-English style guide for policy statements: the pack vocabulary and the rules (about 80% of ASD-STE100). Rewrite Pilot 1's cancellation policies in it as the first test.
+15. [ ] Generators for the §3.3 artifacts: a policy diagram, a consequence page and a briefing video, each stamped with the policy versions it shows.
