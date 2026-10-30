@@ -40,6 +40,32 @@ What changes:
 | The Accelerator touches the repo | The cradle is also present at **runtime**: observing, applying guidance, filing work (introduced last, §9) |
 | Boarding ends with a census | Boarding ends with a **policy book**: "Your app already implies these policies. Confirm, correct or retire them." |
 
+### 0.1 Isn't this just prompts and tools? (2026-10-30)
+
+**At the moment of execution, yes,** and deliberately so. A model reads instructions and calls tools. That part is a commodity, and we want it that way, so the cradle improves every time models do. The product is everything a prompt and a tool cannot do on their own:
+
+| Prompts and tools | The cradle |
+|---|---|
+| A prompt is an **instruction**: text with no version, owner, effective date or approval | A policy is a **commitment**: versioned, dated, owned, rated for criticality, approved, and given a sunset date |
+| The model decides whether to obey the prompt | **Critical policies are not enforced by the prompt at all.** They are compiled into kernel parameters and guards, so the model acts only in the space a policy leaves open, and it cannot talk its way past a guard |
+| A tool does what it is told | A kernel does what the policy **allows**, and returns which rule fired |
+| 300 prompts are 300 paragraphs. Nobody can tell whether two of them conflict, or what is missing | The graph makes contradictions a query, and holes computable (concept × lifecycle event) |
+| Everything goes into the context, or retrieval hopes to find it | Only the triggered policies are loaded, at the version in force for this case |
+| Change a prompt, and you can't tell what else changed | Change a policy: impact analysis, a shadow run over the standard cases, then steward approval |
+| No trail | Every outcome cites the policy versions it applied; every policy lists what implements and states it |
+
+**Questions a prompts-and-tools system cannot answer, and the cradle answers with a query:**
+- Which refund policy applied to booking #4412, which version was it, and who approved it?
+- What changes if the deposit goes from 50% to 30%?
+- Do the website, the confirmation email and the concierge agent all state the same terms?
+- Are any of our policies in conflict? Which ones expire this quarter? Which depend on this regulation?
+
+The value is these answers, not the mechanism. They are what a board, an auditor or a regulator asks.
+
+**Where prompts and tools are enough:** a business with few rules and little at stake. The cradle pays off where rules are dense, money moves and regulation applies (§6).
+
+**The discipline that follows:** the crew builds and maintains the graph (extraction, the Policy Walk, generated examples). If stewards had to hand-build it, the cradle would become the old business-rules platform again.
+
 ---
 
 ## 1. The execution model
@@ -468,3 +494,23 @@ Where it isn't worth it: a small brochure site with almost no policy. The cradle
 13. [ ] Regulation feeds per industry.
 14. [ ] Controlled-English style guide for policy statements: the pack vocabulary and the rules (about 80% of ASD-STE100). Rewrite Pilot 1's cancellation policies in it as the first test.
 15. [ ] Generators for the §3.3 artifacts: a policy diagram, a consequence page and a briefing video, each stamped with the policy versions it shows.
+
+---
+
+## 10. Build log
+
+- **2026-10-30 · G3.1 foundation** (accelerator-platform `ce078e1`, local; push after the Owner runs migration 0014 on accelerator-test).
+  - `packages/domain/src/cradle.ts`: graph types, criticality floors, assembling the book (pack plus site layer), findings (contradictions, holes from lifecycles, missing kernels, unreviewed, unproven), readiness, ingest merge, rulings, starter scaffold, dial readings.
+  - `cradle-packs.ts`: the Commerce and Hospitality starter books. Hospitality kernels are "planned" pending G3-D7.
+  - Migration 0014: tables, the §2.5 indexes and the exclusion constraint, and the `ingest` job kind.
+  - Runner `ingest` job: the Policy Extractor, read-only.
+  - API `/sites/:id/cradle`.
+  - Console **Policy** screen: the workbench dial for the book, the create-cradle starter, a live ingest (the /vision scene with real job events and the site live in a phone), Policy Walk findings, and the book with rulings.
+  - Keyless demo: simulates the ingest from a real reading of Machine Shop. Browser QA `qa/cradle.mjs` 13/13; workspace QA 72/72; unit tests 203 domain, 75 API, 11 runner.
+  - **Not yet:**
+    - kernels running against projections (§2.7);
+    - shadow runs of policy changes (§4);
+    - live examples during the walk;
+    - Jev routing (§1.4);
+    - generative surfaces and rendering the app from the book (§1.5);
+    - decisions stored as Decision nodes (rulings are stored on the policy and the edge for now).
