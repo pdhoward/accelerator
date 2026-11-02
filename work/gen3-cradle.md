@@ -1,6 +1,6 @@
-# Gen 3: The Cradle (Design v0.2)
+# Gen 3: The Cradle (Design v0.3)
 
-*Strategic Machines · started 2026-10-28 · revised 2026-10-29 · **status: direction set by the Owner; design in progress; Pilot 1 (policy extraction from ts-platform, read-only) authorized** · builds on [gen2-crew.md](gen2-crew.md) §13.3 (business-rule register), §20 (domain packs), §21 (traceability store) and §9.2 (the Decide layer, Jev)*
+*Strategic Machines · started 2026-10-28 · revised 2026-11-02 · **status: direction set by the Owner; design in progress; Pilot 1 (policy extraction from ts-platform, read-only) authorized; Pilot 2 (CardDemo, a public COBOL estate) approved 2026-11-02** · builds on [gen2-crew.md](gen2-crew.md) §13.3 (business-rule register), §20 (domain packs), §21 (traceability store) and §9.2 (the Decide layer, Jev)*
 
 **How to use this doc:**
 - §0 says what Gen 3 is and what stays from Gen 2.
@@ -16,7 +16,8 @@
 - §4 covers test-driven policy.
 - §5 is Pilot 1: extracting the policy book from ts-platform.
 - §6 covers the advantage, honestly stated. §7 covers risks.
-- §8 is the decisions log. §9 is the action list.
+- §8 is the decisions log. §9 is the action list. §10 is the build log.
+- §11 covers any technology: legacy estates (COBOL, JCL, CICS, IMS), technology adapters beside industry packs, the three kinds of kernel, and Pilot 2 on AWS CardDemo.
 
 > **What Gen 3 is.** Every client app lives in its own **cradle**: an Accelerator that stays attached for the app's whole life. The app's source of truth is a **policy graph**: the client's policies, practices and regulations, linked to each other and to everything that carries them out. The graph starts from an **industry pack** and grows as the client describes their business. The crew turns each policy into running behavior, in the cheapest form that can be trusted. The app observes what it can't serve and proposes new work. It never makes its own rules. The owner, whom we call the **steward**, sets policy, and the app carries it out at machine speed. Every behavior traces back to a policy the steward approved.
 
@@ -203,6 +204,8 @@ The graph is assembled in layers, like the skill tiers: **industry pack → part
 1. **Policy against policy.** "Free shipping over $100" against "flat $9.95 always."
 2. **Policy against regulation.** A new privacy rule against a policy that collects emails.
 3. **Policy against practice or surface.** What the code, the guest page or the agent actually does has drifted from what the book says.
+
+Estates with many implementations add a fourth kind, **implementation against implementation**: the same rule enforced differently in two places, such as an online screen and a nightly batch job (§11.2).
 
 The third kind is where we're unique. Every surface and kernel links to its policy, so drift is a graph query, not an audit project. The platform states each contradiction with both sides, the evidence and a proposed resolution. It routes the contradiction to the **referee** (the policy's owner role). The ruling becomes a Decision node, so the same conflict never needs refereeing twice.
 
@@ -436,6 +439,8 @@ What this gives a client that conventional development doesn't:
 
 Where it isn't worth it: a small brochure site with almost no policy. The cradle pays off where rules are dense, money moves, and regulation applies: hospitality, insurance, financial planning, healthcare-adjacent services, nonprofits with donor rules.
 
+It pays off most of all in **legacy estates** (§11): banks, insurers and governments running COBOL whose rules nobody can state with confidence. There the book is the missing specification, and the legacy programs serve as kernels until verified native ones replace them, one at a time.
+
 ---
 
 ## 7. Risks
@@ -446,6 +451,9 @@ Where it isn't worth it: a small brochure site with almost no policy. The cradle
 - **Extraction confidence mistaken for approval.** Mitigation: the separate statuses (§2.2), and steward review before anything is "confirmed."
 - **IP of seed kernels** (G3-D7).
 - **Scope.** Each step in §9 must be sellable by itself.
+- **Claims about legacy behavior we haven't verified.** A rule read from COBOL is a candidate until the steward confirms it, and until replay against the legacy system (§11.4) proves any kernel that takes it over. Numeric semantics (truncation against rounding) are the usual trap.
+- **Live legacy systems.** Mode 2 writes to systems of record. Connectors to CICS, IMS or legacy tables need guards, shadow runs and the client's own change control. We never touch a client's mainframe before Observe has been proven on a public estate.
+- **Model claims.** A vendor's "COBOL expert" is adopted only on its score against the CardDemo answer key (§11.5).
 
 ---
 
@@ -471,6 +479,13 @@ Where it isn't worth it: a small brochure site with almost no policy. The cradle
 | G3-D16 | 2026-10-29 | **Generative surfaces:** packs ship a component registry; agents compose, components render. Critical policies are shown to people only through registry components bound to the policy version | Proposed |
 | G3-D17 | 2026-10-29 | Roles: **pack curator** (Strategic Machines) owns the pack; **stewards** (the client, possibly one per area) own their binding; every policy's owner role is its referee | Proposed |
 | G3-D18 | 2026-10-29 | **Karpathy's ladder for the steward:** policy statements are written in controlled English (about 80% of ASD-STE100). Diagrams, interactive pages and explainer videos are generated from the graph as version-bound, discardable views. Critical approvals come with a statement, a diagram and a consequence page, and the record notes what the steward opened | Owner direction |
+| G3-D19 | 2026-11-02 | **Technology adapters** (classifiers, parsers, citation scheme, census, slicing, model routing, data decoders) are a platform axis independent of industry packs. Every ingest is one pack × one or more adapters; the book never depends on the technology. TypeScript is the first adapter, Python the second | Proposed |
+| G3-D20 | 2026-11-02 | Large estates ingest in stages: **inventory → map → slice → extract (parallel) → reconcile → data model → gaps**. Parsers read structure; models read meaning. The six crew roles become separate agents | Proposed |
+| G3-D21 | 2026-11-02 | The **data model** (Record and Field nodes, with 88-level states as enumerations) and **Schedule** nodes are first-class graph outputs. Lifecycle events carry a trigger kind (request, schedule, file, message) | Proposed |
+| G3-D22 | 2026-11-02 | Three kinds of kernel: **native**, **legacy-backed** (an existing program behind a declared contract and a guarded connector), and **batch**. A native kernel replaces a legacy one only after matching it on replayed history, field by field | Proposed |
+| G3-D23 | 2026-11-02 | Legacy clients get three modes, each sold alone: **Observe → Wrap → Replace**. Parametric policies stored in legacy tables are governed by projecting them into those tables | Proposed |
+| G3-D24 | 2026-11-02 | Models are routed by artifact kind and adopted only on measured scores against a public answer key (CardDemo) | Proposed |
+| G3-D25 | 2026-11-02 | **Pilot 2 is AWS CardDemo** (public, Apache 2.0), pinned from the upstream repository, with a Cards pack. Its output may be published as a showcase | **Owner approved 2026-11-02** |
 
 ---
 
@@ -494,6 +509,13 @@ Where it isn't worth it: a small brochure site with almost no policy. The cradle
 13. [ ] Regulation feeds per industry.
 14. [ ] Controlled-English style guide for policy statements: the pack vocabulary and the rules (about 80% of ASD-STE100). Rewrite Pilot 1's cancellation policies in it as the first test.
 15. [ ] Generators for the §3.3 artifacts: a policy diagram, a consequence page and a briefing video, each stamped with the policy versions it shows.
+16. [ ] **The adapter seam (G3-D19):** move the census and the live screen's file pattern behind a TypeScript adapter, then add the Python adapter (classifiers, census, Django and Flask routes). Test on a small sample Python app of our own.
+17. [ ] **Staged ingest (G3-D20):** split the ingest job into stages, with parallel Extractor agents over slices, a Clerk merge, and budgets per slice. The live screen gets one lane per slice.
+18. [ ] **COBOL family adapters:** parsers for COBOL (divisions, paragraphs, PERFORM, CALL, COPY), JCL, BMS and CSD; EBCDIC and COMP-3 decoders; citation by program and paragraph.
+19. [ ] **Pilot 2 (G3-D25):** pin CardDemo upstream; draft the Cards pack (with Regulation Z and PCI DSS nodes); ingest; build the answer key; run a Policy Walk.
+20. [ ] **Mode 3 proof:** a native interest kernel matching INTCALC on the sample data, field by field.
+21. [ ] Model bake-off on the CardDemo answer key: general models against any COBOL specialist, per artifact kind (G3-D24).
+22. [ ] Decide where the system graph lives once it passes about 100k nodes (§11.6), behind a `system.*` tool interface.
 
 ---
 
@@ -522,3 +544,161 @@ Where it isn't worth it: a small brochure site with almost no policy. The cradle
     - the Policy Walk ordered so the steward's decisions come first;
     - a fix for duplicate live-log events;
     - the demo now mirrors the real ingest.
+- **2026-11-02 · The live ingest in two halves** (accelerator-platform `79d8084`).
+  - The Policy screen's live ingest now shows the crew working (the /vision scene) beside the book taking shape (the /studio scene): a ring with one segment per policy, lit as the crew names it, and contradictions in pink. When the run lands, the ring redraws from the stored book and hands over to the Policy Walk.
+  - The extractor now narrates each policy as it finds it, in a fixed line format, so a real run fills the book live. `liveBook` in `packages/domain` binds the book from those lines (5 new tests).
+  - Honest note: on a real run, one agent still narrates all six roles. §11.2 is where they become separate agents.
+
+---
+
+## 11. Any technology: legacy estates, COBOL, JCL, CICS and IMS (2026-11-02)
+
+The objective doesn't change with the technology: **extract the business rules, then run the business on rules + model intelligence + kernels.** What changes is everything underneath the book: what we read, how we split the work, what counts as evidence, and what a kernel is. This section works that through, using AWS's **CardDemo** as the reference estate.
+
+### 11.1 The reference estate: CardDemo
+
+CardDemo is a mainframe credit-card application that AWS published as a test bed for modernization tools (Apache 2.0). The copy the Owner found is `github.com/altitude80ai/awscarddemo`, a fork of `aws-samples/aws-mainframe-modernization-carddemo` with a Next.js wrapper added. What it holds, from its README:
+
+| Part | What's there |
+|---|---|
+| **Online (CICS)** | 17 transactions, one program each, with BMS screen maps: sign-on (CC00), menus, account view and update (CAVW, CAUP), card list, view and update (CCLI, CCDL, CCUP), transaction list, view and add (CT00 to CT02), reports (CR00), bill payment (CB00), and admin user maintenance (CU00 to CU03) |
+| **Batch (JCL)** | 19 jobs: dataset setup and loads, **POSTTRAN** (posts the daily transactions, program CBTRN02C), **INTCALC** (interest, CBACT04C), **COMBTRAN** (a sort), **CREASTMT** (statements, CBSTM03A), an alternate index, and jobs that close and reopen the CICS files around batch |
+| **Data** | About 12 VSAM datasets (users, accounts, cards, customers, the card-to-account cross reference, daily transactions, transactions, disclosure groups, transaction categories and types, category balances), with 11 copybooks as the record layouts. The sample data is EBCDIC |
+| **Security** | RACF, and a user-security file with two roles (admin and regular user) |
+| **Not in this copy** | DB2, IMS and MQ appear only on its roadmap. The upstream AWS repository is reported to add optional DB2, IMS and MQ modules. Check before choosing which copy to pin: we want IMS and MQ in the test |
+
+The code style is deliberately uneven, to exercise analysis tools. The estate is public and licensed for this use, so it fits our rule: **test on our own or public estates, never on a client's production system.** It is the natural **Pilot 2**.
+
+### 11.2 What changes, and what doesn't
+
+**The book doesn't change.** Policies are still grouped by **Concept and lifecycle event**: Account (open, update, close), Card (issue, update, close), Transaction (add, validate, post, reject), Interest (calculate), Statement (produce), Payment (pay), User (sign on, add, remove). The steward walks the same book whether it came from TypeScript or COBOL. This invariant is what makes the platform worth having: **business meaning is the stable layer; technology is the variable one.**
+
+**Five things do change:**
+
+1. **We ingest an estate, not a repository.** A web app's rules sit mostly in its source code. A mainframe's rules are spread over many kinds of artifact, and each carries a different part of the policy:
+
+   | Artifact | What it carries |
+   |---|---|
+   | COBOL programs (the PROCEDURE DIVISION) | Structural policy: validations, calculations, evaluation order |
+   | Copybooks | The data model. 88-level condition names are named states, often in the rule's own vocabulary |
+   | JCL and PROCs | Schedules and sequence: "post before interest", "close the files during batch" |
+   | Scheduler definitions (CA-7, Control-M, TWS) | When things happen: daily, month-end, on file arrival |
+   | BMS maps | Surfaces: what the screen shows and lets a clerk enter |
+   | CICS definitions (CSD) | Transaction to program, files and security: the online entry points |
+   | IMS DBD and PSB, DB2 DDL | The data model, and who may read or change what |
+   | **Data tables** (VSAM, DB2, IMS) | **Parametric policy**: rates, limits and codes. CardDemo's disclosure groups hold the interest rates |
+   | RACF and security files | Access policy |
+
+   The ingest needs **data** (sample or sanitized) as well as code, because in legacy systems the parameters often live in tables, not constants.
+
+2. **Extraction becomes a staged pipeline with truly separate agents.** Today's ingest is one agent narrating six roles; the live screen reflects the stages honestly. An estate of a million lines can't fit in one agent's context, so the roles become real:
+   - **Inventory** (deterministic, no model): classify every file by kind. Seconds, and no cost.
+   - **Map** (the Surveyor: parsers first, a model only as a fallback): build the **system graph**. It links transaction → program → map; program → CALL, LINK or XCTL → program; program → COPY → copybook; job → step → program → dataset; and dataset → record layout. Parsers read this exactly and citeably; a model shouldn't guess what a parser can read.
+   - **Slice:** cut the system graph into units of work, each holding everything it needs. A slice is one **online transaction** (CT02: COTRN02C, its map, its files and copybooks) or one **batch flow** (POSTTRAN: the job, CBTRN02C, the daily file, the cross reference, accounts and category balances). Slices overlap where programs share copybooks; that's fine.
+   - **Extract** (several Extractors in parallel, one slice each): each narrates policies, with citations, into the live book.
+   - **Reconcile** (the Clerk): merge duplicates across slices. A fourth contradiction kind appears here, **implementation against implementation**: the same rule enforced differently in two places. For example, the online add-transaction screen might validate differently from the nightly posting job. In legacy estates this is common, and finding it is valuable.
+   - **Data model** (a dedicated Modeler): copybooks and DDL become **Record** and **Field** nodes linked to Concepts, with 88-levels as enumerations and states. The data model is a first-class output, not a by-product; people evaluating these tools ask for it explicitly.
+   - **Gaps and the Judge,** as today.
+
+   The live screen scales with it. The crew half shows one lane per slice in flight. The book half adds a third view, **the system map**, lighting programs and jobs as their slices finish.
+
+3. **Evidence is cited by structure, not only by line.** COBOL line numbers shift whenever anything above them changes. So a citation names the **program and paragraph** (`CBACT04C · 1300-COMPUTE-INTEREST`), the **job and step**, or the **record and field** (`CVACT01Y · ACCT-CREDIT-LIMIT`), with the line range as a hint. Re-ingest then compares paragraphs, not line numbers.
+
+4. **Time becomes a trigger.** Web policies mostly fire on a request. Legacy policies often fire on a **schedule** ("interest is calculated monthly", "transactions post nightly") or when **a file arrives**. Lifecycle events gain a trigger kind: request, schedule, file or message. Policy nodes link to a **Schedule** node that cites the scheduler or the JCL. Gap finding learns new holes, such as a schedule with no owner, or a batch job whose rejects nobody reviews.
+
+5. **Numeric semantics are policy.** COBOL computes in fixed-point decimal, and truncates unless a statement says ROUNDED. Whether interest truncates or rounds, and at which step, is a **structural policy** with money consequences. The extractor must report it, and any kernel that takes over must reproduce it exactly: decimal arithmetic only, never floating point.
+
+**Worked example, to verify on ingest.** From the program names and the usual reading of CardDemo, INTCALC is expected to yield:
+- **P-INT-1 (parametric):** the interest rate for a balance comes from the disclosure group for the account's group and the transaction category. The rates are **rows in the disclosure-group file**, so changing a rate is a data change, not a code change.
+- **P-INT-2 (structural):** if the account's group has no rate for that category, use the DEFAULT group's rate.
+- **P-INT-3 (structural):** monthly interest = category balance × annual rate ÷ 1200, truncated or rounded as the program does. That must be read from the code.
+- **P-INT-0 (schedule):** interest runs as a batch job after posting. The order is a policy too.
+
+POSTTRAN is expected to yield the posting validations, each rejecting with a reason code: an unknown card, an unknown account, a transaction over the credit limit, and a transaction after the account's expiry date. It should also yield the rule that rejects go to a separate file. The ingest will confirm or correct each of these, and that comparison is one of the pilot's measures.
+
+### 11.3 Technology adapters: a second axis beside industry packs
+
+Packs answer *what business is this?* A new unit, independent of packs, answers *what is it built with?* A **technology adapter** is owned by the platform, not by packs, and contains:
+- **Classifiers:** which files are which kind of artifact.
+- **Parsers** for structure: COBOL divisions, paragraphs, PERFORM, CALL and COPY; JCL steps and DD statements; BMS fields; CSD entries; DDL; DBD and PSB.
+- **The citation scheme** for that technology (§11.2, point 3).
+- **Census measures:** a web app counts routes and components; a COBOL estate counts programs, paragraphs, transactions, jobs and datasets.
+- **Slicing rules:** what a unit of work is (a route, a transaction, a batch flow or a module).
+- **Model routing:** which model extracts each kind of artifact (§11.5).
+- **Decoders** for sample data: EBCDIC, packed decimal (COMP-3) and fixed-width records.
+
+Every ingest is **one industry pack × one or more adapters**. CardDemo is a Cards (consumer credit) pack × the COBOL, JCL, CICS and VSAM adapters. A Django app is a Commerce pack × the Python adapter. The book, the walk, the findings and the rulings never know which adapters were used.
+
+**This also answers Python.** Today's census and the live screen's file counter recognize only TypeScript and JavaScript (accelerator-platform `packages/domain/src/census.ts`, and the path pattern in `cradle-live.tsx`). They become the first adapter. Python is the second, and it is small: classifiers, a census, and Django and Flask route detection.
+
+### 11.4 Kernels: yes, they change
+
+The rule from §1.3 holds: **agents propose; kernels dispose.** Critical behavior never runs on an agent's judgment. What changes is **what a kernel can be.** A legacy estate already contains decades of proven kernels: its COBOL programs. So there are now three kinds:
+
+| Kind | What it is | Example |
+|---|---|---|
+| **Native kernel** | A pack's own verified engine, run against projections (§2.7) | A Cards-pack interest kernel in TypeScript, with decimal arithmetic |
+| **Legacy-backed kernel** | The existing program, wrapped with a **declared contract** (its inputs, its outputs, and the policies it implements, from extraction) and reached through a connector | CBACT04C; or a CICS transaction exposed as a service through CICS web services or z/OS Connect (IMS Connect for IMS, MQ for messaging) |
+| **Batch kernel** | A kernel run by a schedule over a file or table, not by a request. It needs idempotency, checkpoint and restart, and a run window | POSTTRAN, INTCALC |
+
+**A legacy client has three modes,** each sellable on its own (§7: "each step must be sellable by itself"):
+
+1. **Observe.** Ingest only. The book is the documentation nobody has: contradictions, holes, the data model, impact analysis ("what changes if the disclosure-group rates change?") and the compliance mapping. Nothing changes at runtime. This is the first sale, and the CardDemo pilot proves it.
+2. **Wrap: the strangler pattern, by policy.** New surfaces and agents sit in front. The legacy system stays the system of record and **becomes the first set of kernels**.
+   - Agents reach CICS or IMS only through connectors, and every call passes a **guard** checked against the governing policies.
+   - Parametric policies that live in legacy tables are governed by **projecting them into those tables**. The steward changes a rate in the book; after the usual shadow run and approval, the projection writes the disclosure-group row through a connector.
+   - Structural policies stay in COBOL, marked `implemented_by` the program, and change only when the program changes.
+3. **Replace, kernel by kernel.** A native kernel takes over from a legacy one only after it **matches the legacy kernel on real history**. Replay the same inputs (a day's transaction file, a month of balances) through both, and compare the outputs field by field.
+   - Legacy is the **oracle**, and its runs harvest thousands of Examples (§4) for free.
+   - Batch makes this unusually clean: the inputs are files, and so are the outputs.
+   - Cut over one kernel at a time. The book, and the steward's experience, never change.
+
+So the Owner's thought isn't crazy: **the cradle can run a legacy business before a line of COBOL is replaced,** because the legacy programs are kernels and the book governs them. Replacement then becomes a sequence of verified swaps instead of a big-bang rewrite. That is the modernization story the market has been missing: rules first, then runtime, kernel by kernel, each swap proven against the old system.
+
+**Kernel contracts gain fields:**
+- invocation: request, schedule, file or message;
+- the unit of work: a CICS syncpoint or an IMS checkpoint;
+- the data encoding: EBCDIC, packed decimal;
+- numeric semantics (§11.2, point 5);
+- for legacy-backed kernels, the connector, and the program version they wrap.
+
+### 11.5 Models: route by artifact, adopt by measurement
+
+Specialist models, a COBOL expert for example, will come; some vendors already claim them. The platform should welcome them **without trusting the claim**:
+- **Route by artifact kind,** in the adapter: COBOL programs to the best COBOL extractor, JCL and scheduler files to whichever model reads them best, copybooks to the Modeler, and reconciliation to the strongest general model. Gen 2's choice of model by role extends naturally to this.
+- **Adopt only on measurement.** Build an **answer key** for CardDemo once: the policies, the data model and the contradictions, agreed in a human review. Then score every candidate model on precision, recall and citation accuracy for each kind of artifact. A model wins a route by its score, not its marketing. The answer key is a product asset too: "your vendor claims X; here is X on the public benchmark."
+- **Parsers before models.** Structure (call graphs, record layouts, job steps) is read by parsers: exact, cheap and citeable. Model spending goes on meaning: what rule this code enforces, and why.
+- **Where the model runs matters more here.** Banks and insurers may require models inside their own boundary. For this market, the model proxy (on the Gen 2 go-live list) becomes a requirement, not an option.
+
+### 11.6 Scale, storage and cost
+
+- **Budgets per slice** replace one budget per ingest. The live screen shows spending per lane.
+- **Incremental re-ingest:** a changed file maps, through the system graph, to the slices that contain it, and only those slices are extracted again. Citations by paragraph (§11.2) make the before-and-after comparison meaningful.
+- **The system graph is big.** Programs, paragraphs, jobs, steps, datasets and fields for a real estate run to hundreds of thousands of nodes. That is the first realistic trigger in §2.5 for something beyond plain Postgres tables. The **policy graph** stays small and stays in Postgres. The **system graph** may need a closure table, a separate store or, eventually, a graph database. Keep it behind its own tool interface (`system.*`) from day one.
+
+### 11.7 The Cards pack
+
+Pilot 2 needs a **Cards (consumer credit) pack** containing:
+- Concepts: Customer, Account, Card, Transaction, Category, Disclosure group, Statement, Payment, User;
+- their lifecycle events, with trigger kinds;
+- starter policies;
+- **Regulation nodes.** US card issuers fall under the Truth in Lending Act (Regulation Z) for interest and disclosures, and under PCI DSS for card data.
+
+CardDemo will show plenty of holes against those regulations, which makes a strong demonstration: "here is what this system enforces, here is what the law requires, and here is the gap."
+
+### 11.8 Pilot 2 plan: CardDemo
+
+1. Pin a commit of the upstream AWS repository, after checking its DB2, IMS and MQ modules. The estate is public, so unlike Pilot 1 the output can be public too, as a showcase.
+2. Build the inventory and map stages, with parsers for COBOL, JCL, BMS and CSD. Show the system map.
+3. Draft the Cards pack starter book.
+4. Ingest by slices with parallel Extractors, plus the Modeler.
+5. Build the answer key by human review. Record precision, recall, citation accuracy, contradictions found and the parametric share.
+6. Run a Policy Walk on the result, with the Owner as steward.
+7. Prove mode 3 on one kernel: a native interest kernel that matches INTCALC on the sample data, field by field.
+
+**Measures for the showcase:**
+- the share of rules found with correct citations;
+- how much of the data model was found;
+- implementation-against-implementation contradictions;
+- holes against Regulation Z;
+- one legacy kernel matched exactly by a native one.
