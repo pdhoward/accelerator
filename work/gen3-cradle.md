@@ -514,3 +514,11 @@ Where it isn't worth it: a small brochure site with almost no policy. The cradle
     - Jev routing (§1.4);
     - generative surfaces and rendering the app from the book (§1.5);
     - decisions stored as Decision nodes (rulings are stored on the policy and the edge for now).
+- **2026-10-30 · First real ingest** (accelerator-platform `16760d4`).
+  - Machine Shop on accelerator-test: 130 seconds, 22 policies (9 matched to the pack, of which 1 is overridden: shipping at $9.95; 13 are the site's own), 3 contradictions.
+  - **A real defect found:** the assistant tells shoppers the store takes no orders (`lib/assistant-skills.ts:52`, locked in by a test), while Buy now has been live since #9. This is surface-against-policy drift after a change, the case §2.4 exists for.
+  - Follow-ups shipped:
+    - criticality floors per lifecycle event;
+    - the Policy Walk ordered so the steward's decisions come first;
+    - a fix for duplicate live-log events;
+    - the demo now mirrors the real ingest.
