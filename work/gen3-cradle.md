@@ -1,6 +1,6 @@
-# Gen 3: The Cradle (Design v0.3)
+# Gen 3: The Cradle (Design v0.4)
 
-*Strategic Machines · started 2026-10-28 · revised 2026-11-02 · **status: direction set by the Owner; design in progress; Pilot 1 (policy extraction from ts-platform, read-only) authorized; Pilot 2 (CardDemo, a public COBOL estate) approved 2026-11-02** · builds on [gen2-crew.md](gen2-crew.md) §13.3 (business-rule register), §20 (domain packs), §21 (traceability store) and §9.2 (the Decide layer, Jev)*
+*Strategic Machines · started 2026-10-28 · revised 2026-11-03 · **status: direction set by the Owner; design in progress; Pilot 1 (policy extraction from ts-platform, read-only) authorized; Pilot 2 (CardDemo, a public COBOL estate) approved 2026-11-02; Demo 1 (Machine Shop) anchored 2026-11-03, see §12** · builds on [gen2-crew.md](gen2-crew.md) §13.3 (business-rule register), §20 (domain packs), §21 (traceability store) and §9.2 (the Decide layer, Jev)*
 
 **How to use this doc:**
 - §0 says what Gen 3 is and what stays from Gen 2.
@@ -18,6 +18,7 @@
 - §6 covers the advantage, honestly stated. §7 covers risks.
 - §8 is the decisions log. §9 is the action list. §10 is the build log.
 - §11 covers any technology: legacy estates (COBOL, JCL, CICS, IMS), technology adapters beside industry packs, the three kinds of kernel, and Pilot 2 on AWS CardDemo.
+- §12 is the Demo 1 anchor: the original Machine Shop kept as a baseline, its addresses, and what Demo 1 proved before Demo 2 (CardDemo).
 
 > **What Gen 3 is.** Every client app lives in its own **cradle**: an Accelerator that stays attached for the app's whole life. The app's source of truth is a **policy graph**: the client's policies, practices and regulations, linked to each other and to everything that carries them out. The graph starts from an **industry pack** and grows as the client describes their business. The crew turns each policy into running behavior, in the cheapest form that can be trusted. The app observes what it can't serve and proposes new work. It never makes its own rules. The owner, whom we call the **steward**, sets policy, and the app carries it out at machine speed. Every behavior traces back to a policy the steward approved.
 
@@ -486,6 +487,7 @@ It pays off most of all in **legacy estates** (§11): banks, insurers and govern
 | G3-D23 | 2026-11-02 | Legacy clients get three modes, each sold alone: **Observe → Wrap → Replace**. Parametric policies stored in legacy tables are governed by projecting them into those tables | Proposed |
 | G3-D24 | 2026-11-02 | Models are routed by artifact kind and adopted only on measured scores against a public answer key (CardDemo) | Proposed |
 | G3-D25 | 2026-11-02 | **Pilot 2 is AWS CardDemo** (public, Apache 2.0), pinned from the upstream repository, with a Cards pack. Its output may be published as a showcase | **Owner approved 2026-11-02** |
+| G3-D26 | 2026-11-03 | **Every steward decision is aligned into the code by the crew.** A contradiction ruled, a policy changed or retired, or a hole filled opens a work item automatically; the steward never opens one by hand. Decisions touching a built integration (kernel or connector) are Owner-gated. The original Machine Shop is frozen on a `baseline` branch that is never released to (§12) | **Owner direction 2026-11-03** |
 
 ---
 
@@ -548,6 +550,18 @@ It pays off most of all in **legacy estates** (§11): banks, insurers and govern
   - The Policy screen's live ingest now shows the crew working (the /vision scene) beside the book taking shape (the /studio scene): a ring with one segment per policy, lit as the crew names it, and contradictions in pink. When the run lands, the ring redraws from the stored book and hands over to the Policy Walk.
   - The extractor now narrates each policy as it finds it, in a fixed line format, so a real run fills the book live. `liveBook` in `packages/domain` binds the book from those lines (5 new tests).
   - Honest note: on a real run, one agent still narrates all six roles. §11.2 is where they become separate agents.
+- **2026-11-03 · Demo 1: the first Policy Walk, and rulings that change the code** (accelerator-platform `b0e294f`, `5f50ca8`).
+  - The Owner re-ingested Machine Shop with the live two-halves screen and walked the book: three contradictions ruled, most policies confirmed.
+  - The crew is drawn as sober robot heads (one chassis, a sensor per role), on the live ingest and on /vision (`b0e294f`).
+  - **Alignment (G3-D26, `5f50ca8`):** each decision becomes a crew work item carrying the steward's words, the policies and their places in the code. Decisions on the same policies join the open item. Built integrations make it Owner-gated. The Policy Walk gained Change and Retire beside Confirm, and a sentence box to fill each hole. Kernels moved off the steward's walk to "the crew's build list". An "Aligning the code" card tracks each decision to live. Rulings made earlier are sent with one click.
+  - Decisions are now stored as Decision nodes (`acc_cradle_nodes`, kind `decision`), which closes one item on the G3.1 "not yet" list. No migration was needed.
+  - QA: domain 215, API 75, browser `qa/cradle.mjs` 21/21.
+  - Machine Shop's original site was frozen as the baseline (§12).
+- **2026-11-03 · The Graph, with time travel** (accelerator-platform `8614ed0`).
+  - A **Graph** screen (beside Policy) draws the policy graph with Cytoscape.js (open source, MIT): concepts, policies by criticality and status, kernels, holes, contradictions, and decisions on their way into the code.
+  - **Time travel:** a timeline of stops (the start, each ingest, each ruling, each decision) redraws the graph exactly as it stood then. This reads the effective-dated versions; nothing is ever overwritten. Play, step, scrub and search are supported, and what changed at each stop is highlighted.
+  - **Rollback:** select a policy to see every version it has had. Rolling back writes the old content as the next version, so history is never erased, and sends it to the crew to align the code, like any decision (G3-D26).
+  - Not yet: vector (embedding) search over the graph. Today's search is text.
 
 ---
 
@@ -702,3 +716,51 @@ CardDemo will show plenty of holes against those regulations, which makes a stro
 - implementation-against-implementation contradictions;
 - holes against Regulation Z;
 - one legacy kernel matched exactly by a native one.
+
+---
+
+## 12. Demo 1 anchor: Machine Shop before the Cradle (2026-11-03)
+
+Demo 1 is Machine Shop: a TypeScript store, ingested, walked by the steward, and brought into line with the rulings by the crew. Before any ruling was released, the Owner asked to keep the original site as a fixed point to compare against. This section is that anchor. Demo 2 (CardDemo, §11.8) starts from here, and so does the rest of the Gen 3 build.
+
+### 12.1 What is kept
+
+| What | Where | Notes |
+|---|---|---|
+| **Baseline branch** | `baseline` on `pdhoward/machineshop` | At `3a87b9b`: an empty commit on top of `47e81ec`, added only so Vercel would build the branch. The crew never releases to it. |
+| **Baseline tag** | `baseline-2026-11-03` → `47e81ec` | "Release #9: Stripe" plus the env example update: the live site on the morning of 2026-11-03. |
+| **Original site (baseline)** | https://machineshop-git-baseline-strategicmachines.vercel.app | Follows the `baseline` branch, so it never changes. |
+| **Backup snapshot** | https://machineshop-6lj64vnwc-strategicmachines.vercel.app | Vercel's own fixed copy of the production build of `47e81ec`. It survives even if the branch is deleted. |
+| **Cradle-driven site** | Machine Shop's production address (`main`) | Changes with every Go live. |
+
+Both baseline addresses sit behind Vercel's Deployment Protection, so open them signed in to Vercel. To show them to someone without a Vercel account, add a share link or turn protection off in the Vercel project's settings.
+
+### 12.2 How releases relate to the baseline
+
+- Go live (runner `release`, `apps/runner/src/jobs.ts`) merges the work branch into `stage`, moves `main` to it, and Vercel deploys `main` to production. It never touches `baseline`.
+- **To compare:** open the baseline and the live site side by side. The first checks are to ask each assistant "can I buy this drill?", finish a Stripe test order, and read the order page.
+- **To restore the original as the live site:** move `main` back to the `baseline-2026-11-03` tag. This is an Owner decision.
+
+### 12.3 What Demo 1 proved, and what it didn't
+
+**Proved:**
+- A real ingest of a working store found 22 policies and 3 contradictions, including a real defect: the assistant denied that orders could be placed after Buy now went live.
+- A non-technical steward can walk the book, rule in a sentence, and have the crew carry the ruling into the code (G3-D26), with Owner approval where an integration is involved.
+
+**Not yet** (the remainder of the Gen 3 design):
+- the app running *from* the book: kernels against projections (§2.7), the request path with Jev (§1.4), generative surfaces (§1.5);
+- shadow runs of policy changes (§4);
+- live examples during the walk;
+- a directive typed in Work that changes policy being recognised and written back to the book (two-way sync);
+- the six crew roles as separate agents (§11.2).
+
+Today the "Cradle-driven" Machine Shop is the same Next.js app with targeted edits that match the steward's rulings. The baseline makes each later step measurable against where we started.
+
+### 12.4 The Demo 1 rulings (the precedents)
+
+1. **Order page vs test mode:** the order page describes what will happen in the current payment mode. In test mode it says nothing ships and no charge was made.
+2. **Assistant vs Buy now:** shoppers can order through Buy now. The assistant directs them there and never takes payment or shipping details.
+3. **Stock vs old data:** a product can be bought only when its stock status clearly says in stock. The 2021 crawl data is accepted for the test site only.
+
+Each one goes to the crew through "Aligning the code", and is proven when the next ingest finds no contradiction.
+
