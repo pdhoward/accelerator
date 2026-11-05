@@ -3,6 +3,7 @@
 *Strategic Machines · started 2026-10-28 · revised 2026-11-03 · **status: direction set by the Owner; design in progress; Pilot 1 (policy extraction from ts-platform, read-only) authorized; Pilot 2 (CardDemo, a public COBOL estate) approved 2026-11-02; Demo 1 (Machine Shop) anchored 2026-11-03, see §12** · builds on [gen2-crew.md](gen2-crew.md) §13.3 (business-rule register), §20 (domain packs), §21 (traceability store) and §9.2 (the Decide layer, Jev)*
 
 **How to use this doc:**
+- The Backlog comes first: a running list of updates and refactors we know we want, not yet scheduled.
 - §0 says what Gen 3 is and what stays from Gen 2.
 - §1 is the execution model:
   - "can agents run the transactions?" (§1.1);
@@ -21,6 +22,18 @@
 - §12 is the Demo 1 anchor: the original Machine Shop kept as a baseline, its addresses, and what Demo 1 proved before Demo 2 (CardDemo).
 
 > **What Gen 3 is.** Every client app lives in its own **cradle**: an Accelerator that stays attached for the app's whole life. The app's source of truth is a **policy graph**: the client's policies, practices and regulations, linked to each other and to everything that carries them out. The graph starts from an **industry pack** and grows as the client describes their business. The crew turns each policy into running behavior, in the cheapest form that can be trusted. The app observes what it can't serve and proposes new work. It never makes its own rules. The owner, whom we call the **steward**, sets policy, and the app carries it out at machine speed. Every behavior traces back to a policy the steward approved.
+
+---
+
+## Backlog
+
+A running list of updates and refactors we know we want. An item leaves the list when it is built (it then appears in the §10 build log) or dropped (with a line saying why). New items go at the bottom.
+
+| # | Added | Item | Status |
+|---|---|---|---|
+| B1 | 2026-11-05 | **A cloud server for the runner.** Design, code and deploy a hosted runner so jobs run without the Owner's laptop. First target: a Render background worker with a persistent disk, cloning code from GitHub. | In progress (2026-11-05) |
+| B2 | 2026-11-05 | **A concurrent crew for ingest.** Today one agent reads a system slice by slice, playing many personas in turn. Refactor so the platform runs many agents at once, in harmony: extractors working slices in parallel, then the Clerk and Gap Finder reconciling across them. The goal is to read estates of millions of lines in hours, not days. This needs a job fan-out and fan-in on the API, per-slice claims for several runners, a cost ceiling per ingest, and a merge step that stays deterministic. | Open |
+| B3 | 2026-11-05 | **A data dictionary beside the policy book.** Extract the data elements a system uses (fields, records, columns, copybook items, API payloads) together with its policies and business rules. Then link the same element across programs and apps that call it by different names (for example `ACCT-CURR-BAL` in COBOL, `currentBalance` in the web app, `curr_bal` in the database). Open questions: how to find candidate matches (type and PIC, lineage through moves and assignments, shared copybooks, value ranges, the screens and reports that show it), and how the steward confirms them. Proposed: matches the crew isn't sure of go through the same review as apparent contradictions (a Policy Walk item: "same element?" with the evidence), and confirmed links become edges in the graph that policies and kernels can cite. This is critical when refactoring several apps that share data. | Open |
 
 ---
 
@@ -464,28 +477,28 @@ It pays off most of all in **legacy estates** (§11): banks, insurers and govern
 |---|---|---|---|
 | G3-D1 | 2026-10-28 | Gen 3 "The Cradle": the policy graph is the source of truth; the Accelerator stays attached to the app for life | Owner direction |
 | G3-D2 | 2026-10-28 | Pilot 1 reverse-engineers ts-platform's policy book: read-only, at a pinned commit, no execution, no production data. This is consistent with the rule that Cypress is never a test target | Owner authorized |
-| G3-D3 | 2026-10-28 | Pilot output is client material, kept out of public repositories | Proposed |
-| G3-D4 | 2026-10-28 | "Agents propose; kernels dispose": High-rated policies run only through kernels and guards | Proposed |
-| G3-D5 | 2026-10-28 | Every policy carries an owner role, at least one example, and a review-by or sunset date | Proposed |
-| G3-D6 | 2026-10-28 | Graph stored in Postgres (nodes/edges), mirrored to the client repo as files; no graph database yet | Proposed |
-| G3-D7 | 2026-10-28 | Confirm the IP position before any ts-platform code seeds a commercial pack; until then extract knowledge only | Open: Owner |
-| G3-D8 | 2026-10-28 | Industry packs ship as versioned private npm packages | Proposed |
-| G3-D9 | 2026-10-28 | The owner's role in Gen 3 is called the **steward** | Proposed |
+| G3-D3 | 2026-10-28 | Pilot output is client material, kept out of public repositories | Owner direction |
+| G3-D4 | 2026-10-28 | "Agents propose; kernels dispose": High-rated policies run only through kernels and guards | Owner direction |
+| G3-D5 | 2026-10-28 | Every policy carries an owner role, at least one example, and a review-by or sunset date | Owner direction |
+| G3-D6 | 2026-10-28 | Graph stored in Postgres (nodes/edges), mirrored to the client repo as files; no graph database yet | Owner direction |
+| G3-D7 | 2026-10-28 | Confirm the IP position before any ts-platform code seeds a commercial pack; until then extract knowledge only | Owner direction |
+| G3-D8 | 2026-10-28 | Industry packs ship as versioned private npm packages | Owner direction |
+| G3-D9 | 2026-10-28 | The owner's role in Gen 3 is called the **steward** | Owner direction |
 | G3-D10 | 2026-10-29 | **Criticality** (consequence of being wrong, per policy) is separate from **complexity** (build effort, per work order). Criticality = pack floor raised by graph reach; it is only lowered by a recorded steward decision, and never below the floor | Owner direction |
-| G3-D11 | 2026-10-29 | Postgres stays the system of record. Revisit a graph database only on the measured triggers in §2.5; the likely first use is cross-client pack analytics. Agents reach the graph only through `policy.*` tools | Proposed |
-| G3-D12 | 2026-10-29 | Kernels never walk the graph. **Projections** compile policies as-of a date into each kernel's typed input; evidence binds to the projection hash; kernels return traces that map back to policy ids | Proposed |
-| G3-D13 | 2026-10-29 | Extraction labels every policy **parametric** or **structural**; the parametric share is a headline measure | Proposed |
+| G3-D11 | 2026-10-29 | Postgres stays the system of record. Revisit a graph database only on the measured triggers in §2.5; the likely first use is cross-client pack analytics. Agents reach the graph only through `policy.*` tools | Owner direction |
+| G3-D12 | 2026-10-29 | Kernels never walk the graph. **Projections** compile policies as-of a date into each kernel's typed input; evidence binds to the projection hash; kernels return traces that map back to policy ids | Owner direction |
+| G3-D13 | 2026-10-29 | Extraction labels every policy **parametric** or **structural**; the parametric share is a headline measure | Owner direction |
 | G3-D14 | 2026-10-29 | **The Policy Walk** is the tuning and Boarding experience: a specialist crew, gaps computed from ontology lifecycles, live examples showing consequences, and completion defined by checks | Owner direction |
 | G3-D15 | 2026-10-29 | The request path is **Route (Jev) → Ground → Adjudicate (agent) → Execute (kernels and guards) → Record**. Jev classifies and selects; it never lowers criticality; a deterministic check runs alongside it | Owner direction (Jev measured before relied on) |
-| G3-D16 | 2026-10-29 | **Generative surfaces:** packs ship a component registry; agents compose, components render. Critical policies are shown to people only through registry components bound to the policy version | Proposed |
-| G3-D17 | 2026-10-29 | Roles: **pack curator** (Strategic Machines) owns the pack; **stewards** (the client, possibly one per area) own their binding; every policy's owner role is its referee | Proposed |
+| G3-D16 | 2026-10-29 | **Generative surfaces:** packs ship a component registry; agents compose, components render. Critical policies are shown to people only through registry components bound to the policy version | Owner direction |
+| G3-D17 | 2026-10-29 | Roles: **pack curator** (Strategic Machines) owns the pack; **stewards** (the client, possibly one per area) own their binding; every policy's owner role is its referee | Owner direction |
 | G3-D18 | 2026-10-29 | **Karpathy's ladder for the steward:** policy statements are written in controlled English (about 80% of ASD-STE100). Diagrams, interactive pages and explainer videos are generated from the graph as version-bound, discardable views. Critical approvals come with a statement, a diagram and a consequence page, and the record notes what the steward opened | Owner direction |
-| G3-D19 | 2026-11-02 | **Technology adapters** (classifiers, parsers, citation scheme, census, slicing, model routing, data decoders) are a platform axis independent of industry packs. Every ingest is one pack × one or more adapters; the book never depends on the technology. TypeScript is the first adapter, Python the second | Proposed |
-| G3-D20 | 2026-11-02 | Large estates ingest in stages: **inventory → map → slice → extract (parallel) → reconcile → data model → gaps**. Parsers read structure; models read meaning. The six crew roles become separate agents | Proposed |
-| G3-D21 | 2026-11-02 | The **data model** (Record and Field nodes, with 88-level states as enumerations) and **Schedule** nodes are first-class graph outputs. Lifecycle events carry a trigger kind (request, schedule, file, message) | Proposed |
-| G3-D22 | 2026-11-02 | Three kinds of kernel: **native**, **legacy-backed** (an existing program behind a declared contract and a guarded connector), and **batch**. A native kernel replaces a legacy one only after matching it on replayed history, field by field | Proposed |
-| G3-D23 | 2026-11-02 | Legacy clients get three modes, each sold alone: **Observe → Wrap → Replace**. Parametric policies stored in legacy tables are governed by projecting them into those tables | Proposed |
-| G3-D24 | 2026-11-02 | Models are routed by artifact kind and adopted only on measured scores against a public answer key (CardDemo) | Proposed |
+| G3-D19 | 2026-11-02 | **Technology adapters** (classifiers, parsers, citation scheme, census, slicing, model routing, data decoders) are a platform axis independent of industry packs. Every ingest is one pack × one or more adapters; the book never depends on the technology. TypeScript is the first adapter, Python the second | Owner direction |
+| G3-D20 | 2026-11-02 | Large estates ingest in stages: **inventory → map → slice → extract (parallel) → reconcile → data model → gaps**. Parsers read structure; models read meaning. The six crew roles become separate agents | Owner direction |
+| G3-D21 | 2026-11-02 | The **data model** (Record and Field nodes, with 88-level states as enumerations) and **Schedule** nodes are first-class graph outputs. Lifecycle events carry a trigger kind (request, schedule, file, message) | Owner direction |
+| G3-D22 | 2026-11-02 | Three kinds of kernel: **native**, **legacy-backed** (an existing program behind a declared contract and a guarded connector), and **batch**. A native kernel replaces a legacy one only after matching it on replayed history, field by field | Owner direction |
+| G3-D23 | 2026-11-02 | Legacy clients get three modes, each sold alone: **Observe → Wrap → Replace**. Parametric policies stored in legacy tables are governed by projecting them into those tables | Owner direction |
+| G3-D24 | 2026-11-02 | Models are routed by artifact kind and adopted only on measured scores against a public answer key (CardDemo) | Owner direction |
 | G3-D25 | 2026-11-02 | **Pilot 2 is AWS CardDemo** (public, Apache 2.0), pinned from the upstream repository, with a Cards pack. Its output may be published as a showcase | **Owner approved 2026-11-02** |
 | G3-D26 | 2026-11-03 | **Every steward decision is aligned into the code by the crew.** A contradiction ruled, a policy changed or retired, or a hole filled opens a work item automatically; the steward never opens one by hand. Decisions touching a built integration (kernel or connector) are Owner-gated. The original Machine Shop is frozen on a `baseline` branch that is never released to (§12) | **Owner direction 2026-11-03** |
 
