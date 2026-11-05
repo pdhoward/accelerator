@@ -31,9 +31,10 @@ A running list of updates and refactors we know we want. An item leaves the list
 
 | # | Added | Item | Status |
 |---|---|---|---|
-| B1 | 2026-11-05 | **A cloud server for the runner.** Design, code and deploy a hosted runner so jobs run without the Owner's laptop. First target: a Render background worker with a persistent disk, cloning code from GitHub. | In progress (2026-11-05) |
+| B1 | 2026-11-05 | **A cloud server for the runner.** Design, code and deploy a hosted runner so jobs run without the Owner's laptop. The runner can now clone from GitHub (`7382284`), and `render.yaml` describes a Render worker. Render has no free tier for a worker, so the laptop runner stays for now. Next: choose a host (an always-free VM such as Oracle Cloud's, or a paid worker). | Paused (2026-11-05) |
 | B2 | 2026-11-05 | **A concurrent crew for ingest.** Today one agent reads a system slice by slice, playing many personas in turn. Refactor so the platform runs many agents at once, in harmony: extractors working slices in parallel, then the Clerk and Gap Finder reconciling across them. The goal is to read estates of millions of lines in hours, not days. This needs a job fan-out and fan-in on the API, per-slice claims for several runners, a cost ceiling per ingest, and a merge step that stays deterministic. | Open |
 | B3 | 2026-11-05 | **A data dictionary beside the policy book.** Extract the data elements a system uses (fields, records, columns, copybook items, API payloads) together with its policies and business rules. Then link the same element across programs and apps that call it by different names (for example `ACCT-CURR-BAL` in COBOL, `currentBalance` in the web app, `curr_bal` in the database). Open questions: how to find candidate matches (type and PIC, lineage through moves and assignments, shared copybooks, value ranges, the screens and reports that show it), and how the steward confirms them. Proposed: matches the crew isn't sure of go through the same review as apparent contradictions (a Policy Walk item: "same element?" with the evidence), and confirmed links become edges in the graph that policies and kernels can cite. This is critical when refactoring several apps that share data. | Open |
+| B4 | 2026-11-05 | **The model runs the app (the §1.4 request path, built).** Redraw Machine Shop's boundary. Kernels and integrations stay code: catalog and stock reads, Stripe checkout, the order record, and the component registry the UI renders from (§1.5). Everything else (search, buying, the assistant, what the order page says) runs as Route → Ground → Adjudicate → Execute → Record over the policy book in force. A steward's ruling then changes behavior with no code change and no deploy. Only kernel and integration decisions become Work items. Hot paths (search filtering, the "can this be bought" gate) run from projections the model compiles from the book on every version, so they stay fast; the live model handles conversations and exceptions. Proposed as Demo 2 on Machine Shop. | Proposed |
 
 ---
 
@@ -575,6 +576,13 @@ It pays off most of all in **legacy estates** (§11): banks, insurers and govern
   - **Time travel:** a timeline of stops (the start, each ingest, each ruling, each decision) redraws the graph exactly as it stood then. This reads the effective-dated versions; nothing is ever overwritten. Play, step, scrub and search are supported, and what changed at each stop is highlighted.
   - **Rollback:** select a policy to see every version it has had. Rolling back writes the old content as the next version, so history is never erased, and sends it to the crew to align the code, like any decision (G3-D26).
   - Not yet: vector (embedding) search over the graph. Today's search is text.
+- **2026-11-05: the code-state practice** (`7413b27`, `6418731`). Machine Shop's alignment items #11 and #12 were cut from a local `stage` nine commits behind GitHub, so the crew couldn't see Release #9's checkout, and nobody was told. The rule now: **the platform checks the code it works on; the operator is never the one to notice.** Before any job works in a branch, the runner:
+  - fetches the base and says when this machine's copy is behind GitHub (work starts from GitHub's copy; the local branch isn't moved);
+  - brings the Work branch up to the base: a fast-forward when it has nothing of its own, a merge when it does, and a plain stop on conflict;
+  - reports leftover uncommitted changes;
+  - tells the agent the exact code state, and asks it to name any premise mismatch rather than conclude a feature is absent.
+  
+  The same day: the runner clones from GitHub when there's no local copy (`7382284`), and its tool guard became a hook that sees every call (`87b3ce7`; before, Read of a key file wasn't guarded).
 
 ---
 
