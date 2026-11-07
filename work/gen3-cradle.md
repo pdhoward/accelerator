@@ -20,6 +20,7 @@
 - §8 is the decisions log. §9 is the action list. §10 is the build log.
 - §11 covers any technology: legacy estates (COBOL, JCL, CICS, IMS), technology adapters beside industry packs, the three kinds of kernel, and Pilot 2 on AWS CardDemo.
 - §12 is the Demo 1 anchor: the original Machine Shop kept as a baseline, its addresses, and what Demo 1 proved before Demo 2 (CardDemo).
+- §13 is how the Accelerator works at runtime: what is deployed where, what is shared, and what happens when a rule changes.
 
 > **What Gen 3 is.** Every client app lives in its own **cradle**: an Accelerator that stays attached for the app's whole life. The app's source of truth is a **policy graph**: the client's policies, practices and regulations, linked to each other and to everything that carries them out. The graph starts from an **industry pack** and grows as the client describes their business. The crew turns each policy into running behavior, in the cheapest form that can be trusted. The app observes what it can't serve and proposes new work. It never makes its own rules. The owner, whom we call the **steward**, sets policy, and the app carries it out at machine speed. Every behavior traces back to a policy the steward approved.
 
@@ -37,6 +38,12 @@ A running list of updates and refactors we know we want. An item leaves the list
 | B4 | 2026-11-05 | **The model runs the app (the §1.4 request path, built).** Redraw Machine Shop's boundary. Kernels and integrations stay code: catalog and stock reads, Stripe checkout, the order record, and the component registry the UI renders from (§1.5). Everything else (search, buying, the assistant, what the order page says) runs as Route → Ground → Adjudicate → Execute → Record over the policy book in force. A steward's ruling then changes behavior with no code change and no deploy. Only kernel and integration decisions become Work items. Hot paths (search filtering, the "can this be bought" gate) run from projections the model compiles from the book on every version, so they stay fast; the live model handles conversations and exceptions. Proposed as Demo 2 on Machine Shop. | First cut built 2026-11-06 (build log); next: record decisions in the graph, voice, answer cache |
 | B5 | 2026-11-06 | **The conformance gate: test-driven policy for AI-run apps** (§4 built for the runtime). Every policy and ruling is proven by scenarios (buy, search, assistant and notice checks). A new book version is compiled and proven before the app serves it; critical agent scenarios run three times and must pass every time; the last version that passed stays in force. The crew drafts scenarios for uncovered rules; the steward approves or retires them and can Prove again. Next: scenarios from pack examples and replayed traffic, a shadow diff ("these 14 cases change outcome"), and the end-to-end journeys (test checkout). | First cut built 2026-11-06 (build log) |
 | B6 | 2026-11-06 | **The Cradle mark on every transformed site.** "Running on AI · Intelligence matters" in the header and on the home page, with its words served by the Accelerator so every Cradle site carries the same mark. Package it as a drop-in component for the next site. | Built on Machine Shop 2026-11-06 |
+| B7 | 2026-11-07 | **The proof scorecard.** One summary for the site owner, a ring on the Policy dial that drills into a Proof page. It shows the pass rate by concept and criticality, coverage (policies and rulings with no scenario), flaky scenarios (passing 1 or 2 runs of 3, often a sign the rule is worded ambiguously), held versions, cost and history across versions. Each failing or flaky case links to its policy and to a suggested fix, such as "restate: the wording allows two readings" or "contradicts X", which feeds the Policy Walk. | Proposed |
+| B8 | 2026-11-07 | **Generative UI as a component catalog, on every surface.** Formalize what the app agent returns as a JSON spec checked against a pack-level component catalog (§1.5): product grid, comparison table, buy card, policy explainer and so on. The same answer then renders on the web store, in Slack or Teams, or by voice. Evaluate Vercel's json-render (`@json-render/core`, `@json-render/chat`) with Chat SDK as the renderer and channel layer rather than building our own. Kernel-bound components keep prices and terms exact. | **Evaluated 2026-11-07: a fit.** json-render 0.22 (Apache-2.0, pre-1.0; renderers for React, React Native, Vue, Svelte, email, PDF, images, MCP Apps and chat; Zod schemas; streaming) plus Chat SDK (`chat` 4.44, MIT; Slack, Teams, Google Chat, Discord, Telegram, WhatsApp). Voice needs our own spoken renderer. Next: a spike (one session) with the Machine Shop answer as a catalog spec on the web and in a Slack test workspace. Pin exact versions. |
+| B9 | 2026-11-07 | **Smarter search on a miss.** In the 2026-11-07 measurements the AI-run store answered 3 of 5 plain-words requests (the traditional store answered 0). It missed "something to keep my garage floor clean" and "outdoor lights for a patio under 50 dollars", because its keyword kernel needs every word to match. On zero results the agent should retry with broader or alternative keywords, and add a scenario for each miss. | Proposed |
+| B10 | 2026-11-07 | **The code-retirement study.** Classify every file of a traditional app into kernel, business rule, channel (voice, chat, assistant UI), UI shell and plumbing, then measure what the Cradle retires from the app. Machine Shop (3,951 lines): about 70% is channel code (voice ~1,850, chat ~510, transcripts ~410), ~480 is kernels and ~700 is pages. With a component catalog and shared channel renderers (B8), the app's own code could fall to about 1,000–1,400 lines, 65–75% less, although the channel code moves into the platform once rather than disappearing. Run the same study read-only on ts-platform and CardDemo, where business rules are a larger share, before publishing a figure. | Proposed |
+| B11 | 2026-11-07 | **Bake proven rules into each deployment** (G3-D28): at build time the app embeds the version in force (book and compiled projections); at runtime it uses that until a newer proven version arrives. The app no longer needs the Accelerator to serve shoppers. | Open |
+| B12 | 2026-11-07 | **The `@accelerator/cradle` starter package** (G3-D27): extract Machine Shop's `lib/cradle` (agent, projections, book client, gate, mark) into a versioned package the platform installs into a new Cradle app, plus the "integrations become kernels" step in the transformation crew. | Open |
 
 ---
 
@@ -504,6 +511,8 @@ It pays off most of all in **legacy estates** (§11): banks, insurers and govern
 | G3-D24 | 2026-11-02 | Models are routed by artifact kind and adopted only on measured scores against a public answer key (CardDemo) | Owner direction |
 | G3-D25 | 2026-11-02 | **Pilot 2 is AWS CardDemo** (public, Apache 2.0), pinned from the upstream repository, with a Cards pack. Its output may be published as a showcase | **Owner approved 2026-11-02** |
 | G3-D26 | 2026-11-03 | **Every steward decision is aligned into the code by the crew.** A contradiction ruled, a policy changed or retired, or a hole filled opens a work item automatically; the steward never opens one by hand. Decisions touching a built integration (kernel or connector) are Owner-gated. The original Machine Shop is frozen on a `baseline` branch that is never released to (§12) | **Owner direction 2026-11-03** |
+| G3-D27 | 2026-11-07 | **The Cradle runtime is a shared package** (`@accelerator/cradle`), the skeleton the platform installs and sets up in every Cradle app, with a small set of essential services (app agent, projections, GenUI renderer and catalog, gate endpoint, runtime book client). Each app keeps only its kernels and a thin shell. Integrations the traditional app already has are found by the code parse and brought in as kernels. See §13.2 | Owner direction |
+| G3-D28 | 2026-11-07 | **Proven rules are baked into each production deployment**, so a Cradle app runs without the Accelerator and only receives rule changes from it. Until then, it keeps the last rules read, or safe settings. See §13.1 | Owner direction |
 
 ---
 
@@ -800,3 +809,52 @@ Today the "Cradle-driven" Machine Shop is the same Next.js app with targeted edi
 
 Each one goes to the crew through "Aligning the code", and is proven when the next ingest finds no contradiction.
 
+
+---
+
+## 13. How the Accelerator works at runtime (2026-11-07)
+
+This section is for anyone, a customer's CTO or a new engineer, who asks: *when an app is "in the Cradle", what is deployed where, and what happens when a rule changes?* The same picture is on the public overview page (`/platform`, "How a Cradle app runs").
+
+### 13.1 Two deployments, one source of truth
+
+- **The Accelerator** (the Control Room and its API) is its own service, in the Strategic Machines cloud. It holds each app's policy book and graph, runs the Policy Walk and the crew, keeps the keys vault, and proves every change to the rules (the conformance gate, §4 and B5).
+- **The Cradle app** is deployed on its own, in the customer's cloud (Machine Shop's runs on Vercel). The platform is not copied into it. The app **depends** on the Accelerator for its rules, the way an app depends on Stripe for payments or on an identity provider for sign-in:
+  - it reads its proven rules from the Accelerator (`/api/runtime/book`, with a per-site token);
+  - when a rule changes, the Accelerator calls the app to prove the new version (`/api/cradle/prove`), and the app reports the results back (`/api/runtime/proof`);
+  - it calls its own services (payments, databases, messaging, voice, models) through **kernels**: verified code, guarded by the rules.
+- **Resilience (G3-D28):** today the app reads its rules live. If the Accelerator is unreachable it keeps the last rules it read, and an app that has never read them runs on safe settings (browsing only). In production, the proven rules will be **baked into each deployment**, so the app runs without the Accelerator and only *receives rule changes* from it (backlog B11).
+
+### 13.2 What is shared, and how (G3-D27)
+
+"The channel code moves into the platform once" means it is **written, tested and maintained once**, not that it vanishes:
+
+- **The Cradle runtime is a shared package** (working name `@accelerator/cradle`): the skeleton that starts every Cradle app, installed and set up by the platform. It holds a small set of essential services: the app agent (route, ground, decide), projections, the Generative UI renderer and its component catalog (B8), the conformance-gate endpoint, and the runtime book client. Each app installs it, so the code ships inside each app's build, but no app owns or maintains it.
+- **Each app keeps only what is its own:** its kernels and a thin shell.
+- **Integrations come from the app's own code.** When the crew transforms a traditional app, every integration it already has (Slack, Postgres, SQL Server, MongoDB, a payment provider…) is found by the code parse and brought into the Cradle app **as a kernel**: the same behavior, now behind a contract and guarded by the rules. Nothing is rebuilt that the app didn't use.
+- **Channels later can be hosted.** Where a channel is the same for every customer (a Slack bot, a voice line), the platform can run it as one service for all apps.
+
+How to frame it: *each app carries far less code that it must own, review and maintain; the common parts are built once and shared.* Machine Shop: about 70% of its 3,951 lines are channel code (B10).
+
+### 13.3 What happens when a rule changes: the "place of birth" example
+
+A regulator requires card applicants to give their place of birth. The steward adds the rule in the Policy Walk. What follows:
+
+| Layer | What happens | Automatic? |
+|---|---|---|
+| The rule | A new or restated policy, versioned and dated | Yes: the Policy Walk |
+| The proof | The crew drafts a scenario ("an application without a place of birth is rejected"); the gate proves the new version before it serves | Yes |
+| The screen | The application form gains a "Place of birth" field: the same catalog component, one more field in its spec | **Yes**: no UI deploy, because a form's fields are data (Gen 2 FormSpec), and the catalog limits component *types*, not fields |
+| Validation | "Required", and any format, come from the rule | Yes |
+| Storage | If the store accepts extra attributes (a document store, or a JSON column for extension fields), nothing to do; if the schema is strict, a migration | **Sometimes**: otherwise the crew writes the migration as a Work item and the owner approves it |
+| Integrations | If an outside service (a credit bureau) must receive the field, the kernel changes | **No, by design**: kernel and integration changes always wait for the owner |
+
+The catalog itself changes only when a **new kind** of component is needed. The data dictionary (B3) makes "place of birth" a defined element that the form, the store and the integrations all point to.
+
+### 13.4 Predictability: each rule change ships with its evidence
+
+What companies fear about AI-run apps is unpredictable behavior. The Cradle's answer is to measure it, not to ask for trust:
+- critical paths (money, stock, eligibility) run in kernels and compiled projections, never in free-form model output;
+- every new version of the rules is proven against scenarios before it serves, and critical scenarios must pass every run;
+- a scenario that passes only some runs is a signal that a rule can be read two ways, and becomes a rewording in the Policy Walk (the scorecard, B7);
+- the version that last passed stays in force until a new one passes.
