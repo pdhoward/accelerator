@@ -21,6 +21,7 @@
 - §11 covers any technology: legacy estates (COBOL, JCL, CICS, IMS), technology adapters beside industry packs, the three kinds of kernel, and Pilot 2 on AWS CardDemo.
 - §12 is the Demo 1 anchor: the original Machine Shop kept as a baseline, its addresses, and what Demo 1 proved before Demo 2 (CardDemo).
 - §13 is how the Accelerator works at runtime: what is deployed where, what is shared, and what happens when a rule changes.
+- §14 holds research notes on outside tools and ideas (for example CodeGraphContext and a deterministic code graph, §14.1).
 
 > **What Gen 3 is.** Every client app lives in its own **cradle**: an Accelerator that stays attached for the app's whole life. The app's source of truth is a **policy graph**: the client's policies, practices and regulations, linked to each other and to everything that carries them out. The graph starts from an **industry pack** and grows as the client describes their business. The crew turns each policy into running behavior, in the cheapest form that can be trusted. The app observes what it can't serve and proposes new work. It never makes its own rules. The owner, whom we call the **steward**, sets policy, and the app carries it out at machine speed. Every behavior traces back to a policy the steward approved.
 
@@ -47,6 +48,7 @@ A running list of updates and refactors we know we want. An item leaves the list
 | B13 | 2026-11-07 | **The app that polices itself (regulatory watch).** Like a car that calls the dealer when it needs service: an agent watches the regulations and standards each pack cites (for example Reg Z, PCI DSS, GLBA for Cards) and the steward's own sources. When a change may affect a rule in the book, it tells the owner what changed, which policies it touches, and a proposed restatement with its scenarios, ready for the Policy Walk and the conformance gate. | Vision (Owner, 2026-11-07) |
 | B14 | 2026-11-08 | **Rule releases: batch changes, prove once.** Today every change to the rules starts a full proof (about $0.20 per run with 10 scenarios). Instead, the steward groups changes into a release (quarter-end pricing, a product launch, a new regulation) with one effective date. While drafting, targeted proofs run only the scenarios tied to the changed policies (cents). The full suite runs once when the release is proven, and everything goes into force together. On a failure, the scorecard (B7) attributes each failing scenario to the change that caused it, so one bad change can be pulled without abandoning the release. Urgent fixes ship alone as a hotfix release. This saves money (10 changes for about $0.20, not $2), avoids half-applied rules, and gives one approval with one body of evidence. | Proposed (Owner, 2026-11-08) |
 | B15 | 2026-11-08 | **Two locks on every table: revoke the old anon and authenticated grants.** Tables created before Supabase's grant change carry full privileges for `anon` (the public key) and `authenticated`. Row-level security blocks them today: an outsider test on 2026-11-08 read 0 of 46 tables. But if RLS were ever switched off on a table, it would open to anyone with the public key. Nothing needs those grants (the console uses Supabase for sign-in only; the API uses service_role, granted in migration 0018). Add a migration that revokes all table privileges from anon and authenticated in public, then re-run the outsider test. | After the 2026-11-09 demo |
+| B16 | 2026-11-08 | **A deterministic code graph under the policy graph.** Prompted by CodeGraphContext (MIT; Tree-sitter into Neo4j, Kuzu or FalkorDB; about 25 languages; calls, imports, inheritance; served as an MCP server). It has no COBOL, JCL or PL/I support and no variable or data-flow tracking, so it can't trace COBOL data as is. (1) **COBOL, with B3:** our own structural indexer on an existing COBOL parser (evaluate tree-sitter-cobol and ProLeap first). Nodes: programs, paragraphs, copybooks, fields, files, DB2 tables, JCL jobs. Edges: CALL, PERFORM, COPY, MOVE and COMPUTE (field lineage), READ and WRITE, EXEC SQL. Stored in Postgres beside the policy graph (§2.5) and exposed to the crew through the Toolbelt. Uses: exact data lineage (for example ACCT-CURR-BAL from file to screen), slicing by dependency, and impact analysis for rule changes. (2) **Modern languages:** spike CodeGraphContext as an MCP tool for the crew on a TypeScript ingest (Machine Shop, ts-platform), and measure cost, turns and citation quality before and after. | Proposed (2026-11-08). The full explanation and recommendation are in §14.1 |
 
 ---
 
@@ -861,3 +863,43 @@ What companies fear about AI-run apps is unpredictable behavior. The Cradle's an
 - every new version of the rules is proven against scenarios before it serves, and critical scenarios must pass every run;
 - a scenario that passes only some runs is a signal that a rule can be read two ways, and becomes a rewording in the Policy Walk (the scorecard, B7);
 - the version that last passed stays in force until a new one passes.
+
+---
+
+## 14. Research notes (2026-11-08)
+
+Notes on outside tools and ideas that bear on the backlog: what they are, how they compare with what the Accelerator already does, and what we should take from them.
+
+### 14.1 CodeGraphContext, and a deterministic code graph (backlog B16)
+
+**What it is.** CodeGraphContext is an open-source tool (MIT, about 4,400 GitHub stars) that parses code with Tree-sitter and stores it in a graph database such as Neo4j or Kuzu. It records functions, classes, calls, imports and inheritance, so you can ask "who calls this?", "what's the call chain from here?" or "what code is dead?". It answers from the command line, or serves the answers to AI assistants over MCP. Repository: github.com/codegraphcontext/codegraphcontext.
+
+**How it compares with what we have:**
+
+| | The Accelerator today | CodeGraphContext |
+|---|---|---|
+| What the graph holds | **Business meaning:** policies, rulings, contradictions, decisions, versions | **Code structure:** functions, calls, imports |
+| How code is read | AI agents read files in slices and cite path and line; a census sorts files by role (program, copybook, job…) | A deterministic parser (Tree-sitter) |
+| COBOL, JCL | Yes: our own estate adapter (§11.3) | **No.** About 25 languages, none of them COBOL, JCL or PL/I |
+| Data tracing (fields, lineage) | Not yet (the data dictionary, B3) | **No.** Calls and imports only; no variables or data flow |
+
+The two are complementary: we have the business graph, it has a code graph, which we lack. But for COBOL data tracing it covers neither the language nor the data flow.
+
+**What it shows us.** Our ingest is all AI reading. A deterministic code graph underneath would make it cheaper, more complete and checkable. For COBOL that graph would hold:
+- **Nodes:** programs, paragraphs, copybooks, fields, files, DB2 tables, JCL jobs.
+- **Edges, taken from the code itself:**
+  - `CALL` and `PERFORM`: which code runs which;
+  - `COPY`: which record layouts a program uses;
+  - `MOVE` and `COMPUTE`: field-to-field data flow, the lineage;
+  - `READ` and `WRITE`: which files;
+  - `EXEC SQL`: which tables.
+
+That gives three things:
+1. **Data lineage, done precisely.** Follow `ACCT-CURR-BAL` from the file it is read from, through every `MOVE` and `COMPUTE`, to the screen and report that show it. The AI then explains what the path means.
+2. **Smarter slicing** for the extractors: by what calls and uses what, not by file-name order.
+3. **Impact analysis:** "if this rule changes, these 4 programs and 2 jobs are affected."
+
+**Recommendation:**
+- **For COBOL:** build our own structural indexer as part of the data dictionary (B3), on an existing COBOL parser. A Tree-sitter COBOL grammar and the open-source ProLeap parser are the first candidates to evaluate; their quality isn't verified yet. The code graph lives in **Postgres beside the policy graph**, not in a new graph database, following the storage decision in §2.5. The crew queries it through our existing tool server (the Toolbelt), the way CodeGraphContext serves its tools over MCP.
+- **For modern languages:** a cheap spike. Plug CodeGraphContext in as an MCP tool for the crew when it ingests a TypeScript app (Machine Shop, ts-platform), and measure whether it cuts cost and turns or improves citations. If it does, use it as is.
+
