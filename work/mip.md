@@ -1,6 +1,6 @@
 # MIP: the Mainframe Intelligence Pack
 
-*Strategic Machines · started 2026-11-12 · status: benchmark corpus audited, golden dataset built; parser not yet built*
+*Strategic Machines · started 2026-11-12 · status: P1 (L2 structure) built and passing: platform `90a0353`, `packs/mip`. Next: P2 (resolution)*
 
 **MIP** is the platform's technology pack for the mainframe family (COBOL, JCL, CICS, IMS, DB2, VSAM). It reads a mainframe application's source, without installing anything on the mainframe, and produces the platform's code map (gen3-cradle.md §11.3.1, B28): programs, entry points, calls, data and the conditions that connect them, every item cited to a file and line. The industry pack and the model then say what that behavior means to the business (§1.6).
 
@@ -26,6 +26,7 @@ The demonstration this aims at: *"We ingested an IBM-published banking applicati
 | M3 | **Deeper semantics (L3) use cobol-py**: data descriptions, REDEFINES, statement-level data flow | It ports ProLeap's grammar and semantic model, so we don't write a COBOL grammar |
 | M4 | **ProLeap (Java) is deferred** | It's MIT and well tested but dormant (last parser change January 2024), and cobol-py ports the same model. It becomes the fallback only if cobol-py's speed blocks L3 at scale |
 | M5 | **IBM Bank of Z is the primary benchmark**, CardDemo runs alongside it, IBM GenApp is held out | §4 |
+| M6 | **JCL is read by a small parser of our own, not Lark** (2026-11-12) | JCL's statement structure is regular (name, operation, operands, continuation, in-stream data); a grammar library added a dependency without making it more exact |
 
 ## 3. Evaluation of cobol-py (2026-11-12)
 
@@ -145,3 +146,26 @@ The expected edges come from our audit, which is itself pattern-based: they are 
 - **Speed at L3.** cobol-py's speed (about 50 lines per second) makes L3 a background, cached, parallel job. ProLeap is the fallback.
 - **One author's style.** Mitigated by three corpora from two publishers and a held-out test.
 - **The model's role.** It labels and explains what the analysis proves; it never asserts a path the graph doesn't contain (§1.6).
+
+## 12. Progress
+
+### P1: L2 structure (2026-11-12), built and passing
+
+`accelerator-platform/packs/mip` (platform `90a0353`): Python, one pinned dependency (SQLGlot), 11 unit tests. `python -m mip analyze <repo>` writes the code map; `python -m mip.bench` scores it against a golden file.
+
+| Check | Result |
+|---|---|
+| **Bank of Z vs the golden file** | **100% recall and 100% precision in all 8 categories:** 108 LINKs (dynamic ones resolved to ABNDPROC, INQCUST, INQACCCU by their literals), 20 RETURN TRANSIDs, 89 COPYs (REPLACING marked), 29 SQL accesses (cursors traced to their tables), 3 batch steps (through DSN RUN PROGRAM), the asynchronous RUN, calls, the CICS file write. The RUN's programs are left unresolved, as required. 0.37 s for the whole repository |
+| **CardDemo, the features Bank of Z lacks** | 32 XCTL (30 through data; the menu's `CDEMO-MENU-OPT-PGMNAME(WS-OPTION)` correctly left data-driven), 26 EXEC DLI and 9 CBLTDLI with their function codes, 11 programs with indexed (VSAM) files, 52 CICS file commands, 159 JCL steps, 25 CSD transactions with their programs; 0 diagnostics; 0.43 s |
+| **Independent cross-check** | Static CALL targets agree with cobol-py (ProLeap's grammar, a separate implementation) on **all 39** CardDemo programs it can parse |
+| **Speed** | About 70,000 lines per second, against cobol-py's 50 |
+
+**What P1 taught (each now a unit test):** an apostrophe in `AUTHOR. James O'Grady.` opened a literal that swallowed a whole program (free-text identification entries are now skipped, and a literal never runs past its line); code past column 72 can cut an `END-EXEC` (a block now never swallows the next `EXEC`, and the case is reported); a subscripted target (`PROGRAM(X(WS-OPTION))`) keeps its name apart from its subscript; an SSA's segment name is often a FILLER.
+
+**The golden file was wrong once, and MIP found it:** the audit read `FETCH FROM ACC-CURSOR` as a table called ACC; MIP traced the cursor to its DECLARE on ACCOUNT. The manifest builder now takes a FETCH's tables from its cursor, and the correction is recorded in `tools/manifest.py`.
+
+**Honest limits of P1:** the golden edges came from our own audit, so agreement on Bank of Z is MIP agreeing with a pattern reading checked by hand on the rules and trace; the cobol-py cross-check is the independent evidence so far. Copybooks are analyzed as themselves (not inlined), so a call inside a copybook belongs to the copybook and reaches a program through its COPY edge. Some IMS calls have no segment (SCHD, TERM, or a segment held in data). The code map JSON carries fields the TypeScript type doesn't yet declare (`scope`, `command`, `sql`, `dli`), to be added when the runner calls MIP.
+
+### Next: P2, resolution
+
+Dynamic targets from tables (the CardDemo menu's COMEN02Y, the admin menu's COADM02Y), constant evaluation of `STRING 'OCR' WS-CC-CNT INTO WS-RUN-TRANSID` (OCR1–OCR5), and COMMAREA layouts compared by byte offset across every LINK and XCTL, with the BNK1CRA/PAYDBCR mismatch found automatically.

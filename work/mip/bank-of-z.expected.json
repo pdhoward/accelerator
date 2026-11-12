@@ -2196,7 +2196,7 @@
     "program": "INQACCCU",
     "verb": "FETCH",
     "tables": [
-     "ACC"
+     "ACCOUNT"
     ],
     "file": "src/base/cics/cobol/INQACCCU.cbl",
     "line": 466

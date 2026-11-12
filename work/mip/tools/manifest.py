@@ -81,9 +81,13 @@ for pid in SUBSET:
             edges.append({"from": pid, "kind": f"cics_file_{c['command'].lower()}", "to_file": c.get("file") or c.get("dataset"), "file": p["path"], "line": c["line"]})
     for c in p.get("call_static", []):
         edges.append({"from": pid, "kind": "call", "to": c["target"], "file": p["path"], "line": c["line"]})
+    # A FETCH reads the tables of the cursor it names, declared in the same program (the audit's pattern
+    # would read "FETCH FROM ACC-CURSOR" as table ACC: corrected 2026-11-12, found by MIP's first run).
+    declared = [s["tables"] for s in p.get("sql", []) if s["verb"] == "DECLARE"]
     for s in p.get("sql", []):
         if s["verb"] in ("SELECT", "INSERT", "UPDATE", "DELETE", "DECLARE", "FETCH"):
-            sql.append({"program": pid, "verb": s["verb"], "tables": s["tables"], "file": p["path"], "line": s["line"]})
+            tables = sorted({t for d in declared for t in d}) if s["verb"] == "FETCH" and len(declared) == 1 else s["tables"]
+            sql.append({"program": pid, "verb": s["verb"], "tables": tables, "file": p["path"], "line": s["line"]})
     for c in p.get("copy", []):
         copies.append({"program": pid, "copybook": c["copybook"], "line": c["line"], **({"replacing": True} if c.get("replacing") else {})})
 
