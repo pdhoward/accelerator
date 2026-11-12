@@ -1,0 +1,177 @@
+{
+ "schema": "mip-expected/1",
+ "corpus": {
+  "name": "AWS CardDemo",
+  "revision": "59cc6c2fd7ebd7ef7925cad552a01a4b8b6e4d5e"
+ },
+ "p2": {
+  "resolved": [
+   {
+    "program": "COMEN01C",
+    "kind": "xctl",
+    "line": 156,
+    "via": "CDEMO-MENU-OPT-PGMNAME",
+    "values": [
+     "COACTVWC",
+     "COACTUPC",
+     "COCRDLIC",
+     "COCRDSLC",
+     "COCRDUPC",
+     "COTRN00C",
+     "COTRN01C",
+     "COTRN02C",
+     "CORPT00C",
+     "COBIL00C",
+     "COPAUS0C"
+    ],
+    "evidence": [
+     {
+      "file": "app/cbl/COMEN01C.cbl",
+      "line": 156,
+      "text": "                EXEC CICS XCTL"
+     },
+     {
+      "file": "app/cbl/COMEN01C.cbl",
+      "line": 157,
+      "text": "                    PROGRAM(CDEMO-MENU-OPT-PGMNAME(WS-OPTION))"
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 28,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COACTVWC'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 34,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COACTUPC'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 40,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COCRDLIC'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 46,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COCRDSLC'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 52,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COCRDUPC'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 58,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COTRN00C'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 64,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COTRN01C'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 71,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COTRN02C'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 77,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'CORPT00C'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 83,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COBIL00C'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 89,
+      "text": "     10 FILLER                       PIC X(08) VALUE 'COPAUS0C'."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 93,
+      "text": "   05 CDEMO-MENU-OPTIONS REDEFINES CDEMO-MENU-OPTIONS-DATA."
+     },
+     {
+      "file": "app/cpy/COMEN02Y.cpy",
+      "line": 97,
+      "text": "       15 CDEMO-MENU-OPT-PGMNAME       PIC X(08)."
+     }
+    ]
+   },
+   {
+    "program": "COADM01C",
+    "kind": "xctl",
+    "line": 145,
+    "via": "CDEMO-ADMIN-OPT-PGMNAME",
+    "values": [
+     "COUSR00C",
+     "COUSR01C",
+     "COUSR02C",
+     "COUSR03C",
+     "COTRTLIC",
+     "COTRTUPC"
+    ],
+    "evidence": [
+     {
+      "file": "app/cbl/COADM01C.cbl",
+      "line": 145,
+      "text": "             EXEC CICS"
+     },
+     {
+      "file": "app/cbl/COADM01C.cbl",
+      "line": 146,
+      "text": "                 XCTL PROGRAM(CDEMO-ADMIN-OPT-PGMNAME(WS-OPTION))"
+     },
+     {
+      "file": "app/cpy/COADM02Y.cpy",
+      "line": 29,
+      "text": "     10 FILLER                        PIC X(08) VALUE 'COUSR00C'."
+     },
+     {
+      "file": "app/cpy/COADM02Y.cpy",
+      "line": 34,
+      "text": "     10 FILLER                        PIC X(08) VALUE 'COUSR01C'."
+     },
+     {
+      "file": "app/cpy/COADM02Y.cpy",
+      "line": 39,
+      "text": "     10 FILLER                        PIC X(08) VALUE 'COUSR02C'."
+     },
+     {
+      "file": "app/cpy/COADM02Y.cpy",
+      "line": 44,
+      "text": "     10 FILLER                        PIC X(08) VALUE 'COUSR03C'."
+     },
+     {
+      "file": "app/cpy/COADM02Y.cpy",
+      "line": 49,
+      "text": "     10 FILLER                        PIC X(08) VALUE 'COTRTLIC'."
+     },
+     {
+      "file": "app/cpy/COADM02Y.cpy",
+      "line": 53,
+      "text": "     10 FILLER                        PIC X(08) VALUE 'COTRTUPC'."
+     },
+     {
+      "file": "app/cpy/COADM02Y.cpy",
+      "line": 59,
+      "text": "       15 CDEMO-ADMIN-OPT-PGMNAME       PIC X(08)."
+     }
+    ]
+   }
+  ],
+  "interfaces": [],
+  "no_findings_expected": "CardDemo's screens share CARDDEMO-COMMAREA (COCOM01Y) and extend it with fields of their own, copying only the bytes passed (MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA): compatible, not drift. The sign-on (COSGN00C) never reads its COMMAREA.",
+  "evidence": [
+   {
+    "file": "app/cbl/COTRN00C.cbl",
+    "line": 111,
+    "text": "         MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA"
+   }
+  ]
+ }
+}

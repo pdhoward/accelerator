@@ -1,6 +1,6 @@
 # MIP: the Mainframe Intelligence Pack
 
-*Strategic Machines · started 2026-11-12 · status: P1 (L2 structure) built and passing: platform `90a0353`, `packs/mip`. Next: P2 (resolution)*
+*Strategic Machines · started 2026-11-12 · status: P1 (L2 structure) and P2 (resolution, interface checks) built and passing: platform `90a0353`, `f6bb2e1`, `packs/mip`. Next: P3 (L3 semantics)*
 
 **MIP** is the platform's technology pack for the mainframe family (COBOL, JCL, CICS, IMS, DB2, VSAM). It reads a mainframe application's source, without installing anything on the mainframe, and produces the platform's code map (gen3-cradle.md §11.3.1, B28): programs, entry points, calls, data and the conditions that connect them, every item cited to a file and line. The industry pack and the model then say what that behavior means to the business (§1.6).
 
@@ -166,6 +166,20 @@ The expected edges come from our audit, which is itself pattern-based: they are 
 
 **Honest limits of P1:** the golden edges came from our own audit, so agreement on Bank of Z is MIP agreeing with a pattern reading checked by hand on the rules and trace; the cobol-py cross-check is the independent evidence so far. Copybooks are analyzed as themselves (not inlined), so a call inside a copybook belongs to the copybook and reaches a program through its COPY edge. Some IMS calls have no segment (SCHD, TERM, or a segment held in data). The code map JSON carries fields the TypeScript type doesn't yet declare (`scope`, `command`, `sql`, `dli`), to be added when the runner calls MIP.
 
-### Next: P2, resolution
+### P2: resolution and interface checks (2026-11-12), built and passing
 
-Dynamic targets from tables (the CardDemo menu's COMEN02Y, the admin menu's COADM02Y), constant evaluation of `STRING 'OCR' WS-CC-CNT INTO WS-RUN-TRANSID` (OCR1–OCR5), and COMMAREA layouts compared by byte offset across every LINK and XCTL, with the BNK1CRA/PAYDBCR mismatch found automatically.
+Platform `f6bb2e1`. Expected results: `work/mip/bank-of-z.expected.json` (new `p2` section) and `work/mip/carddemo.expected.json` (built by `tools/manifest_carddemo.py`); every evidence line verified against the source.
+
+| Check | Result |
+|---|---|
+| **Tables** | CardDemo's menus resolve to the programs in their tables, read byte for byte the way the program reads them: COMEN01C → 11 programs (COACTVWC … COPAUS0C), COADM01C → 6 (COUSR00C … COTRTUPC) |
+| **Constant evaluation** | Bank of Z's `RUN TRANSID(WS-RUN-TRANSID)` → OCR1–OCR5, from `STRING 'OCR' WS-CC-CNT` inside `PERFORM VARYING WS-CC-CNT FROM 1 BY 1 UNTIL WS-CC-CNT > 5`. The programs those transactions run stay unresolved (no CSD), and no program is asserted |
+| **Interfaces, Bank of Z** | 145 LINK/XCTL COMMAREAs compared byte for byte: 142 same, 1 compatible, 2 drift. **BNK1CRA → DBCRFUN, high, found automatically:** BNK1CRA passes 92 bytes; DBCRFUN uses COMM-DESCRIPTION (90–129), COMM-SUCCESS (130) and COMM-FAIL-CODE (131). **DELCUS → DELACC, low:** DELCUS declares two PCB pointers, DELACC's copybook three, and DELACC never uses the third. No unexpected findings |
+| **Interfaces, CardDemo** | 68 compared: 31 same, 23 compatible, 14 not read, **no drift.** Its screens extend the shared COMMAREA (COCOM01Y) with fields of their own but copy only the bytes passed (`MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA`); the sign-on never reads its COMMAREA |
+| **Regression** | P1 still 100% on all 8 Bank of Z categories; static CALLs agree with cobol-py on 39/39; 22 unit tests |
+
+**What P2 taught (each now a unit test):** PICTURE strings contain periods (`+9(10).99`) and must be one token; `COPY X REPLACING X-COMMAREA BY DFHCOMMAREA` is how a program names its COMMAREA; a copied 01 record stands alone and the fields after it continue it (`COPY COCOM01Y.` then `05 CDEMO-CT00-INFO`); two copybooks can share a name, so the one nearest the program wins, as in a compiler's library search; and a layout difference is not a defect by itself. The rules that keep findings honest: opaque bytes read as a structure are compatible; a bounded `(1:EIBCALEN)` copy lets the called program extend the area safely; severity depends on whether the called program actually uses the conflicting field. Four apparent drifts were checked against the source and found false before those rules existed; that is why each rule exists.
+
+### Next: P3, L3 semantics
+
+Within each program: control flow (PERFORM, PERFORM THRU, GO TO, fall-through), the conditions guarding each statement, and data flow (where each field is set and read), using cobol-py's semantic graph mapped back to source lines. Across programs: values carried through COMMAREAs by byte offset (the layouts P2 built). Exit: the golden trace (BOZ-R1) reproduced step by step, every hop with its condition and citation.

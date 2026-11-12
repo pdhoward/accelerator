@@ -1,5 +1,144 @@
 {
  "schema": "mip-expected/1",
+ "p2": {
+  "resolved": [
+   {
+    "program": "CRECUST",
+    "kind": "run_async",
+    "line": 687,
+    "values": [
+     "OCR1",
+     "OCR2",
+     "OCR3",
+     "OCR4",
+     "OCR5"
+    ],
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/CRECUST.cbl",
+      "line": 231,
+      "text": " 01 WS-CC-CNT                     PIC 9         VALUE 0."
+     },
+     {
+      "file": "src/base/cics/cobol/CRECUST.cbl",
+      "line": 620,
+      "text": "     PERFORM VARYING WS-CC-CNT FROM 1 BY 1"
+     },
+     {
+      "file": "src/base/cics/cobol/CRECUST.cbl",
+      "line": 621,
+      "text": "        UNTIL WS-CC-CNT > 5"
+     },
+     {
+      "file": "src/base/cics/cobol/CRECUST.cbl",
+      "line": 626,
+      "text": "             STRING 'OCR' DELIMITED BY SIZE,"
+     }
+    ]
+   }
+  ],
+  "interfaces": [
+   {
+    "caller": "BNK1CRA",
+    "callee": "DBCRFUN",
+    "line": 511,
+    "verdict": "differs",
+    "severity": "high",
+    "caller_size": 92,
+    "callee_size": 132,
+    "why": "DBCRFUN uses COMM-DESCRIPTION (90–129), COMM-SUCCESS (130) and COMM-FAIL-CODE (131); BNK1CRA passes 92 bytes with its success flag at 90",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 133,
+      "text": "    03 SUBPGM-SUCCESS            PIC X."
+     },
+     {
+      "file": "src/base/cics/copy/PAYDBCR.cpy",
+      "line": 19,
+      "text": "         05 COMM-DESCRIPTION      PIC X(40)."
+     },
+     {
+      "file": "src/base/cics/copy/PAYDBCR.cpy",
+      "line": 20,
+      "text": "    03 COMM-SUCCESS             PIC X."
+     },
+     {
+      "file": "src/base/cics/copy/PAYDBCR.cpy",
+      "line": 21,
+      "text": "    03 COMM-FAIL-CODE           PIC X."
+     }
+    ]
+   },
+   {
+    "caller": "DELCUS",
+    "callee": "DELACC",
+    "line": 378,
+    "verdict": "differs",
+    "severity": "low",
+    "caller_size": 118,
+    "callee_size": 122,
+    "why": "DELCUS declares its own copy of the parameters with two PCB pointers; DELACC's copybook has three. DELACC never mentions DELACC-DEL-PCB3, so nothing reads the missing bytes today",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/DELCUS.cbl",
+      "line": 244,
+      "text": "    03 DELACC-COMM-PCB1 POINTER."
+     },
+     {
+      "file": "src/base/cics/cobol/DELCUS.cbl",
+      "line": 245,
+      "text": "    03 DELACC-COMM-PCB2 POINTER."
+     },
+     {
+      "file": "src/base/cics/copy/DELACC.cpy",
+      "line": 39,
+      "text": "    03 DELACC-DEL-PCB3             POINTER."
+     }
+    ]
+   }
+  ],
+  "not_findings": [
+   {
+    "caller": "BNK1UAC",
+    "callee": "UPDACC",
+    "line": 954,
+    "verdict": "compatible",
+    "why": "BNK1UAC passes 4 more bytes (COMM-PCB1-POINTER) than UPDACC reads; every field UPDACC reads lines up",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1UAC.cbl",
+      "line": 193,
+      "text": "    03 COMM-PCB1-POINTER         POINTER."
+     }
+    ]
+   },
+   {
+    "caller": "BNK1DAC",
+    "callee": "DELACC",
+    "line": 713,
+    "verdict": "same",
+    "why": "PARMS-SUBPGM matches DELACC's 122 bytes; the COPY INQACC that follows it opens a record of its own",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1DAC.cbl",
+      "line": 83,
+      "text": " 01 PARMS-SUBPGM."
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1DAC.cbl",
+      "line": 104,
+      "text": "    03 PARMS-SUBPGM-DEL-PCB3     POINTER."
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1DAC.cbl",
+      "line": 106,
+      "text": " COPY INQACC."
+     }
+    ]
+   }
+  ]
+ },
  "corpus": {
   "name": "IBM Bank of Z",
   "url": "https://github.com/IBM/Bank-of-Z",

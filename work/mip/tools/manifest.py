@@ -219,8 +219,31 @@ absent = [
     {"feature": "CICS resource definitions (CSD)", "found": 0, "note": "transaction → program and file definitions are not in the repository"},
 ]
 
+# ── P2: resolution and interfaces, hand-verified 2026-11-12 ─────────────────
+p2 = {
+    "resolved": [
+        {"program": "CRECUST", "kind": "run_async", "line": 687, "values": ["OCR1", "OCR2", "OCR3", "OCR4", "OCR5"],
+         "evidence": [ev(CICS + "CRECUST.cbl", 231, "WS-CC-CNT"), ev(CICS + "CRECUST.cbl", 620, "PERFORM VARYING WS-CC-CNT FROM 1"), ev(CICS + "CRECUST.cbl", 621, "UNTIL WS-CC-CNT > 5"), ev(CICS + "CRECUST.cbl", 626, "STRING 'OCR'")]},
+    ],
+    "interfaces": [
+        {"caller": "BNK1CRA", "callee": "DBCRFUN", "line": 511, "verdict": "differs", "severity": "high", "caller_size": 92, "callee_size": 132,
+         "why": "DBCRFUN uses COMM-DESCRIPTION (90–129), COMM-SUCCESS (130) and COMM-FAIL-CODE (131); BNK1CRA passes 92 bytes with its success flag at 90",
+         "evidence": [ev(CICS + "BNK1CRA.cbl", 133, "SUBPGM-SUCCESS"), ev(COPY + "PAYDBCR.cpy", 19, "COMM-DESCRIPTION"), ev(COPY + "PAYDBCR.cpy", 20, "COMM-SUCCESS"), ev(COPY + "PAYDBCR.cpy", 21, "COMM-FAIL-CODE")]},
+        {"caller": "DELCUS", "callee": "DELACC", "line": 378, "verdict": "differs", "severity": "low", "caller_size": 118, "callee_size": 122,
+         "why": "DELCUS declares its own copy of the parameters with two PCB pointers; DELACC's copybook has three. DELACC never mentions DELACC-DEL-PCB3, so nothing reads the missing bytes today",
+         "evidence": [ev(CICS + "DELCUS.cbl", 244, "DELACC-COMM-PCB1"), ev(CICS + "DELCUS.cbl", 245, "DELACC-COMM-PCB2"), ev(COPY + "DELACC.cpy", 39, "DELACC-DEL-PCB3")]},
+    ],
+    "not_findings": [
+        {"caller": "BNK1UAC", "callee": "UPDACC", "line": 954, "verdict": "compatible", "why": "BNK1UAC passes 4 more bytes (COMM-PCB1-POINTER) than UPDACC reads; every field UPDACC reads lines up",
+         "evidence": [ev(CICS + "BNK1UAC.cbl", 193, "COMM-PCB1-POINTER")]},
+        {"caller": "BNK1DAC", "callee": "DELACC", "line": 713, "verdict": "same", "why": "PARMS-SUBPGM matches DELACC's 122 bytes; the COPY INQACC that follows it opens a record of its own",
+         "evidence": [ev(CICS + "BNK1DAC.cbl", 83, "01 PARMS-SUBPGM"), ev(CICS + "BNK1DAC.cbl", 104, "PARMS-SUBPGM-DEL-PCB3"), ev(CICS + "BNK1DAC.cbl", 106, "COPY INQACC")]},
+    ],
+}
+
 manifest = {
     "schema": "mip-expected/1",
+    "p2": p2,
     "corpus": {"name": "IBM Bank of Z", "url": "https://github.com/IBM/Bank-of-Z", "license": "Apache-2.0", "revision": REVISION, "committed": audit["committed"]},
     "inventory": audit["counts"],
     "subset": programs,
