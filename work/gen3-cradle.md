@@ -9,7 +9,8 @@
   - "can agents run the transactions?" (§1.1);
   - criticality (§1.3);
   - the request path with Jev (§1.4);
-  - generative surfaces (§1.5).
+  - generative surfaces (§1.5);
+  - the division of labor: the book decides what's allowed, the model interprets people, kernels compute exactly (§1.6).
 - §2 is the policy graph, the platform's proprietary core:
   - storage and indexes, and when a graph database would be needed (§2.5);
   - how kernels run against the graph (§2.7).
@@ -22,6 +23,7 @@
 - §12 is the Demo 1 anchor: the original Machine Shop kept as a baseline, its addresses, and what Demo 1 proved before Demo 2 (CardDemo).
 - §13 is how the Accelerator works at runtime: what is deployed where, what is shared, and what happens when a rule changes.
 - §14 holds research notes on outside tools and ideas (for example CodeGraphContext and a deterministic code graph, §14.1).
+- §15 is how industry packs, technology packs (adapters), kernels and skills are managed: what each is, who owns it, how it is versioned and proven, and how a new market segment is added.
 
 > **What Gen 3 is.** Every client app lives in its own **cradle**: an Accelerator that stays attached for the app's whole life. The app's source of truth is a **policy graph**: the client's policies, practices and regulations, linked to each other and to everything that carries them out. The graph starts from an **industry pack** and grows as the client describes their business. The crew turns each policy into running behavior, in the cheapest form that can be trusted. The app observes what it can't serve and proposes new work. It never makes its own rules. The owner, whom we call the **steward**, sets policy, and the app carries it out at machine speed. Every behavior traces back to a policy the steward approved.
 
@@ -41,9 +43,9 @@ A running list of updates and refactors we know we want. An item leaves the list
 | B6 | 2026-11-06 | **The Cradle mark on every transformed site.** "Running on AI · Intelligence matters" in the header and on the home page, with its words served by the Accelerator so every Cradle site carries the same mark. Package it as a drop-in component for the next site. | Built on Machine Shop 2026-11-06 |
 | B7 | 2026-11-07 | **The proof scorecard.** One summary for the site owner, a ring on the Policy dial that drills into a Proof page. It shows the pass rate by concept and criticality, coverage (policies and rulings with no scenario), flaky scenarios (passing 1 or 2 runs of 3, often a sign the rule is worded ambiguously), held versions, cost and history across versions. Each failing or flaky case links to its policy and to a suggested fix, such as "restate: the wording allows two readings" or "contradicts X", which feeds the Policy Walk. | Built (2026-11-09, `f7407e8`): the Gate segment on the Policy dial and the Proof scorecard page (/s/:site/policy/proof) |
 | B8 | 2026-11-07 | **Generative UI as a component catalog, on every surface.** Formalize what the app agent returns as a JSON spec checked against a pack-level component catalog (§1.5): product grid, comparison table, buy card, policy explainer and so on. The same answer then renders on the web store, in Slack or Teams, or by voice. Evaluate Vercel's json-render (`@json-render/core`, `@json-render/chat`) with Chat SDK as the renderer and channel layer rather than building our own. Kernel-bound components keep prices and terms exact. | **First cut built (2026-11-11, Machine Shop cradle `dabcfe3`).** Evaluated 2026-11-07: json-render 0.22 (Apache-2.0, pre-1.0) plus Chat SDK fit. Built our own small catalog in json-render's spec shape (`{ root, elements: { id: { type, props, children } } }`, lib/cradle/ui.ts) rather than adding the pre-1.0 dependency now, because our spec is assembled by code from the model's narrow choices, not written by the model, and kernel-bound components take product ids, never prices. Components: Answer, Heading, Filters, Products, Compare, Skeleton, Empty, FollowUp, each declaring its props, the concepts it expresses and whether it is kernel-bound. Two renderers: the web store and plain text for chat and voice (`POST /api/cradle/answer?format=text`). The conformance gate fails a search case whose screen is invalid. Next: a Slack renderer through Chat SDK, a policy-explainer component, voice using the text renderer, and adopting json-render's renderers once it reaches 1.0 |
-| B9 | 2026-11-07 | **Smarter search on a miss.** In the 2026-11-07 measurements the AI-run store answered 3 of 5 plain-words requests (the traditional store answered 0). It missed "something to keep my garage floor clean" and "outdoor lights for a patio under 50 dollars", because its keyword kernel needs every word to match. On zero results the agent should retry with broader or alternative keywords, and add a scenario for each miss. | **First cut built (2026-11-11, Machine Shop cradle `431e4b2`), as platform code.** On a miss the agent's broader keywords are searched at the same time as the first ones (B21), and the answer says plainly when it substituted. Relevance: the store's kernel stays the simplest search any web app has (every keyword appears somewhere) and unchanged, so the classic store remains the baseline; the platform asks it for a pool of 40 and ranks with lib/cradle/relevance.ts, which reads only a title and a category trail (whole words in the title's subject, the category's last step, the phrase in order, and what follows 'for', 'fits' or 'compatible with' read as an accessory). No store-specific words. 'compare lawn mowers': before, a reel mower, two blade sets and a wheel; now three mowers first. Limits: it can't know a pool cleaner is not a shop vacuum; that needs meaning, not words (embeddings, or the decision model choosing from the pool, B26). Next: add a scenario per miss to the gate |
+| B9 | 2026-11-07 | **Smarter search on a miss.** In the 2026-11-07 measurements the AI-run store answered 3 of 5 plain-words requests (the traditional store answered 0). It missed "something to keep my garage floor clean" and "outdoor lights for a patio under 50 dollars", because its keyword kernel needs every word to match. On zero results the agent should retry with broader or alternative keywords, and add a scenario for each miss. | **Built (2026-11-11 and 12) as a Commerce pack kernel.** On a miss the broader keywords are searched at once and the answer says when it substituted (`c3ec6e4`). The exact half of search is the Commerce pack's catalog-relevance kernel (platform `725614f`, Machine Shop `be215ac`): which candidates the keywords name (in the title, before 'for'), ordered by relevance, price or rating; the decision carries the shopper's order and count (`12764a4`). 'compare two of the least expensive lawn mowers': the two cheapest mowers, '2 of 8 matches'. Limit: it can't know a pool cleaner isn't a shop vacuum (meaning, not words: B26 or embeddings). Next: a scenario per miss in the gate |
 | B10 | 2026-11-07 | **The code-retirement study.** Classify every file of a traditional app into kernel, business rule, channel (voice, chat, assistant UI), UI shell and plumbing, then measure what the Cradle retires from the app. Machine Shop (3,951 lines): about 70% is channel code (voice ~1,850, chat ~510, transcripts ~410), ~480 is kernels and ~700 is pages. With a component catalog and shared channel renderers (B8), the app's own code could fall to about 1,000–1,400 lines, 65–75% less, although the channel code moves into the platform once rather than disappearing. Run the same study read-only on ts-platform and CardDemo, where business rules are a larger share, before publishing a figure. | Proposed |
-| B11 | 2026-11-07 | **Bake proven rules into each deployment** (G3-D28): at build time the app embeds the version in force (book and compiled projections); at runtime it uses that until a newer proven version arrives. The app no longer needs the Accelerator to serve shoppers. | Open |
+| B11 | 2026-11-07 | **Bake proven rules into each deployment** (G3-D28): at build time the app embeds the version in force (book and compiled projections); at runtime it uses that until a newer proven version arrives. The app no longer needs the Accelerator to serve shoppers. | **Built (2026-11-12): compile once per version for the whole app.** Platform `16b2667`, Machine Shop `ec1c716`. The first server to compile a book version stores the settings on the Accelerator (decision node PROJ-<version>-<compiler fingerprint>, via POST /api/runtime/projection); every other server reads them with the book. Measured: a fresh server went from 13.3 s to 3.0 s from Enter to products, with no compile. The fingerprint covers the compiler's instructions, the settings' shape, the site's description and the checkout mode, so a changed compiler recompiles once. Not yet: embedding the version in force in the deploy itself, so the app serves with the Accelerator down (G3-D28) |
 | B12 | 2026-11-07 | **The `@accelerator/cradle` starter package** (G3-D27): extract Machine Shop's `lib/cradle` (agent, projections, book client, gate, mark) into a versioned package the platform installs into a new Cradle app, plus the "integrations become kernels" step in the transformation crew. | Open |
 | B13 | 2026-11-07 | **The app that polices itself (regulatory watch).** Like a car that calls the dealer when it needs service: an agent watches the regulations and standards each pack cites (for example Reg Z, PCI DSS, GLBA for Cards) and the steward's own sources. When a change may affect a rule in the book, it tells the owner what changed, which policies it touches, and a proposed restatement with its scenarios, ready for the Policy Walk and the conformance gate. | Vision (Owner, 2026-11-07) |
 | B14 | 2026-11-08 | **Rule releases: batch changes, prove once.** Today every change to the rules starts a full proof (about $0.20 per run with 10 scenarios). Instead, the steward groups changes into a release (quarter-end pricing, a product launch, a new regulation) with one effective date. While drafting, targeted proofs run only the scenarios tied to the changed policies (cents). The full suite runs once when the release is proven, and everything goes into force together. On a failure, the scorecard (B7) attributes each failing scenario to the change that caused it, so one bad change can be pulled without abandoning the release. Urgent fixes ship alone as a hotfix release. This saves money (10 changes for about $0.20, not $2), avoids half-applied rules, and gives one approval with one body of evidence. | Proposed (Owner, 2026-11-08) |
@@ -60,6 +62,7 @@ A running list of updates and refactors we know we want. An item leaves the list
 | B25 | 2026-11-11 | **Applicability context: when a rule applies depends on the call chain and the conditions that drove it (raised by the Owner's team).** A rule inside a program often fires only because another program called it under certain conditions, set several programs upstream or many paragraphs earlier. Today the platform doesn't model this: slices are cut by program name (at most 8 programs or about 6,000 lines), an extractor sees only its slice and the copybooks, and reconciliation sees only the list of found policies. CardDemo examples: (1) COSGN00C moves SEC-USR-TYPE from the user security file into the COMMAREA and XCTLs to COADM01C for admins or COMEN01C otherwise; COMEN01C then XCTLs to a program named in the menu table (COMEN02Y), refusing admin-only options for regular users. So 'only admins can reach X' lives in a data file, two programs, a copybook and a table, and the call target is data, not a literal. (2) CSUTLDTC's date validation (via CEEDAYS) is called from CORPT00C and COTRN02C, in different slices from its callers. At tens of millions of lines this can't be left to a model reading slices. Design: (a) a deterministic code graph (with B16): parse COBOL with a real parser (dialects, COPY REPLACING, EXEC CICS/SQL/DLI), and build the inter-program graph (static CALL, dynamic CALL and XCTL resolved by constant and data-flow propagation or marked data-driven; CICS XCTL, LINK, START and RETURN TRANSID; JCL EXEC PGM and scheduler order from B24; MQ and IMS triggers), the data hand-offs (COMMAREA, LINKAGE, files, DB2 tables, queues), and each program's control flow (PERFORM, PERFORM THRU, GO TO, fall-through) with data flow (where each field is set and read); (b) for each rule site, compute its applicability context: the conditions on every path from the system's entry points (transactions, job steps) to the statement, within the program (the guards around it) and across programs (the caller's condition at the call site and the values it passed), by backward slicing; unresolved or data-driven parts are marked as such; (c) the model reads a rule site with its computed slice, not a batch of files: smaller, cheaper and grounded, and slices follow call-graph neighborhoods instead of names; (d) the catalog gains, per policy: applies when (the condition chain), reached from (entry points), decided by (the upstream fields and who sets them), each with citations, and a confidence (proven statically, inferred, or data-driven); (e) runtime evidence (B22) confirms the paths really taken, and rules no path reaches feed the code-retirement study (B10). First evaluate existing parsers and analyzers (open source such as Eclipse Che4z COBOL Language Support or the ProLeap ANTLR parser; commercial mainframe analyzers) before writing our own. Pilot on CardDemo: every policy gets an 'applies when' chain with citations, checked by hand on the sign-on/menu and date-validation examples. | Proposed (2026-11-11). Build with B16 and B24 (item 6), before any large estate |
 | B26 | 2026-11-11 | **Adopt json-render, with Jev composition, as the generative-UI layer (the Owner asked that this not be lost).** B8's first cut (Machine Shop `dabcfe3`) uses our own small catalog in json-render's exact spec shape (`{ root, elements: { id: { type, props, children } } }`), so switching is a contained change: map lib/cradle/ui.ts's CATALOG to `defineCatalog` (zod props), the web renderer to `defineRegistry` plus `<Renderer>`, and the streamed patches to SpecStream (`createSpecStreamCompiler`). What it adds: renderers we don't have to write (React Native, email, PDF, images, MCP Apps, chat through Chat SDK for Slack and Teams), and Jev composition (in json-render since 0.21), where a decision model picks components from the catalog instead of writing text: the natural next step for B21's fast UI and the platform's way of distilling and presenting content. Keep our rules: kernel-bound components take ids and read prices and stock from the kernel; the spec is validated against the catalog; the conformance gate proves the screen. When: once json-render reaches 1.0, or sooner if a Slack or Teams surface is wanted. Pin exact versions; evaluate Jev's speed and cost on the Why? timeline before it serves. | Tracked (2026-11-11). Build with B21 step 5 and B17 |
 | B27 | 2026-11-11 | **Industry packs carry best practice; the gap between a site and its pack becomes an upgrade conversation (the Owner's idea).** Two moves from site-specific code into data, started 2026-11-11: who the site is comes from its registration (acc_sites.description, migration 0020, branch `site-description`), and which rules each use reads comes from the pack's `grounding` (platform `72cd231`, Machine Shop `533643d`). The bigger step: a pack holds what the best sites in its industry do, not only what our pilot did. Commerce today has 10 concepts and 17 policies; the best stores also run notifications (order, shipping and back-in-stock), promotions and coupons, sales and price rules, returns and exchanges, order tracking, reviews and Q&A, wishlists, abandoned-cart recovery, gift cards and loyalty, and data requests. Each becomes a pack concept with its lifecycle events, best-practice policies with examples, and the kernels or connectors that carry them out (some planned, such as shipping and returns, which Machine Shop can't do yet). When a site is ingested, every best practice it doesn't have is already found as a hole (findings); the step is to present them as an upgrade conversation: 'the best stores confirm orders by email within 5 minutes; you don't; want it?' with what it takes (rule only, rule plus kernel, or a new integration), its effort rating and its cost, and the steward's yes becomes a Work item on the Accelerator (or a ruling that the site deliberately doesn't). Declined practices are recorded, so the site isn't asked again until the pack changes. This is also the commercial path: the platform shows an owner where their site falls short of best practice and offers to close each gap. Steps: (1) expand Commerce with the best-practice concepts and policies, cited and dated; (2) an Upgrades view on the site (pack gaps, grouped by concept, with effort and the kernels needed); (3) 'Add this' creates the Work item with the pack policy as its spec and its examples as scenarios for the gate; (4) the same for Hospitality and Cards. Also move the search and assistant prompts into the pack as skills, so a new industry ships its own. | Proposed (2026-11-11). Grounding built; description built on a branch (run 0020) |
+| B28 | 2026-11-12 | **Technology packs and the code map: every language the way industries are handled (the Owner's question).** Two layers (language packs; framework and runtime packs), one language-neutral code map (B16) every pack emits, tree-sitter for modern languages and a parser pack for the mainframe family (COBOL, JCL, BMS, CSD, schedulers), maturity levels L0 to L4 stated per pack, and segments as industry pack × technology packs (§11.3.1, §15). Item 6 rescoped: (1) the technology-pack interface and the code map schema; (2) evaluate ProLeap, Eclipse Che4z and tree-sitter-cobol on CardDemo (read-only); (3) COBOL, JCL and CICS packs to L2 then L3 on CardDemo; (4) a TypeScript pack through tree-sitter on Machine Shop, proving the design is general; (5) B24 and B25 on the map; (6) the census names the technology packs and levels at ingest. | Proposed (2026-11-12). Next build item |
 
 ---
 
@@ -206,6 +209,30 @@ Generative AI earns its keep across the cradle, not only in the UI:
 - running the Policy Walk conversation.
 
 ---
+
+### 1.6 The division of labor: the book, the model, kernels (2026-11-12)
+
+An AI app is fast, cheap and trustworthy only when each part does what it is best at and nothing else. This is the platform's working rule, and part of what we know that others don't (the Owner, 2026-11-12: "each part is leveraged for its strength").
+
+| Part | Its job | It never | Where it lives |
+|---|---|---|---|
+| **The book** (policies and rulings) | Decides **what is allowed**: prices in USD, only in-stock products can be bought, flat shipping, what the assistant may say | Computes anything, or knows how a page looks | The policy graph, per site, from the industry pack plus the site's own layer (§2, §3) |
+| **The model** | **Interprets people**: reads a shopper's words into narrow choices (intent, keywords, department, price range, order, how many, layout) and writes the words people read (headline, explanation, follow-up) | Decides a price, a stock status, what counts as the product, or anything else that must come out the same every time | Prompts and skills from the industry pack (B27), grounded on the concepts the pack names for each use (`grounding`) |
+| **Kernels** | **Compute exactly**: which candidates are the product the shopper named and their order (catalog-relevance), whether a product can be bought (the buy rule, compiled from the book), the order total, shipping, tax, refunds | Interpret words or improvise | Static code shipped by the industry pack, run on every site of that industry (`lib/cradle/kernels/<pack>`, the `@accelerator/cradle` package, B12) |
+| **Connectors** | Reach the site's own systems: its catalog, its payments | Hold business rules | The only code a site keeps: what it already has (its database read, its Stripe account) |
+
+**The test:** if two runs could give different answers and the difference matters to money, stock, a promise or the law, it is a kernel. If it is about understanding what a person meant, or wording something for them, it is the model. If it is about what the business allows, it is the book.
+
+**Worked example (Machine Shop, 2026-11-12):** "compare two of the least expensive lawn mowers".
+1. The **model** reads it as: intent compare, keywords "lawn mower", order cheapest first, count 2, layout compare. It writes the headline. It does not pick the products.
+2. The **catalog connector** returns candidates where every keyword appears (the simplest search any store already has), sorted by price.
+3. The **catalog-relevance kernel** keeps only the candidates the keywords name (a mower, not a blade set "for" a mower), orders them by price and keeps two.
+4. The **buy rule**, compiled from the **book**, marks each "can buy now" or says why not.
+5. The screen is built from **catalog components** bound to the kernel's results (§1.5), so a price shown can never disagree with the price charged.
+
+Before the kernel existed, the model's choices alone gave a $89.99 striping kit and a $3,399 riding mower as "the two least expensive mowers". With the kernel: $91.06 and $499.00, every time.
+
+**What it buys:** speed (the model writes a few short fields; kernels run in milliseconds), cost (one small model call per request; rules compiled once per version and kept on the Accelerator, B11), and trust (the conformance gate proves the combination before it serves, §4, and anything critical is exact by construction).
 
 ## 2. The policy graph
 
@@ -529,6 +556,9 @@ It pays off most of all in **legacy estates** (§11): banks, insurers and govern
 | G3-D26 | 2026-11-03 | **Every steward decision is aligned into the code by the crew.** A contradiction ruled, a policy changed or retired, or a hole filled opens a work item automatically; the steward never opens one by hand. Decisions touching a built integration (kernel or connector) are Owner-gated. The original Machine Shop is frozen on a `baseline` branch that is never released to (§12) | **Owner direction 2026-11-03** |
 | G3-D27 | 2026-11-07 | **The Cradle runtime is a shared package** (`@accelerator/cradle`), the skeleton the platform installs and sets up in every Cradle app, with a small set of essential services (app agent, projections, GenUI renderer and catalog, gate endpoint, runtime book client). Each app keeps only its kernels and a thin shell. Integrations the traditional app already has are found by the code parse and brought in as kernels. See §13.2 | Owner direction |
 | G3-D28 | 2026-11-07 | **Proven rules are baked into each production deployment**, so a Cradle app runs without the Accelerator and only receives rule changes from it. Until then, it keeps the last rules read, or safe settings. See §13.1 | Owner direction |
+| G3-D29 | 2026-11-12 | **The division of labor** (§1.6): the book decides what's allowed, the model interprets people (narrow choices and the words people read), kernels compute exactly (what counts as the product, prices, stock, money). Anything that must come out the same every time is a pack kernel, never the model and never site code | Owner direction |
+| G3-D30 | 2026-11-12 | **Technology packs in two layers over one code map** (§11.3.1): language packs and framework or runtime packs; tree-sitter for modern languages, parser packs for the mainframe family; maturity levels L0 to L4 stated per pack; segments are industry pack × technology packs | Owner direction |
+| G3-D31 | 2026-11-12 | **A site's identity is its account owner's**: name, address, description and industry pack are set on the site's Setup page by the account's owners and operators, not by a platform admin; the AI app introduces itself from them (§15.1) | Owner direction |
 
 ---
 
@@ -624,6 +654,13 @@ It pays off most of all in **legacy estates** (§11): banks, insurers and govern
   
   After tighter wording and Claude Sonnet 5.5 for the cradle assistant, the result was **9/10**, with every assistant scenario passing all three runs. The remaining failure is the bad test, left for the steward to retire. That is the review loop working as designed.
 
+- **2026-11-11 and 12: fast UI, the component catalog, relevance as a kernel, rules compiled once.**
+  - B8 + B21 (Machine Shop `dabcfe3`): answers stream onto the screen as a spec built from catalog components (json-render's shape; web and text renderers; the gate checks the screen). Products ready 0.8 to 1.6 s after the request; the floor is the model's first token.
+  - Fixes from the Owner's tests: product pages with many photos, honest substitutions, comparisons of two, follow-ups that are requests (`c3ec6e4`); the shopper's order and count (`12764a4`).
+  - No site words in the runtime; the pack's grounding and the site's own description come with the book (platform `72cd231`, `d810153`; Machine Shop `533643d`; migration 0020).
+  - B11 (platform `16b2667`, Machine Shop `ec1c716`): a fresh server 13.3 s → 3.0 s.
+  - The catalog-relevance kernel in the Commerce pack (platform `725614f`, Machine Shop `be215ac`); §1.6 and §15 written; B26, B27, B28 added.
+
 ---
 
 ## 11. Any technology: legacy estates, COBOL, JCL, CICS and IMS (2026-11-02)
@@ -705,6 +742,47 @@ Packs answer *what business is this?* A new unit, independent of packs, answers 
 Every ingest is **one industry pack × one or more adapters**. CardDemo is a Cards (consumer credit) pack × the COBOL, JCL, CICS and VSAM adapters. A Django app is a Commerce pack × the Python adapter. The book, the walk, the findings and the rulings never know which adapters were used.
 
 **This also answers Python.** Today's census and the live screen's file counter recognize only TypeScript and JavaScript (accelerator-platform `packages/domain/src/census.ts`, and the path pattern in `cradle-live.tsx`). They become the first adapter. Python is the second, and it is small: classifiers, a census, and Django and Flask route detection.
+
+#### 11.3.1 Update 2026-11-12: technology packs in two layers, one code map, maturity levels
+
+The Owner asked how the platform handles the top languages (TypeScript, Python, Java, PHP, C++…) and, for mainframes, JCL, IMS and CICS as separate technologies, the same way it handles industries with packs. The answer, and the design from here on:
+
+**Where it stands (honest).** The adapter idea above is mostly not built. There are two hard-coded paths in the runner: a **"web"** path, where an agent reads the files with general guidance and nothing is parsed, and a **"COBOL"** path (`cradle-estate.ts`), which classifies files by role (program, copybook, job, screen, CICS definition, data definition), cuts slices, resolves COPY members and numbers lines for citations, but parses nothing either. JCL, CICS and IMS are recognized by file type and read by the model as text. The census counts only TypeScript and JavaScript. That carried CardDemo (about 30,000 lines); it can't give exact call chains (B25) or reach tens of millions of lines.
+
+**1. Technology packs in two layers, because technologies stack.** CardDemo is COBOL + CICS + VSAM + JCL + a scheduler; Machine Shop is TypeScript + React + Next.js; a Spring app is Java + Spring + JPA.
+
+| Layer | What it knows | Examples |
+|---|---|---|
+| **Language packs** | Syntax: units (programs, paragraphs, functions, classes), calls, imports or COPY, declarations, statements, conditions | COBOL, PL/I, JCL, Assembler; TypeScript and JavaScript, Python, Java, C#, PHP, Go, C/C++, SQL, HTML and CSS |
+| **Framework and runtime packs** | What the code means at run time: **entry points** (a CICS transaction, a JCL step, a Next.js route, a Spring controller, a Django view), **how control passes** (XCTL and LINK, a route handler, dependency injection, an event), **where data lives** (VSAM files, DB2 and IMS databases, an ORM model, a REST call), **schedules** (CA-7, Control-M, cron) | CICS, IMS DB/DC, DB2, VSAM, MQ, CA-7, Control-M; React, Next.js, Express, Django, Flask, Spring, Laravel, ASP.NET, Rails |
+
+**2. One code map in the middle (B16).** Every technology pack emits the same language-neutral graph: units, entry points, calls (static, dynamic or data-driven), data elements, reads and writes, and conditions, each with a citation (file and lines). Everything above it never knows the language: policy extraction, applicability ("applies when", B25), batch order (B24), the data dictionary (B3), the industry packs and the Policy Walk. **Adding a language is writing one technology pack; nothing upstream changes.**
+
+**3. Reuse parsers, don't write them.**
+- **Modern languages: tree-sitter.** One open-source parsing toolkit covers about 40 languages with one query language. A generic tree-sitter pack plus a small query file per language yields units, calls and imports for TypeScript, Python, Java, C#, PHP, Go, C/C++ and more; the framework layer adds entry points and data access. This is why the top ten languages are cheap.
+- **The mainframe family: a parser pack per technology.** COBOL dialects, COPY REPLACING, and EXEC CICS, EXEC SQL and EXEC DLI blocks embedded in COBOL need a real COBOL parser (evaluate ProLeap, Eclipse Che4z COBOL Language Support and tree-sitter-cobol on CardDemo). JCL, BMS, the CICS CSD and the schedulers' formats are small and regular: modest parsers of our own. Together they are "the tree-sitter for COBOL" the Owner described.
+
+**4. Maturity levels, per technology pack.** Each pack states its level, and sales and ingest know what a site will get:
+
+| Level | What it gives | Today |
+|---|---|---|
+| **L0** | Read as text by the model | The "web" path |
+| **L1** | Classified, sliced, cited | COBOL, JCL, BMS, CSD, DDL (`cradle-estate.ts`) |
+| **L2** | Parsed into the code map | None yet |
+| **L3** | Entry points, call chains, data flow and conditions: exact "applies when" (B25), batch order (B24) | None yet |
+| **L4** | Runtime behavior recorded and replayed against the new app (B22) | None yet |
+
+**5. Market segments are a matrix of industry packs × technology packs.** Each new segment is an industry pack plus the technology packs its systems run on, at a stated level:
+
+| Segment | Industry pack | Technology packs |
+|---|---|---|
+| Banking, cards, insurance | Cards, Insurance | COBOL, PL/I, JCL, CICS, IMS, DB2, VSAM, MQ, CA-7 or Control-M |
+| Government | Public services | COBOL, Natural and Adabas, JCL |
+| Retail and commerce | Commerce | PHP (Magento, WooCommerce), Java (Spring), TypeScript (Next.js, React) |
+| Hospitality | Hospitality | TypeScript (Next.js), Python (Django), Java |
+| Healthcare | Healthcare | Java, C# (.NET), MUMPS |
+
+**Item 6 is rescoped accordingly (2026-11-12):** build the technology-pack framework and the code map schema first; evaluate the parsers; COBOL, JCL and CICS as the first parser-backed packs (L2, then L3) on CardDemo; TypeScript through tree-sitter as the second, on Machine Shop, to prove the design is general; then B24 and B25 on top of the map. Tracked as B28.
 
 ### 11.4 Kernels: yes, they change
 
@@ -935,3 +1013,59 @@ That gives three things:
 - Use it to make B2 a **multi-lab crew**. For precision, two or three models from different labs extract the same slice independently; the Clerk reconciles them, and real disagreements become Policy Walk items. This is the G3-D24 bake-off on CardDemo's answer key, run continuously.
 - **Verify before relying on it:** that our Anthropic betas (server-side refusal fallback) pass through, otherwise use the Gateway's model fallbacks; the latency added per call; that batches have no ZDR. Add Vercel as a data processor in customer terms.
 
+---
+
+## 15. How packs, technology packs, kernels and skills are managed (2026-11-12)
+
+The platform grows by adding **packs**, never by writing code for a site. This section is the operating manual: what each kind of pack is, who owns it, how it is versioned and proven, how a site gets its packs, and how a new market segment is added.
+
+### 15.1 The catalog of reusable parts
+
+| Part | Answers | Contains | Owned by |
+|---|---|---|---|
+| **Industry pack** (§3) | *What business is this?* | Concepts and their lifecycle events; best-practice policies with examples and citations (B27); `grounding` (which concepts each use reads); kernels and connectors it needs; components (§1.5); skills (prompts) for search, the assistant and drafting | A pack steward: a domain expert at Strategic Machines or a partner, with citations to regulation and practice |
+| **Technology pack** (§11.3.1) | *What is it built with?* | Classifiers; a parser (tree-sitter or a parser pack); code-map extractors; entry points and how control passes; the citation scheme; census measures; slicing rules; model routing; data decoders (EBCDIC, packed decimal); its maturity level | The platform team |
+| **Kernel** (§1.6, §11.4) | *What must be exact?* | Static, tested code: native (TypeScript), legacy-backed (an existing program behind a contract) or batch | The industry pack that declares it |
+| **Connector** | *How do we reach the site's systems?* | A typed integration (catalog read, Stripe, email, CICS through z/OS Connect) with a guard | The platform (common ones) or the site (its own database read) |
+| **Skill** | *How does the model speak and decide here?* | Prompt instructions and examples for one use (search, assistant, compile, scenario drafting) | The industry pack; the platform owns the generic ones |
+
+**The site owns only:** its description and its choice of industry pack (Setup → "About this site", the account owner's, not the platform admin's), its connectors to its own systems, and its own layer of the book (policies that differ from or add to the pack, and the steward's rulings). Nothing else is written per site: the platform stays general (the Owner's rule, 2026-11-11).
+
+### 15.2 Where they live, today and next
+
+| Part | Today | Next (B12) |
+|---|---|---|
+| Industry packs | `packages/domain/src/cradle-packs.ts` (Commerce, Hospitality, Cards) | One versioned package per pack: `@accelerator/pack-commerce`… |
+| Technology packs | Two hard-coded paths in the runner (`cradle-estate.ts` for COBOL, the "web" agent path) | One package per pack with a common interface: `@accelerator/tech-cobol`, `@accelerator/tech-typescript`… registered with the runner |
+| Kernels | `lib/cradle/kernels/<pack>/` in the app, selected by `lib/cradle/kernels/index.ts` only when the site's pack offers them | Shipped inside each industry pack's package |
+| Skills | Prompts in `lib/cradle` (search, assistant, compile, drafting), with the site's identity and grounding from the book | In each industry pack, so a new industry ships its own |
+| Runtime | `lib/cradle` in Machine Shop | `@accelerator/cradle`, installed into every Cradle app |
+
+### 15.3 Versions and what a change sets off
+
+- **An industry pack's version** is part of every site's book version. Changing a pack policy therefore changes the book: the app recompiles (once per version, kept on the Accelerator, B11) and the conformance gate proves the new version before it serves. Descriptive fields (label, summary, grounding, a kernel's description) are not part of the version.
+- **A kernel** is code: semantic versions, its own unit tests (the pack's examples), and the gate's scenarios on every site that uses it. A kernel change ships with the runtime package; each site's gate proves it before the site takes it.
+- **A technology pack** changes how code is read, not what runs: a new version means re-ingesting, and the crew shows the difference in the book (new policies, changed citations) for the steward to review.
+- **A skill** change is proven like a kernel change: the gate's scenarios run on the sites that use it.
+
+### 15.4 How a site gets its packs
+
+1. The account owner registers the site and, on Setup, describes it and chooses its industry pack.
+2. At ingest, the census detects the technologies (file roles, languages, frameworks) and names the technology packs it will use and their levels. A technology with no pack is read at L0 and flagged.
+3. The ingest is **one industry pack × the detected technology packs**. The book, the walk, the findings and the rulings never know which technology packs were used.
+4. At runtime, the app reads its book with the pack's grounding, kernels and skills, and the site's description. It runs only the kernels its pack offers.
+5. The gaps between the site and its pack's best practice become the upgrade conversation (B27).
+
+### 15.5 Adding a market segment
+
+1. **Industry pack:** concepts, lifecycle events, best-practice policies with examples and citations, grounding, the kernels and connectors it needs (planned until built), components, skills. Reviewed by a domain expert.
+2. **Technology packs:** for each technology the segment's systems run on, a pack at L1 at least, L2 for anything we sell as "exact".
+3. **A reference system and its answer key:** a public or friendly system for the segment (CardDemo for cards; Machine Shop for commerce), with hand-checked policies, call chains and applicability. Every pack's claims are measured against it: precision, recall, citation accuracy, cost per thousand lines.
+4. **Kernels for the critical concepts** before any site in the segment runs on the Cradle (Observe mode needs none, §11.4).
+5. **The level stated on the offer:** what a client in the segment gets at L1, L2, L3.
+
+### 15.6 Quality rules
+
+- No pack claims a level its answer key doesn't show.
+- No kernel ships without the pack's examples as tests, and no site takes a new kernel or skill version until its own gate passes.
+- No site-specific code in the runtime, packs or kernels; site specifics come from the book, the site's registration and its connectors.
