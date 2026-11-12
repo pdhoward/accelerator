@@ -1,6 +1,6 @@
 # MIP: the Mainframe Intelligence Pack
 
-*Strategic Machines · started 2026-11-12 · status: P1 (L2 structure) and P2 (resolution, interface checks) built and passing: platform `90a0353`, `f6bb2e1`, `packs/mip`. Next: P3 (L3 semantics)*
+*Strategic Machines · started 2026-11-12 · status: P1 (L2), P2 (resolution, interfaces) and P3 (L3 semantics) built and passing: platform `90a0353`, `f6bb2e1`, `22fd940`, `packs/mip`. Next: P4 (rules, with AI on the review queue)*
 
 **MIP** is the platform's technology pack for the mainframe family (COBOL, JCL, CICS, IMS, DB2, VSAM). It reads a mainframe application's source, without installing anything on the mainframe, and produces the platform's code map (gen3-cradle.md §11.3.1, B28): programs, entry points, calls, data and the conditions that connect them, every item cited to a file and line. The industry pack and the model then say what that behavior means to the business (§1.6).
 
@@ -27,6 +27,9 @@ The demonstration this aims at: *"We ingested an IBM-published banking applicati
 | M4 | **ProLeap (Java) is deferred** | It's MIT and well tested but dormant (last parser change January 2024), and cobol-py ports the same model. It becomes the fallback only if cobol-py's speed blocks L3 at scale |
 | M5 | **IBM Bank of Z is the primary benchmark**, CardDemo runs alongside it, IBM GenApp is held out | §4 |
 | M6 | **JCL is read by a small parser of our own, not Lark** (2026-11-12) | JCL's statement structure is regular (name, operation, operands, continuation, in-stream data); a grammar library added a dependency without making it more exact |
+| M7 | **MIP is native: no third-party COBOL parser** (the Owner, 2026-11-12) | cobol-py and ProLeap are studied and used only as independent referees in evaluation, never as components. The one outside library is SQLGlot, a general SQL parser for embedded SQL: **kept** (the Owner, 2026-11-12) |
+| M8 | **AI where static analysis stops, never instead of it** (the Owner, 2026-11-12) | The deterministic engine states what the code provably does, cited. Where it can't (values set at run time, targets held in data or in configuration that isn't in the repository, interfaces that don't line up), it writes a review item with the evidence. The model then proposes an answer or an explanation, marked as a proposal, and flags what a person must decide. The model never asserts a path the code map doesn't contain (gen3-cradle.md §1.6) |
+| M9 | **The rule review runs on the platform's runner, not in MIP** (2026-11-12) | MIP stays deterministic and offline: it writes candidates with their evidence. The runner (`apps/runner/src/mip.ts`) sends each candidate with the industry pack to Claude (Opus 5.5, structured output, server-side refusal fallback) and gets back a fixed shape: name, statement, kind, concept, policy, criticality, inputs, outcome, an answer to every review item, findings, confidence. Keys stay on the runner |
 
 ## 3. Evaluation of cobol-py (2026-11-12)
 
@@ -127,8 +130,10 @@ The expected edges come from our audit, which is itself pattern-based: they are 
 | **P1. L2 structure** | Source normalizer (columns, continuations, comments, original line numbers); COBOL extractor (PROGRAM-ID, paragraphs and sections, PERFORM/THRU, GO TO, CALL static/dynamic, COPY/REPLACING, SELECT/FD); EXEC CICS (every command, split per block, PROGRAM/FILE/TRANSID/COMMAREA); EXEC SQL through SQLGlot (tables and verbs); IMS (CBLTDLI/AIBTDLI calls and EXEC DLI, function codes, PCBs); JCL through Lark (JOB, EXEC PGM/PROC, DD/DSN, SYSTSIN `RUN PROGRAM`) | On Bank of Z: every expected edge, SQL access, COPY and batch step in the manifest found, at the cited line; nothing in "unresolved" asserted. On CardDemo: the same for XCTL, VSAM, EXEC DLI and the batch cycle |
 | **P2. Resolution** | Dynamic targets by literal assignment (VALUE, MOVE) and by constant evaluation (the `'OCR'` + counter loop); COMMAREA layouts by byte offset across LINK and XCTL | WS-ABEND-PGM → ABNDPROC, INQCUST-PROGRAM → INQCUST, RUN TRANSID → {OCR1…OCR5} (program unresolved, as expected); **the BNK1CRA/PAYDBCR layout mismatch detected automatically** |
 | **P3. L3 semantics** | cobol-py per program (parallel, cached by source hash), mapped back to original lines; data definitions with REDEFINES and OCCURS; definitions and uses (MOVE, COMPUTE, arithmetic, I/O); the conditions guarding each statement | The golden trace reproduced: every step and every lineage hop, with its condition, at the cited lines |
-| **P4. Rules and queries** | Candidate decisions (thresholds, eligibility, refusals, status changes) labeled by the model with the industry pack (Cards, banking); `pathsTo` for "reached from"; impact queries | The three rules proposed with their evidence; "what if the account limit were 12?" answered with every affected program and screen |
-| **P5. Cold test** | Run on GenApp, unseen | Report precision and recall against a hand-checked sample; publish the numbers, good or bad |
+| **P4. Rules** | Candidate decisions (thresholds, eligibility, refusals, status changes) labeled by the model with the industry pack | The three rules proposed with their evidence; every review item answered with a proposal or flagged for a person (impact queries moved to P6) |
+| **P5. System-wide data lineage** | A data element followed across the whole system, through every hop and every rename: file hops through JCL (a DD written by one step and read by the next, by dataset name), DB2 column mapping on INSERT/UPDATE as well as SELECT, CALL USING by position, containers and COMMAREAs (built in P4); where its definition changes (PIC, USAGE, scale, sign) along the way; the model proposes identity where only names link (B3, `int_rate` = `interest_rate` = `i-rate`), marked for a person | One element traced end to end on CardDemo's batch cycle (a field written by one job, read by the next, renamed between them), with every function that changes it and every definition change flagged |
+| **P6. Whole-system reachability** | Multi-hop `pathsTo` over the code map with the conditions joined along each path; program names passed through the COMMAREA and tables (P2's resolution, applied at every hop); targets held in configuration outside the repository as review items, with runtime evidence when the site supplies it (B22) and the scheduler for batch (B24); impact queries | "What reaches DBCRFUN, and under what conditions?" answered across all callers; "what if the account limit were 12?" answered with every affected program and screen; measured on a generated million-line estate |
+| **P7. Cold test** | Run on GenApp, unseen | Report precision and recall against a hand-checked sample; publish the numbers, good or bad |
 
 **Measures** (targets, not results): ≥ 99% of supplied files inventoried; ≥ 98% precision on L2 constructs; ≥ 95% recall on literal calls; ≥ 90% precision on the scoped L3 lineage; 100% of published rules carry source evidence; every unresolved dependency reported. Also measured: lines per CPU-second, memory per program, and the cost of the model calls.
 
@@ -180,6 +185,83 @@ Platform `f6bb2e1`. Expected results: `work/mip/bank-of-z.expected.json` (new `p
 
 **What P2 taught (each now a unit test):** PICTURE strings contain periods (`+9(10).99`) and must be one token; `COPY X REPLACING X-COMMAREA BY DFHCOMMAREA` is how a program names its COMMAREA; a copied 01 record stands alone and the fields after it continue it (`COPY COCOM01Y.` then `05 CDEMO-CT00-INFO`); two copybooks can share a name, so the one nearest the program wins, as in a compiler's library search; and a layout difference is not a defect by itself. The rules that keep findings honest: opaque bytes read as a structure are compatible; a bounded `(1:EIBCALEN)` copy lets the called program extend the area safely; severity depends on whether the called program actually uses the conflicting field. Four apparent drifts were checked against the source and found false before those rules existed; that is why each rule exists.
 
-### Next: P3, L3 semantics
+### P3: L3 semantics (2026-11-12), built and passing
 
-Within each program: control flow (PERFORM, PERFORM THRU, GO TO, fall-through), the conditions guarding each statement, and data flow (where each field is set and read), using cobol-py's semantic graph mapped back to source lines. Across programs: values carried through COMMAREAs by byte offset (the layouts P2 built). Exit: the golden trace (BOZ-R1) reproduced step by step, every hop with its condition and citation.
+Platform `22fd940` (`flow.py`, `trace.py`), native. `python -m mip.trace <repo> <PROGRAM> <line>` answers, for one statement: **applies when** (the conditions it runs under, earlier exits included), **reached from** (PERFORM chains in the program, and the programs that LINK or XCTL to it with their own conditions), **decided by** (where each field in those conditions is set, followed across programs through the COMMAREA by byte offset, through 88-level condition names and group moves), **outcome** (what its block sets and where the calling program reads it), and **needs review**.
+
+| Check | Result |
+|---|---|
+| **The golden trace (BOZ-R1)** | Reproduced automatically: traces of DBCRFUN 347 (the refusal) and 392 (the success update) cite **21 of 21** lines of the 9-step golden trace |
+| **Applies when, DBCRFUN 347** | `NOT (SQLCODE NOT = 0)` (279, an earlier exit) · `COMM-AMT < 0` (307) · `NOT (MORTGAGE or LOAN and facility 496)` (330, an earlier exit) · `WS-DIFFERENCE < 0 AND COMM-FACILTYPE = 496` (344). The success update (392) carries the nested exit: `NOT ((COMM-AMT < 0 AND (MORTGAGE or LOAN …)) OR (COMM-AMT < 0 AND WS-DIFFERENCE < 0 AND COMM-FACILTYPE = 496))` |
+| **Decided by** | COMM-AMT ← BNK1CRA's SUBPGM-AMT (COMMAREA offset 8) ← WS-AMOUNT-AS-FLOAT, negated when `SIGNI = '-'` (495). The balance ← DB2 `ACCOUNT.ACCOUNT_AVAILABLE_BALANCE` (245, column by column). The facility type ← CICS `INQUIRE ASSOCIATION ODFACILTYPE` (508) |
+| **Review queue** | The facility type is set at run time; DBCRFUN's fail code and success flag reach BNK1CRA by intent (SUBPGM-FAIL-CODE, EVALUATE at 585 → "Sorry insufficient funds…" at 606) but not by position (BNK1CRA's area is 92 bytes): the P2 drift, now shown on the path it breaks |
+| **CardDemo sign-on (B25's example)** | "Only admins reach COADM01C" derived from source: `CDEMO-USRTYP-ADMIN` (88 VALUE 'A', COCOM01Y 27) ← `MOVE SEC-USR-TYPE TO CDEMO-USER-TYPE` (COSGN00C 227, after a good read and a matching password) ← `READ DATASET(WS-USRSEC-FILE) INTO(SEC-USER-DATA)` (211); reached from MAIN-PARA → PROCESS-ENTER-KEY when Enter is pressed. Nothing to review |
+| **Scale** | Both corpora parse whole: 18,298 statements, no errors, about 0.6 s each. P1 and P2 unchanged; 28 unit tests |
+
+**What P3 taught:** a decision often hides behind an earlier exit several statements up (`IF SQLCODE NOT = 0 … GO TO UAD999`), sometimes nested two IFs deep, so guards must collect every path that leaves the block; only definitions that can reach the use count (an update after the decision in the same paragraph doesn't decide it); a condition name is decided by its parent field; a field is set whenever its group is (READ … INTO a record); and what the caller sees must be checked by position, not assumed by name.
+
+**Honest limits:** reaching definitions are exact within a paragraph and conservative across paragraphs (a definition elsewhere is listed as "may reach"); conditions are kept as written, not simplified; lineage stops at a set depth (three hops by default); loops are shown as a guard, not unrolled.
+
+### P4: rules, with AI on the review queue (2026-11-12), built and passing
+
+Two halves, per M8 and M9. **MIP (deterministic):** `python -m mip.rules <repo> [--programs A,B] --out candidates.json`. A candidate is a block that sets what the calling program receives (a fail code, a success flag, a score, a routing target) under at least one business condition. Conditions only about whether the last call worked (SQLCODE, RESP codes, EIBCALEN, abend codes) and loop controls don't make a rule. The THEN and ELSE of one decision are one candidate. Each candidate carries its trace, the value its outcome takes (a score is an average, so the average is traced too), its review items, and the cited source lines as written. **Runner (the model):** `apps/runner/src/mip.ts` sends each candidate with the industry pack to Claude Opus 5.5 and gets back a fixed shape (M9).
+
+| Check | Result |
+|---|---|
+| **The three golden rules** | Found with their evidence: **3 of 3** (`python -m mip.bench --p4`). BOZ-R1 at DBCRFUN 346 (4 of 4 decision lines cited), BOZ-R2 at CREACC 382 (5 of 5, into INQACCCU), BOZ-R3 at CRECUST 776 (6 of 6, into all five credit agencies) |
+| **Candidates** | Bank of Z: 51 in 13 programs. CardDemo: 139 in 20 programs (menus' routing included, e.g. COUSR03C 200 sets CDEMO-TO-PROGRAM to COSGN00C) |
+| **The model's review, Bank of Z** | All 51 reviewed, none failed, **$4.38** in total (about $0.09 each). 24 business, 27 technical. Confidence high on 33, medium on 18 |
+| **Every review item answered (exit)** | **21 of 21**: 8 settled by a proposal with its basis, 13 marked for a person (values only known at run time, the BNK1CRA layout drift) |
+| **What the model found that the reader didn't flag** | The funds check applies only when the facility type is 496, so other callers can overdraw (DBCRFUN 344). Two account openings for the same customer at once could both pass the ten-account limit: the count is taken before the ENQ, and the ENQ is on the account-number counter, not the customer (CREACC 437). The credit agencies return random scores in this sample (CRDTAGY1 201). Fail code 'C' has no message on the create-customer screen (BNK1CCS) |
+| **Pack fit** | The model noticed that Bank of Z is retail banking (sort codes, mortgages, loans) and that the Cards pack doesn't cover it. It left concept and policy empty instead of forcing a match: 50 of 51 have no policy |
+
+**New in the static reader for P4:**
+
+- A `PERFORM` of a paragraph that never returns (GET-ME-OUT-OF-HERE ends in EXEC CICS RETURN) is an earlier exit, so the ten-account check now carries "the customer exists" as a condition.
+- A LINK is a definition of its COMMAREA: a value is followed into the called program at the same byte offset (NUMBER-OF-ACCOUNTS → INQACCCU's count).
+- A container read back from programs started with RUN TRANSID is followed into each of them (the credit score → CRDTAGY1–5's PUT CONTAINER → the random score).
+- The CICS resource definitions in YAML (the resource builder's `resourceDefinitions:`) are read like a CSD, so transactions OCR1–OCR5 resolve to CRDTAGY1–5.
+- Reaching definitions:
+  - a definition later in the same loop counts, because it ran on the previous pass;
+  - main-path definitions come before error paths, so the cap keeps the ones that make the business value.
+- Interface review items are raised only where P2 found real drift: an XCTL never returns, and a field past the caller's area is the callee's own extension.
+
+The result is that CardDemo's interface review items fell from 78 to 0, and Bank of Z's 8 are exactly the BNK1CRA → DBCRFUN drift.
+
+P1, P2 and P3 scores are unchanged. 35 MIP tests and 23 runner tests pass.
+
+**Honest limits:**
+
+- The findings are many: 254 across 51 rules, 161 of them for a person. Some repeat the same point from rule to rule. They need ranking and merging before a steward sees them.
+- No industry pack fits retail banking yet. A Banking pack (accounts, deposits, lending, customer onboarding, credit checks) is the natural next pack.
+- The review runs from the command line. Wiring it into Cradle ingest and the Policy Walk (candidates become policies for the steward, the drift becomes a contradiction to rule on) is the next step for the platform.
+
+### Answers to the Owner's questions (2026-11-12)
+
+**Can a data element be traced across the system, as `int_rate` becomes `interest_rate` in the next batch program and `i-rate` in the next application?** Partly today, fully in P5. Today a value is followed:
+
+- inside a program (every MOVE, COMPUTE, READ INTO, SQL INTO, condition name and group);
+- across CICS programs by byte offset through the COMMAREA, both ways (P3, P4);
+- into programs started asynchronously, through containers (P4).
+
+The rename is handled where the bytes line up: SUBPGM-AMT in BNK1CRA is COMM-AMT in DBCRFUN. Still missing:
+
+- file hops between batch steps (one job writes a dataset and the next reads it, under another record name);
+- DB2 columns written by INSERT and UPDATE;
+- CALL USING by position;
+- flagging where the definition changes on the way (PIC 9(3)V99 becoming COMP-3, or losing a decimal);
+- proposing identity where only the name links two elements.
+
+P5 builds those. The last one is the model's job, marked for a person (B3).
+
+**Across a million-line application, can we trace upstream programs calling downstream programs dynamically?** One hop at a time, today. Every LINK, XCTL, CALL and RUN is in the code map, with targets held in data resolved from the values the source assigns (menus, tables, `'OCR' + counter`). Each trace shows who reaches a statement and under what conditions. Still missing:
+
+- the multi-hop walk: every path from an entry point down to a program, with the conditions joined;
+- targets set only in configuration outside the repository (these are review items, settled by runtime evidence from the site, B22);
+- batch order from the scheduler (B24).
+
+P6 builds those and measures them on a generated million-line estate. Speed isn't the risk: both corpora read in under a second, and the walk is a graph query.
+
+### Next: P5, system-wide data lineage
+
+See the plan (§9). The test is one element on CardDemo's batch cycle, followed end to end through its renames, with every function that changes it and every change in its definition flagged.
