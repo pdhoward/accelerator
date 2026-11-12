@@ -1,0 +1,3307 @@
+{
+ "schema": "mip-expected/1",
+ "corpus": {
+  "name": "IBM Bank of Z",
+  "url": "https://github.com/IBM/Bank-of-Z",
+  "license": "Apache-2.0",
+  "revision": "568421969f860beffdcbd4451009d6956e3ecfce",
+  "committed": "2026-11-12T16:44:42+01:00"
+ },
+ "inventory": {
+  "jcl": 48,
+  "copybook": 96,
+  "cobol_program": 45,
+  "pli_program": 2,
+  "bms_map": 10,
+  "ims_dbd": 9,
+  "ims_psb": 8,
+  "java": 11
+ },
+ "subset": [
+  {
+   "id": "BNKMENU",
+   "path": "src/base/cics/cobol/BNKMENU.cbl",
+   "lines": 1314,
+   "role": "online menu: routes to every function by RETURN TRANSID"
+  },
+  {
+   "id": "BNK1CRA",
+   "path": "src/base/cics/cobol/BNK1CRA.cbl",
+   "lines": 1169,
+   "role": "online: credit or debit an account (teller screen)"
+  },
+  {
+   "id": "DBCRFUN",
+   "path": "src/base/cics/cobol/DBCRFUN.cbl",
+   "lines": 869,
+   "role": "service: apply a credit or debit to an account (DB2)"
+  },
+  {
+   "id": "BNK1TFN",
+   "path": "src/base/cics/cobol/BNK1TFN.cbl",
+   "lines": 1227,
+   "role": "online: transfer between accounts"
+  },
+  {
+   "id": "XFRFUN",
+   "path": "src/base/cics/cobol/XFRFUN.cbl",
+   "lines": 2069,
+   "role": "service: transfer funds (DB2)"
+  },
+  {
+   "id": "BNK1CAC",
+   "path": "src/base/cics/cobol/BNK1CAC.cbl",
+   "lines": 1301,
+   "role": "online: create an account"
+  },
+  {
+   "id": "CREACC",
+   "path": "src/base/cics/cobol/CREACC.cbl",
+   "lines": 1341,
+   "role": "service: create an account (DB2, named counter)"
+  },
+  {
+   "id": "INQCUST",
+   "path": "src/base/cics/cobol/INQCUST.cbl",
+   "lines": 771,
+   "role": "service: read a customer (DB2)"
+  },
+  {
+   "id": "INQACCCU",
+   "path": "src/base/cics/cobol/INQACCCU.cbl",
+   "lines": 882,
+   "role": "service: list a customer's accounts (DB2 cursor)"
+  },
+  {
+   "id": "BNK1CCS",
+   "path": "src/base/cics/cobol/BNK1CCS.cbl",
+   "lines": 1682,
+   "role": "online: create a customer"
+  },
+  {
+   "id": "CRECUST",
+   "path": "src/base/cics/cobol/CRECUST.cbl",
+   "lines": 1631,
+   "role": "service: create a customer, with an asynchronous credit check"
+  },
+  {
+   "id": "CRDTAGY1",
+   "path": "src/base/cics/cobol/CRDTAGY1.cbl",
+   "lines": 260,
+   "role": "credit agency 1 (dummy: random delay and score)"
+  },
+  {
+   "id": "CRDTAGY2",
+   "path": "src/base/cics/cobol/CRDTAGY2.cbl",
+   "lines": 260,
+   "role": "credit agency 2"
+  },
+  {
+   "id": "CRDTAGY3",
+   "path": "src/base/cics/cobol/CRDTAGY3.cbl",
+   "lines": 259,
+   "role": "credit agency 3"
+  },
+  {
+   "id": "CRDTAGY4",
+   "path": "src/base/cics/cobol/CRDTAGY4.cbl",
+   "lines": 262,
+   "role": "credit agency 4"
+  },
+  {
+   "id": "CRDTAGY5",
+   "path": "src/base/cics/cobol/CRDTAGY5.cbl",
+   "lines": 262,
+   "role": "credit agency 5"
+  },
+  {
+   "id": "BNK1DCS",
+   "path": "src/base/cics/cobol/BNK1DCS.cbl",
+   "lines": 2184,
+   "role": "online: display, update or delete a customer"
+  },
+  {
+   "id": "DELCUS",
+   "path": "src/base/cics/cobol/DELCUS.cbl",
+   "lines": 905,
+   "role": "service: delete a customer and all their accounts"
+  },
+  {
+   "id": "DELACC",
+   "path": "src/base/cics/cobol/DELACC.cbl",
+   "lines": 649,
+   "role": "service: delete an account"
+  },
+  {
+   "id": "ABNDPROC",
+   "path": "src/base/cics/cobol/ABNDPROC.cbl",
+   "lines": 176,
+   "role": "abend handler: writes ABNDFILE (a CICS file)"
+  }
+ ],
+ "expected": {
+  "edges": [
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "OMEN",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 170
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 225,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 337,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "ODCS",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 387
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 441,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "ODAC",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 459
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 513,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "OCCS",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 532
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 586,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "OCAC",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 605
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 659,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "OUAC",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 678
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 732,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "OCRA",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 751
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 805,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "OTFN",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 824
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 878,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "return_transid",
+    "to_transid": "OCCA",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 898
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 952,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 1035,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 1111,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 1189,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNKMENU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNKMENU.cbl",
+    "line": 1268,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 96,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "return_transid",
+    "to_transid": "OMEN",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 201
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "return_transid",
+    "to_transid": "OCRA",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 263
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 318,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 164,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 425,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 164,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 511,
+    "to": "DBCRFUN"
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 566,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 164,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 705,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 164,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 780,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 164,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 856,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 164,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CRA",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CRA.cbl",
+    "line": 934,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 164,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "DBCRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DBCRFUN.cbl",
+    "line": 628,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 185,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "DBCRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DBCRFUN.cbl",
+    "line": 815,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 185,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "return_transid",
+    "to_transid": "OMEN",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 198
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "return_transid",
+    "to_transid": "OTFN",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 247
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 302,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 160,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 411,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 160,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 496,
+    "to": "XFRFUN"
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 551,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 160,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 728,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 160,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 803,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 160,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 879,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 160,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1TFN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1TFN.cbl",
+    "line": 957,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 160,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 364,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 463,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 573,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 664,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 737,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 813,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 881,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1165,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1262,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1341,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1459,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1541,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1709,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1846,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "XFRFUN",
+    "kind": "link",
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 2018,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 257,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "return_transid",
+    "to_transid": "OMEN",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 186
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "return_transid",
+    "to_transid": "OCAC",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 248
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 309,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 147,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 416,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 147,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 775,
+    "to": "CREACC"
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 834,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 147,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 1027,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 147,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 1104,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 147,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 1182,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 147,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CAC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CAC.cbl",
+    "line": 1260,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 147,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CREACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 327,
+    "to": "INQCUST"
+   },
+   {
+    "from": "CREACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 564,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 291,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CREACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 655,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 291,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CREACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 753,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 291,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CREACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 839,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 291,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CREACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 1149,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 291,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CREACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 1182,
+    "to": "INQACCCU"
+   },
+   {
+    "from": "INQCUST",
+    "kind": "link",
+    "file": "src/base/cics/cobol/INQCUST.cbl",
+    "line": 506,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 185,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "INQCUST",
+    "kind": "link",
+    "file": "src/base/cics/cobol/INQCUST.cbl",
+    "line": 628,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 185,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "INQACCCU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/INQACCCU.cbl",
+    "line": 321,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "INQACCCU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/INQACCCU.cbl",
+    "line": 424,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "INQACCCU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/INQACCCU.cbl",
+    "line": 563,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "INQACCCU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/INQACCCU.cbl",
+    "line": 794,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "INQACCCU",
+    "kind": "link",
+    "file": "src/base/cics/cobol/INQACCCU.cbl",
+    "line": 851,
+    "to": "INQCUST"
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "return_transid",
+    "to_transid": "OMEN",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 223
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "return_transid",
+    "to_transid": "OCCS",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 264
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "return_transid",
+    "to_transid": "OCCS",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 291
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 346,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 477,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 574,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 997,
+    "to": "CRECUST"
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 1052,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 1203,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 1286,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 1365,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 1444,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 1523,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1CCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1CCS.cbl",
+    "line": 1603,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 162,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CRECUST",
+    "kind": "run_async",
+    "to_transid": null,
+    "dynamic": {
+     "via": "WS-RUN-TRANSID"
+    },
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 687
+   },
+   {
+    "from": "CRECUST",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 1441,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 137,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CRECUST",
+    "kind": "call",
+    "to": "CEEDAYS",
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 1570
+   },
+   {
+    "from": "CRECUST",
+    "kind": "call",
+    "to": "CEELOCT",
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 1585
+   },
+   {
+    "from": "CRDTAGY1",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CRDTAGY1.cbl",
+    "line": 166,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 90,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CRDTAGY2",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CRDTAGY2.cbl",
+    "line": 165,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 89,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CRDTAGY3",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CRDTAGY3.cbl",
+    "line": 165,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 89,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CRDTAGY4",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CRDTAGY4.cbl",
+    "line": 166,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 89,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "CRDTAGY5",
+    "kind": "link",
+    "file": "src/base/cics/cobol/CRDTAGY5.cbl",
+    "line": 165,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 88,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "return_transid",
+    "to_transid": "OMEN",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 260
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "return_transid",
+    "to_transid": "ODCS",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 364
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 419,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 616,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 691,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 866,
+    "to": "INQCUST"
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 921,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1011,
+    "to": "DELCUS"
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1066,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1216,
+    "to": "UPDCUST"
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1271,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1566,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1644,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1723,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1825,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1912,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "BNK1DCS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/BNK1DCS.cbl",
+    "line": 1993,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 184,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "DELCUS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 303,
+    "to": "INQCUST",
+    "dynamic": {
+     "via": "INQCUST-PROGRAM",
+     "resolved_by": [
+      {
+       "value": "INQCUST",
+       "line": 256,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "DELCUS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 378,
+    "to": "DELACC"
+   },
+   {
+    "from": "DELCUS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 409,
+    "to": "INQACCCU"
+   },
+   {
+    "from": "DELCUS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 535,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 267,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "DELCUS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 691,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 267,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "DELCUS",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 859,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 267,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "DELACC",
+    "kind": "link",
+    "file": "src/base/cics/cobol/DELACC.cbl",
+    "line": 603,
+    "to": "ABNDPROC",
+    "dynamic": {
+     "via": "WS-ABEND-PGM",
+     "resolved_by": [
+      {
+       "value": "ABNDPROC",
+       "line": 193,
+       "how": "VALUE"
+      }
+     ]
+    }
+   },
+   {
+    "from": "ABNDPROC",
+    "kind": "cics_file_write",
+    "to_file": "ABNDFILE",
+    "file": "src/base/cics/cobol/ABNDPROC.cbl",
+    "line": 141
+   }
+  ],
+  "sql": [
+   {
+    "program": "DBCRFUN",
+    "verb": "SELECT",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/DBCRFUN.cbl",
+    "line": 245
+   },
+   {
+    "program": "DBCRFUN",
+    "verb": "UPDATE",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/DBCRFUN.cbl",
+    "line": 392
+   },
+   {
+    "program": "DBCRFUN",
+    "verb": "INSERT",
+    "tables": [
+     "PROCTRAN"
+    ],
+    "file": "src/base/cics/cobol/DBCRFUN.cbl",
+    "line": 532
+   },
+   {
+    "program": "XFRFUN",
+    "verb": "SELECT",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 930
+   },
+   {
+    "program": "XFRFUN",
+    "verb": "UPDATE",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 992
+   },
+   {
+    "program": "XFRFUN",
+    "verb": "SELECT",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1057
+   },
+   {
+    "program": "XFRFUN",
+    "verb": "UPDATE",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1362
+   },
+   {
+    "program": "XFRFUN",
+    "verb": "INSERT",
+    "tables": [
+     "PROCTRAN"
+    ],
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1624
+   },
+   {
+    "program": "XFRFUN",
+    "verb": "INSERT",
+    "tables": [
+     "PROCTRAN"
+    ],
+    "file": "src/base/cics/cobol/XFRFUN.cbl",
+    "line": 1761
+   },
+   {
+    "program": "CREACC",
+    "verb": "SELECT",
+    "tables": [
+     "CONTROL"
+    ],
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 495
+   },
+   {
+    "program": "CREACC",
+    "verb": "UPDATE",
+    "tables": [
+     "CONTROL"
+    ],
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 593
+   },
+   {
+    "program": "CREACC",
+    "verb": "SELECT",
+    "tables": [
+     "CONTROL"
+    ],
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 686
+   },
+   {
+    "program": "CREACC",
+    "verb": "UPDATE",
+    "tables": [
+     "CONTROL"
+    ],
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 777
+   },
+   {
+    "program": "CREACC",
+    "verb": "INSERT",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 916
+   },
+   {
+    "program": "CREACC",
+    "verb": "INSERT",
+    "tables": [
+     "PROCTRAN"
+    ],
+    "file": "src/base/cics/cobol/CREACC.cbl",
+    "line": 1059
+   },
+   {
+    "program": "INQCUST",
+    "verb": "SELECT",
+    "tables": [
+     "CUSTOMER"
+    ],
+    "file": "src/base/cics/cobol/INQCUST.cbl",
+    "line": 310
+   },
+   {
+    "program": "INQCUST",
+    "verb": "SELECT",
+    "tables": [
+     "CUSTOMER"
+    ],
+    "file": "src/base/cics/cobol/INQCUST.cbl",
+    "line": 675
+   },
+   {
+    "program": "INQACCCU",
+    "verb": "DECLARE",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/INQACCCU.cbl",
+    "line": 74
+   },
+   {
+    "program": "INQACCCU",
+    "verb": "FETCH",
+    "tables": [
+     "ACC"
+    ],
+    "file": "src/base/cics/cobol/INQACCCU.cbl",
+    "line": 466
+   },
+   {
+    "program": "CRECUST",
+    "verb": "INSERT",
+    "tables": [
+     "CUSTOMER"
+    ],
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 1219
+   },
+   {
+    "program": "CRECUST",
+    "verb": "INSERT",
+    "tables": [
+     "PROCTRAN"
+    ],
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 1359
+   },
+   {
+    "program": "CRECUST",
+    "verb": "SELECT",
+    "tables": [
+     "CONTROL"
+    ],
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 1496
+   },
+   {
+    "program": "CRECUST",
+    "verb": "UPDATE",
+    "tables": [
+     "CONTROL"
+    ],
+    "file": "src/base/cics/cobol/CRECUST.cbl",
+    "line": 1524
+   },
+   {
+    "program": "DELCUS",
+    "verb": "SELECT",
+    "tables": [
+     "CUSTOMER"
+    ],
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 441
+   },
+   {
+    "program": "DELCUS",
+    "verb": "DELETE",
+    "tables": [
+     "CUSTOMER"
+    ],
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 642
+   },
+   {
+    "program": "DELCUS",
+    "verb": "INSERT",
+    "tables": [
+     "PROCTRAN"
+    ],
+    "file": "src/base/cics/cobol/DELCUS.cbl",
+    "line": 774
+   },
+   {
+    "program": "DELACC",
+    "verb": "SELECT",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/DELACC.cbl",
+    "line": 248
+   },
+   {
+    "program": "DELACC",
+    "verb": "DELETE",
+    "tables": [
+     "ACCOUNT"
+    ],
+    "file": "src/base/cics/cobol/DELACC.cbl",
+    "line": 438
+   },
+   {
+    "program": "DELACC",
+    "verb": "INSERT",
+    "tables": [
+     "PROCTRAN"
+    ],
+    "file": "src/base/cics/cobol/DELACC.cbl",
+    "line": 521
+   }
+  ],
+  "copybooks": [
+   {
+    "program": "BNKMENU",
+    "copybook": "BNK1MAI",
+    "line": 68
+   },
+   {
+    "program": "BNKMENU",
+    "copybook": "DFHAID",
+    "line": 70
+   },
+   {
+    "program": "BNKMENU",
+    "copybook": "ABNDINFO",
+    "line": 99
+   },
+   {
+    "program": "BNK1CRA",
+    "copybook": "BNK1CDM",
+    "line": 66
+   },
+   {
+    "program": "BNK1CRA",
+    "copybook": "DFHAID",
+    "line": 68
+   },
+   {
+    "program": "BNK1CRA",
+    "copybook": "ABNDINFO",
+    "line": 167
+   },
+   {
+    "program": "DBCRFUN",
+    "copybook": "SORTCODE",
+    "line": 48
+   },
+   {
+    "program": "DBCRFUN",
+    "copybook": "ACCOUNT",
+    "line": 119
+   },
+   {
+    "program": "DBCRFUN",
+    "copybook": "PROCTRAN",
+    "line": 150
+   },
+   {
+    "program": "DBCRFUN",
+    "copybook": "ABNDINFO",
+    "line": 188
+   },
+   {
+    "program": "DBCRFUN",
+    "copybook": "PAYDBCR",
+    "line": 195
+   },
+   {
+    "program": "BNK1TFN",
+    "copybook": "BNK1TFM",
+    "line": 68
+   },
+   {
+    "program": "BNK1TFN",
+    "copybook": "DFHAID",
+    "line": 70
+   },
+   {
+    "program": "BNK1TFN",
+    "copybook": "ABNDINFO",
+    "line": 163
+   },
+   {
+    "program": "XFRFUN",
+    "copybook": "SORTCODE",
+    "line": 56
+   },
+   {
+    "program": "XFRFUN",
+    "copybook": "ACCOUNT",
+    "line": 125
+   },
+   {
+    "program": "XFRFUN",
+    "copybook": "ACCOUNT",
+    "line": 128,
+    "replacing": true
+   },
+   {
+    "program": "XFRFUN",
+    "copybook": "PROCTRAN",
+    "line": 175
+   },
+   {
+    "program": "XFRFUN",
+    "copybook": "ABNDINFO",
+    "line": 260
+   },
+   {
+    "program": "XFRFUN",
+    "copybook": "XFRFUN",
+    "line": 265
+   },
+   {
+    "program": "BNK1CAC",
+    "copybook": "BNK1CAM",
+    "line": 65
+   },
+   {
+    "program": "BNK1CAC",
+    "copybook": "DFHAID",
+    "line": 67
+   },
+   {
+    "program": "BNK1CAC",
+    "copybook": "ABNDINFO",
+    "line": 150
+   },
+   {
+    "program": "CREACC",
+    "copybook": "SORTCODE",
+    "line": 42
+   },
+   {
+    "program": "CREACC",
+    "copybook": "PROCTRAN",
+    "line": 134
+   },
+   {
+    "program": "CREACC",
+    "copybook": "ACCOUNT",
+    "line": 153
+   },
+   {
+    "program": "CREACC",
+    "copybook": "CUSTOMER",
+    "line": 156
+   },
+   {
+    "program": "CREACC",
+    "copybook": "INQCUSTZ",
+    "line": 272
+   },
+   {
+    "program": "CREACC",
+    "copybook": "INQACCCU",
+    "line": 275,
+    "replacing": true
+   },
+   {
+    "program": "CREACC",
+    "copybook": "ACCTCTRL",
+    "line": 281
+   },
+   {
+    "program": "CREACC",
+    "copybook": "ABNDINFO",
+    "line": 294
+   },
+   {
+    "program": "CREACC",
+    "copybook": "CREACC",
+    "line": 298
+   },
+   {
+    "program": "INQCUST",
+    "copybook": "SORTCODE",
+    "line": 80
+   },
+   {
+    "program": "INQCUST",
+    "copybook": "CUSTOMER",
+    "line": 85
+   },
+   {
+    "program": "INQCUST",
+    "copybook": "ABNDINFO",
+    "line": 188
+   },
+   {
+    "program": "INQCUST",
+    "copybook": "INQCUSTZ",
+    "line": 193
+   },
+   {
+    "program": "INQACCCU",
+    "copybook": "SORTCODE",
+    "line": 33
+   },
+   {
+    "program": "INQACCCU",
+    "copybook": "ACCOUNT",
+    "line": 104
+   },
+   {
+    "program": "INQACCCU",
+    "copybook": "CUSTOMER",
+    "line": 155
+   },
+   {
+    "program": "INQACCCU",
+    "copybook": "INQCUSTZ",
+    "line": 158
+   },
+   {
+    "program": "INQACCCU",
+    "copybook": "ABNDINFO",
+    "line": 187
+   },
+   {
+    "program": "INQACCCU",
+    "copybook": "INQACCCU",
+    "line": 191
+   },
+   {
+    "program": "BNK1CCS",
+    "copybook": "BNK1CCM",
+    "line": 66
+   },
+   {
+    "program": "BNK1CCS",
+    "copybook": "DFHAID",
+    "line": 68
+   },
+   {
+    "program": "BNK1CCS",
+    "copybook": "ABNDINFO",
+    "line": 165
+   },
+   {
+    "program": "CRECUST",
+    "copybook": "SORTCODE",
+    "line": 55
+   },
+   {
+    "program": "CRECUST",
+    "copybook": "PROCTRAN",
+    "line": 120
+   },
+   {
+    "program": "CRECUST",
+    "copybook": "ABNDINFO",
+    "line": 139
+   },
+   {
+    "program": "CRECUST",
+    "copybook": "CUSTOMER",
+    "line": 146
+   },
+   {
+    "program": "CRECUST",
+    "copybook": "CEEIGZCT",
+    "line": 351
+   },
+   {
+    "program": "CRECUST",
+    "copybook": "CUSTCTRL",
+    "line": 393
+   },
+   {
+    "program": "CRECUST",
+    "copybook": "CRECUST",
+    "line": 402
+   },
+   {
+    "program": "CRDTAGY1",
+    "copybook": "SORTCODE",
+    "line": 41
+   },
+   {
+    "program": "CRDTAGY1",
+    "copybook": "CUSTOMER",
+    "line": 45
+   },
+   {
+    "program": "CRDTAGY1",
+    "copybook": "ABNDINFO",
+    "line": 93
+   },
+   {
+    "program": "CRDTAGY2",
+    "copybook": "SORTCODE",
+    "line": 41
+   },
+   {
+    "program": "CRDTAGY2",
+    "copybook": "CUSTOMER",
+    "line": 45
+   },
+   {
+    "program": "CRDTAGY2",
+    "copybook": "ABNDINFO",
+    "line": 92
+   },
+   {
+    "program": "CRDTAGY3",
+    "copybook": "SORTCODE",
+    "line": 41
+   },
+   {
+    "program": "CRDTAGY3",
+    "copybook": "CUSTOMER",
+    "line": 45
+   },
+   {
+    "program": "CRDTAGY3",
+    "copybook": "ABNDINFO",
+    "line": 92
+   },
+   {
+    "program": "CRDTAGY4",
+    "copybook": "SORTCODE",
+    "line": 42
+   },
+   {
+    "program": "CRDTAGY4",
+    "copybook": "CUSTOMER",
+    "line": 46
+   },
+   {
+    "program": "CRDTAGY4",
+    "copybook": "ABNDINFO",
+    "line": 92
+   },
+   {
+    "program": "CRDTAGY5",
+    "copybook": "SORTCODE",
+    "line": 41
+   },
+   {
+    "program": "CRDTAGY5",
+    "copybook": "CUSTOMER",
+    "line": 45
+   },
+   {
+    "program": "CRDTAGY5",
+    "copybook": "ABNDINFO",
+    "line": 91
+   },
+   {
+    "program": "BNK1DCS",
+    "copybook": "BNK1DCM",
+    "line": 69
+   },
+   {
+    "program": "BNK1DCS",
+    "copybook": "DFHAID",
+    "line": 71
+   },
+   {
+    "program": "BNK1DCS",
+    "copybook": "INQCUSTZ",
+    "line": 120
+   },
+   {
+    "program": "BNK1DCS",
+    "copybook": "DELCUS",
+    "line": 123
+   },
+   {
+    "program": "BNK1DCS",
+    "copybook": "UPDCUST",
+    "line": 126
+   },
+   {
+    "program": "BNK1DCS",
+    "copybook": "DFHBMSCA",
+    "line": 159
+   },
+   {
+    "program": "BNK1DCS",
+    "copybook": "ABNDINFO",
+    "line": 187
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "SORTCODE",
+    "line": 44
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "ACCOUNT",
+    "line": 109
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "CUSTOMER",
+    "line": 112
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "PROCTRAN",
+    "line": 115
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "INQACCCU",
+    "line": 253
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "INQCUSTZ",
+    "line": 258
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "ABNDINFO",
+    "line": 270
+   },
+   {
+    "program": "DELCUS",
+    "copybook": "DELCUS",
+    "line": 274
+   },
+   {
+    "program": "DELACC",
+    "copybook": "SORTCODE",
+    "line": 41
+   },
+   {
+    "program": "DELACC",
+    "copybook": "ACCOUNT",
+    "line": 105
+   },
+   {
+    "program": "DELACC",
+    "copybook": "PROCTRAN",
+    "line": 108
+   },
+   {
+    "program": "DELACC",
+    "copybook": "ACCTCTRL",
+    "line": 184
+   },
+   {
+    "program": "DELACC",
+    "copybook": "ABNDINFO",
+    "line": 196
+   },
+   {
+    "program": "DELACC",
+    "copybook": "DELACC",
+    "line": 200,
+    "replacing": true
+   },
+   {
+    "program": "ABNDPROC",
+    "copybook": "ABNDINFO",
+    "line": 38
+   }
+  ],
+  "batch": [
+   {
+    "job_file": "src/base/batch/jcl/BNK2STMT.jcl",
+    "step": "BNKCSTMT",
+    "program": "BNK2STMT",
+    "line": 41,
+    "via": "IKJEFT01 → DSN RUN PROGRAM (in-line SYSTSIN)"
+   },
+   {
+    "job_file": "src/base/batch/jcl/BNKSTMTC.jcl",
+    "step": "BNKSTMTC",
+    "program": "BNKSTMTC",
+    "line": 51,
+    "via": "IKJEFT01 → DSN RUN PROGRAM (in-line SYSTSIN)"
+   },
+   {
+    "job_file": "src/base/batch/jcl/BNKSTMTP.jcl",
+    "step": "STEP1",
+    "program": "BNKSTMTP",
+    "line": 21,
+    "via": "IKJEFT01 → DSN RUN PROGRAM (in-line SYSTSIN)"
+   }
+  ],
+  "unresolved": [
+   {
+    "what": "CRECUST RUN TRANSID(WS-RUN-TRANSID) → which programs run",
+    "values": [
+     "OCR1",
+     "OCR2",
+     "OCR3",
+     "OCR4",
+     "OCR5"
+    ],
+    "values_evidence": [
+     {
+      "file": "src/base/cics/cobol/CRECUST.cbl",
+      "line": 620,
+      "text": "     PERFORM VARYING WS-CC-CNT FROM 1 BY 1"
+     },
+     {
+      "file": "src/base/cics/cobol/CRECUST.cbl",
+      "line": 626,
+      "text": "             STRING 'OCR' DELIMITED BY SIZE,"
+     },
+     {
+      "file": "src/base/cics/cobol/CRECUST.cbl",
+      "line": 687,
+      "text": "             EXEC CICS RUN TRANSID(WS-RUN-TRANSID)"
+     }
+    ],
+    "why": "The transaction IDs are computed in a loop (expected: OCR1–OCR5, by constant evaluation). Which program each transaction runs is a CICS resource definition (CSD), which is not in the repository. The pairing OCRn → CRDTAGYn is suggested by the names only and must be reported as unresolved, not asserted."
+   },
+   {
+    "what": "BNK1CRA → DBCRFUN: COMM-FACILTYPE = 496",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 508,
+      "text": "         ODFACILTYPE(SUBPGM-FACILTYPE)"
+     },
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 344,
+      "text": "        IF WS-DIFFERENCE < 0 AND COMM-FACILTYPE = 496"
+     }
+    ],
+    "why": "The facility type is set at run time by EXEC CICS INQUIRE ASSOCIATION, so whether the debit checks apply to a given request can't be decided from source. The program's own comment (DBCRFUN, 'COMM-FACILTYPE(496 = NONE)') is documentation, not a proven value."
+   },
+   {
+    "what": "ABNDPROC WRITE FILE(ABNDFILE): the file's organization",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/ABNDPROC.cbl",
+      "line": 141,
+      "text": "     EXEC CICS WRITE"
+     }
+    ],
+    "why": "A CICS file; whether it is a VSAM KSDS is defined in the CSD and the dataset definitions, not in the repository."
+   },
+   {
+    "what": "IBTRAN CALL <data name> (FINDCLASS, GETSTATICMETHODID, …)",
+    "why": "Calls through procedure pointers to the Java Native Interface (COBOL–Java interop), not COBOL programs. They must be classified as JNI calls, not resolved or reported as missing programs."
+   }
+  ]
+ },
+ "rules": [
+  {
+   "id": "BOZ-R1",
+   "title": "A teller debit is refused when it would take the available balance below zero (the overdraft limit is read but not applied)",
+   "programs": [
+    "BNK1CRA",
+    "DBCRFUN"
+   ],
+   "input": [
+    {
+     "file": "src/base/cics/cobol/BNK1CRA.cbl",
+     "line": 494,
+     "text": "     IF SIGNI = '-'",
+     "note": "a '-' sign on the screen makes the amount a debit"
+    },
+    {
+     "file": "src/base/cics/cobol/BNK1CRA.cbl",
+     "line": 498,
+     "text": "     MOVE WS-AMOUNT-AS-FLOAT TO SUBPGM-AMT."
+    }
+   ],
+   "decision": [
+    {
+     "file": "src/base/cics/cobol/DBCRFUN.cbl",
+     "line": 245,
+     "text": "     EXEC SQL",
+     "note": "reads the account row, including AVAILABLE_BALANCE and OVERDRAFT_LIMIT"
+    },
+    {
+     "file": "src/base/cics/cobol/DBCRFUN.cbl",
+     "line": 341,
+     "text": "        COMPUTE WS-DIFFERENCE = HV-ACCOUNT-AVAIL-BAL"
+    },
+    {
+     "file": "src/base/cics/cobol/DBCRFUN.cbl",
+     "line": 344,
+     "text": "        IF WS-DIFFERENCE < 0 AND COMM-FACILTYPE = 496"
+    },
+    {
+     "file": "src/base/cics/cobol/DBCRFUN.cbl",
+     "line": 347,
+     "text": "           MOVE '3' TO COMM-FAIL-CODE"
+    }
+   ],
+   "outcome": [
+    {
+     "file": "src/base/cics/cobol/BNK1CRA.cbl",
+     "line": 604,
+     "text": "           WHEN '3'"
+    },
+    {
+     "file": "src/base/cics/cobol/BNK1CRA.cbl",
+     "line": 606,
+     "text": "              STRING 'Sorry insufficient funds available to pro'"
+    }
+   ],
+   "condition": {
+    "field": "ACCOUNT_AVAILABLE_BALANCE + COMM-AMT",
+    "operator": "<",
+    "value": 0,
+    "and": "COMM-FACILTYPE = 496 (set at run time)"
+   },
+   "also": "Related: a payment out of a MORTGAGE or LOAN account sets fail code 4 (DBCRFUN 330–335), which BNK1CRA has no message for (it falls to WHEN OTHER, 'the AMOUNT could not be applied').",
+   "also_evidence": [
+    {
+     "file": "src/base/cics/cobol/DBCRFUN.cbl",
+     "line": 330,
+     "text": "        IF (HV-ACCOUNT-ACC-TYPE = 'MORTGAGE'"
+    },
+    {
+     "file": "src/base/cics/cobol/DBCRFUN.cbl",
+     "line": 335,
+     "text": "           MOVE '4' TO COMM-FAIL-CODE"
+    },
+    {
+     "file": "src/base/cics/cobol/BNK1CRA.cbl",
+     "line": 612,
+     "text": "           WHEN OTHER"
+    }
+   ]
+  },
+  {
+   "id": "BOZ-R2",
+   "title": "A customer may hold at most ten accounts: an eleventh is refused",
+   "programs": [
+    "BNK1CAC",
+    "CREACC",
+    "INQCUST",
+    "INQACCCU"
+   ],
+   "input": [
+    {
+     "file": "src/base/cics/cobol/BNK1CAC.cbl",
+     "line": 775,
+     "text": "     EXEC CICS LINK",
+     "note": "the create-account screen links to CREACC"
+    }
+   ],
+   "decision": [
+    {
+     "file": "src/base/cics/cobol/CREACC.cbl",
+     "line": 327,
+     "text": "     EXEC CICS LINK PROGRAM('INQCUST ')",
+     "note": "the customer must exist (INQCUST); otherwise fail code 1"
+    },
+    {
+     "file": "src/base/cics/cobol/CREACC.cbl",
+     "line": 1182,
+     "text": "     EXEC CICS LINK PROGRAM('INQACCCU')",
+     "note": "the customer's accounts are listed by INQACCCU"
+    },
+    {
+     "file": "src/base/cics/cobol/INQACCCU.cbl",
+     "line": 464,
+     "text": "     NUMBER-OF-ACCOUNTS = 20",
+     "note": "INQACCCU fetches at most 20 accounts"
+    },
+    {
+     "file": "src/base/cics/cobol/CREACC.cbl",
+     "line": 380,
+     "text": "     IF NUMBER-OF-ACCOUNTS IN INQACCCU-COMMAREA > 9"
+    },
+    {
+     "file": "src/base/cics/cobol/CREACC.cbl",
+     "line": 383,
+     "text": "        MOVE '8' TO COMM-FAIL-CODE IN DFHCOMMAREA"
+    }
+   ],
+   "outcome": [
+    {
+     "file": "src/base/cics/cobol/BNK1CAC.cbl",
+     "line": 897,
+     "text": "           WHEN '8'"
+    },
+    {
+     "file": "src/base/cics/cobol/BNK1CAC.cbl",
+     "line": 900,
+     "text": "                 ' (too many accounts).'"
+    }
+   ],
+   "condition": {
+    "field": "NUMBER-OF-ACCOUNTS (from INQACCCU)",
+    "operator": ">",
+    "value": 9
+   },
+   "also": "The same program refuses account types other than ISA, MORTGAGE, SAVING, CURRENT and LOAN (ACCOUNT-TYPE-CHECK, CREACC 1303 onward).",
+   "also_evidence": [
+    {
+     "file": "src/base/cics/cobol/CREACC.cbl",
+     "line": 1303,
+     "text": " ACCOUNT-TYPE-CHECK SECTION."
+    }
+   ]
+  },
+  {
+   "id": "BOZ-R3",
+   "title": "A new customer's credit score is the average of the agency scores that arrive in time, and 0 if none do",
+   "programs": [
+    "BNK1CCS",
+    "CRECUST",
+    "CRDTAGY1",
+    "CRDTAGY2",
+    "CRDTAGY3",
+    "CRDTAGY4",
+    "CRDTAGY5"
+   ],
+   "input": [
+    {
+     "file": "src/base/cics/cobol/BNK1CCS.cbl",
+     "line": 997,
+     "text": "     EXEC CICS LINK",
+     "note": "the create-customer screen links to CRECUST"
+    }
+   ],
+   "decision": [
+    {
+     "file": "src/base/cics/cobol/CRECUST.cbl",
+     "line": 687,
+     "text": "             EXEC CICS RUN TRANSID(WS-RUN-TRANSID)",
+     "note": "five asynchronous requests (OCR1–OCR5)"
+    },
+    {
+     "file": "src/base/cics/cobol/CRDTAGY1.cbl",
+     "line": 201,
+     "text": "     COMPUTE WS-NEW-CREDSCORE = ((999 - 1)",
+     "note": "each agency returns a score from 1 to 999 (random in this sample)"
+    },
+    {
+     "file": "src/base/cics/cobol/CRECUST.cbl",
+     "line": 749,
+     "text": "             EXEC CICS FETCH ANY(WS-ANY-CHILD-FETCH-TKN)",
+     "note": "collects whichever replies have arrived"
+    },
+    {
+     "file": "src/base/cics/cobol/CRECUST.cbl",
+     "line": 774,
+     "text": "                   IF WS-RETRIEVED-CNT = 0"
+    },
+    {
+     "file": "src/base/cics/cobol/CRECUST.cbl",
+     "line": 776,
+     "text": "                      MOVE 0 TO COMM-CREDIT-SCORE"
+    },
+    {
+     "file": "src/base/cics/cobol/CRECUST.cbl",
+     "line": 812,
+     "text": "                      COMPUTE WS-ACTUAL-CS-SCR = WS-TOTAL-CS-SCR /"
+    }
+   ],
+   "outcome": [
+    {
+     "file": "src/base/cics/cobol/CRECUST.cbl",
+     "line": 1219,
+     "text": "     EXEC SQL",
+     "note": "the customer row is inserted with the score"
+    },
+    {
+     "file": "src/base/cics/cobol/BNK1CCS.cbl",
+     "line": 1109,
+     "text": "     MOVE SUBPGM-CREDIT-SCORE   TO CREDSCO.",
+     "note": "and shown on the screen"
+    }
+   ],
+   "condition": {
+    "score": "sum of received scores / number received",
+    "fallback": "0 when no agency replies in time"
+   },
+   "note": "The agencies are deliberately dummies (random delay 0–3 s, random score). The rule worth extracting is the aggregation and its fallbacks, not the agencies' scores."
+  }
+ ],
+ "golden_trace": {
+  "rule": "BOZ-R1",
+  "question": "When a teller debits an account, what decides whether it is refused, and what does the teller see?",
+  "steps": [
+   {
+    "step": 1,
+    "what": "The teller enters an account number and an amount with a sign on the BNK1CRA screen; '-' makes it a debit",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 494,
+      "text": "     IF SIGNI = '-'"
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 498,
+      "text": "     MOVE WS-AMOUNT-AS-FLOAT TO SUBPGM-AMT."
+     }
+    ]
+   },
+   {
+    "step": 2,
+    "what": "BNK1CRA asks CICS where the request came from (facility type, at run time)",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 503,
+      "text": "     EXEC CICS INQUIRE ASSOCIATION(EIBTASKN)"
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 508,
+      "text": "         ODFACILTYPE(SUBPGM-FACILTYPE)"
+     }
+    ]
+   },
+   {
+    "step": 3,
+    "what": "BNK1CRA links to DBCRFUN with its own layout of the parameters (SUBPGM-PARMS, 92 bytes)",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 511,
+      "text": "     EXEC CICS LINK"
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 512,
+      "text": "        PROGRAM('DBCRFUN')"
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 513,
+      "text": "        COMMAREA(SUBPGM-PARMS)"
+     }
+    ]
+   },
+   {
+    "step": 4,
+    "what": "DBCRFUN receives them through the PAYDBCR copybook (132 bytes)",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 195,
+      "text": "    COPY PAYDBCR."
+     }
+    ]
+   },
+   {
+    "step": 5,
+    "what": "DBCRFUN reads the account's balances and limits from DB2",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 245,
+      "text": "     EXEC SQL"
+     },
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 270,
+      "text": "        FROM ACCOUNT"
+     }
+    ]
+   },
+   {
+    "step": 6,
+    "what": "A debit (amount below zero) from a MORTGAGE or LOAN account is refused with code 4",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 307,
+      "text": "     IF COMM-AMT < 0"
+     },
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 335,
+      "text": "           MOVE '4' TO COMM-FAIL-CODE"
+     }
+    ]
+   },
+   {
+    "step": 7,
+    "what": "Otherwise, if the available balance plus the (negative) amount is below zero, it is refused with code 3; the overdraft limit is not used",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 341,
+      "text": "        COMPUTE WS-DIFFERENCE = HV-ACCOUNT-AVAIL-BAL"
+     },
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 344,
+      "text": "        IF WS-DIFFERENCE < 0 AND COMM-FACILTYPE = 496"
+     },
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 347,
+      "text": "           MOVE '3' TO COMM-FAIL-CODE"
+     }
+    ]
+   },
+   {
+    "step": 8,
+    "what": "On success DBCRFUN updates the balances and records the transaction in PROCTRAN",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 384,
+      "text": "     COMPUTE HV-ACCOUNT-AVAIL-BAL ="
+     },
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 392,
+      "text": "     EXEC SQL"
+     },
+     {
+      "file": "src/base/cics/cobol/DBCRFUN.cbl",
+      "line": 441,
+      "text": "     PERFORM WRITE-TO-PROCTRAN."
+     }
+    ]
+   },
+   {
+    "step": 9,
+    "what": "BNK1CRA reads the outcome and shows the teller a message",
+    "evidence": [
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 581,
+      "text": "     IF SUBPGM-SUCCESS = 'N'"
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 606,
+      "text": "              STRING 'Sorry insufficient funds available to pro'"
+     },
+     {
+      "file": "src/base/cics/cobol/BNK1CRA.cbl",
+      "line": 624,
+      "text": "        MOVE 'Amount successfully applied to the account.' TO"
+     }
+    ]
+   }
+  ],
+  "lineage": [
+   "screen AMTI + SIGNI → BNK1CRA.WS-AMOUNT-AS-FLOAT → BNK1CRA.SUBPGM-AMT (offset 8, 12 bytes)",
+   "→ COMMAREA → DBCRFUN.COMM-AMT (PAYDBCR, offset 8, 12 bytes)",
+   "DB2 ACCOUNT.ACCOUNT_AVAILABLE_BALANCE → DBCRFUN.HV-ACCOUNT-AVAIL-BAL",
+   "HV-ACCOUNT-AVAIL-BAL + COMM-AMT → DBCRFUN.WS-DIFFERENCE → decision (< 0) → COMM-FAIL-CODE '3'",
+   "DBCRFUN.COMM-SUCCESS / COMM-FAIL-CODE (offsets 130, 131) → BNK1CRA.SUBPGM-SUCCESS / SUBPGM-FAIL-CODE (offsets 90, 91): see the finding"
+  ],
+  "finding": {
+   "title": "Interface drift: BNK1CRA's copy of the DBCRFUN parameters is 40 bytes short (predicted defect)",
+   "evidence": [
+    {
+     "file": "src/base/cics/copy/PAYDBCR.cpy",
+     "line": 19,
+     "text": "         05 COMM-DESCRIPTION      PIC X(40)."
+    },
+    {
+     "file": "src/base/cics/copy/PAYDBCR.cpy",
+     "line": 20,
+     "text": "    03 COMM-SUCCESS             PIC X."
+    },
+    {
+     "file": "src/base/cics/cobol/BNK1CRA.cbl",
+     "line": 132,
+     "text": "         05 FILLER                  PIC X(4) VALUE SPACES."
+    },
+    {
+     "file": "src/base/cics/cobol/BNK1CRA.cbl",
+     "line": 133,
+     "text": "    03 SUBPGM-SUCCESS            PIC X."
+    }
+   ],
+   "history": "Commit afb4f68 (2026-07-23, 'CICS Account transaction history (#123)') added COMM-DESCRIPTION to PAYDBCR and updated DBCRFUN, XFRFUN, the API mappings and the Java caller; BNK1CRA, which declares the parameters inline instead of copying PAYDBCR, was not updated.",
+   "offsets": {
+    "PAYDBCR": {
+     "COMM-DESCRIPTION": [
+      90,
+      129
+     ],
+     "COMM-SUCCESS": 130,
+     "COMM-FAIL-CODE": 131,
+     "length": 132
+    },
+    "BNK1CRA": {
+     "SUBPGM-SUCCESS": 90,
+     "SUBPGM-FAIL-CODE": 91,
+     "length": 92
+    }
+   },
+   "predicted_effect": "BNK1CRA passes 92 bytes; DBCRFUN addresses 132. DBCRFUN's success flag and fail code land past the end of BNK1CRA's parameter area, and BNK1CRA reads its flag from the bytes DBCRFUN treats as the start of the description. A refused debit would therefore likely be reported to the teller as 'Amount successfully applied' while the balance is unchanged. Static analysis only: to be confirmed on a running CICS system."
+  }
+ },
+ "absent_features": [
+  {
+   "feature": "CICS XCTL",
+   "found": 0,
+   "note": "every transfer of control is LINK (145) or RETURN TRANSID (26)"
+  },
+  {
+   "feature": "VSAM KSDS declared in COBOL (ORGANIZATION INDEXED)",
+   "found": 0,
+   "note": "data is in DB2 (143 EXEC SQL) and IMS (31 CBLTDLI calls); one CICS WRITE FILE(ABNDFILE), organization not in the repository"
+  },
+  {
+   "feature": "EXEC DLI",
+   "found": 0,
+   "note": "IMS is reached through CALL 'CBLTDLI' only"
+  },
+  {
+   "feature": "REPLACE (compiler directive)",
+   "found": 0,
+   "note": "COPY ... REPLACING is present (7 programs)"
+  },
+  {
+   "feature": "JCL procedures (PROC) and EXEC PGM= of application programs",
+   "found": 0,
+   "note": "batch programs run through IKJEFT01 → DSN RUN PROGRAM"
+  },
+  {
+   "feature": "CICS resource definitions (CSD)",
+   "found": 0,
+   "note": "transaction → program and file definitions are not in the repository"
+  }
+ ]
+}
