@@ -262,6 +262,52 @@ P5 builds those. The last one is the model's job, marked for a person (B3).
 
 P6 builds those and measures them on a generated million-line estate. Speed isn't the risk: both corpora read in under a second, and the walk is a graph query.
 
-### Next: P5, system-wide data lineage
+### P5: system-wide data lineage (2026-11-13), built and passing
 
-See the plan (§9). The test is one element on CardDemo's batch cycle, followed end to end through its renames, with every function that changes it and every change in its definition flagged.
+`python -m mip.lineage <repo> <PROGRAM> <FIELD>` follows one element forward through the whole system. It tracks the element by its bytes (a record, an offset and a size), not by its name. So `TRAN-AMT` in one program and `TRNX-AMT` in another are the same element when the bytes line up.
+
+**What it follows:**
+- moves of values and of untyped groups, including a table entry and back;
+- arithmetic, which starts a derived value;
+- a WRITE to its DD, the dataset that DD names, and every step that reads that dataset:
+  - a SORT, with its INREC/OUTREC reformat;
+  - IDCAMS REPRO and IEBGENER;
+  - GDG generations;
+  - programs, and the programs they CALL;
+- CALL USING, in both directions;
+- CICS COMMAREAs;
+- DB2 columns (UPDATE and INSERT to SELECT and FETCH);
+- online programs that read the dataset through the CSD file.
+
+At each hop it records how the definition changes: picture, sign, scale, editing, packed to zoned, and position in the record. It also lists the statements that test or change the element, and shows where the element came from.
+
+| Check | Result |
+|---|---|
+| **The golden lineage (CardDemo, `p5` in `carddemo.expected.json`)** | **24 of 24** steps cited and **3 of 3** definition changes flagged (`python -m mip.bench --p5`). Every golden line is asserted against the source by `tools/manifest_p5.py` |
+| **The path** | `DIS-INT-RATE` (S9(04)V99, from DISCGRP, loaded by IDCAMS) → monthly interest (`(TRAN-CAT-BAL * DIS-INT-RATE) / 1200`: a rate becomes money, no ROUNDED) → `TRAN-AMT` → SYSTRAN(+1) → COMBTRAN's sort and REPRO → the transaction file → CREASTMT's sort, whose OUTREC moves the card number to the front and shifts the amount from byte 133 to 149 → `TRNX-AMT` in CBSTM03A, read for it by CBSTM03B through CALL USING → a table entry (X(318)) and back → `ST-TRANAMT PIC Z(9).99-` on the statement. The interest total also lands in `ACCT-CURR-BAL` (S9(10)V99), which batch exports and five online screens read through `ACCTDAT` |
+| **A shared buffer, read precisely** | CBSTM03A passes one 1,000-byte buffer to CBSTM03B for four files. A value comes back only to the calls that set CBSTM03B's dispatch condition (`LK-M03B-DD = 'ACCTFILE'`, found on the PERFORM chain, and condition names such as `SET M03B-READ TO TRUE`). It stays valid only until the buffer is filled again. Without this, the balance appeared in the card cross-reference record |
+| **DB2 (Bank of Z)** | `ACCOUNT.ACCOUNT_AVAILABLE_BALANCE` is updated by DBCRFUN and XFRFUN, and read by DELACC, INQACC and UPDACC. Each move out of it flags COMP-3 → DISPLAY |
+| **Same name, no path (B3)** | Fields elsewhere whose names say the same business words (abbreviations expanded: INT = INTEREST, AMT = AMOUNT; an initial can stand for a word, so `I-RATE` matches `INTEREST-RATE`) are listed for the model to propose and a person to confirm. For `TRAN-AMT`, these are the `WS-TRAN-AMT +99999999.99` fields on the transaction screens, where the same amount is entered online. CardDemo has no other interest-rate field |
+| **Scale** | 253 traces across both corpora, 0 errors, at most 0.3 s each. P1–P4 unchanged; 41 unit tests |
+
+**Fixed on the way:**
+- A concatenated DD (the unnamed second SORTIN) now keeps its name.
+- SORT and IDCAMS control statements are kept per step.
+- A CICS file seen first in a program and then in the CSD keeps the CSD's dataset name. Online readers had been missing because of this.
+
+**Honest limits:**
+- **Ordering:** within a program the lineage doesn't follow statement order. The exception is a buffer filled by a call, which is followed only until it's filled again.
+- **Job order:** it isn't checked. GDG generations (+1) and (0) are treated as the same dataset; the scheduler is B24.
+- **Not followed yet:**
+  - procedures (EXEC PROC);
+  - several SORT outputs (OUTFIL);
+  - SORT INCLUDE and OMIT, which filter records rather than move them;
+  - 01-level REDEFINES;
+  - STRING and UNSTRING;
+  - IMS segments and MQ messages;
+  - CICS WRITE into a file that batch reads.
+- **Names:** same-name candidates are listed. The model's proposal for each is the next step on the runner, like the P4 review.
+
+### Next: P6, whole-system reachability
+
+See the plan (§9). Reachability builds on P5: lineage answers "where does this value go?", and P6 answers "what can reach this program, and under what conditions?", across every hop, then "what changes if the account limit becomes 12?".

@@ -173,5 +173,207 @@
     "text": "         MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA"
    }
   ]
+ },
+ "p5": {
+  "element": {
+   "program": "CBACT04C",
+   "field": "DIS-INT-RATE",
+   "copybook": "app/cpy/CVTRA02Y.cpy",
+   "line": 9
+  },
+  "summary": "The interest rate becomes monthly interest, then a transaction amount (TRAN-AMT), then is merged, sorted, reformatted and printed on the statement (TRNX-AMT, ST-TRANAMT); its total also lands in the account balance.",
+  "steps": [
+   {
+    "kind": "origin",
+    "file": "app/jcl/DISCGRP.jcl",
+    "line": 61,
+    "text": "   REPRO INFILE(DISCGRP) OUTFILE(DISCVSAM)",
+    "what": "The rate table is loaded from DISCGRP.PS into the DISCGRP VSAM file"
+   },
+   {
+    "kind": "origin",
+    "file": "app/jcl/INTCALC.jcl",
+    "line": 35,
+    "text": "//DISCGRP  DD DISP=SHR,",
+    "what": "The interest job reads the rate table through DD DISCGRP"
+   },
+   {
+    "kind": "origin",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 416,
+    "text": "           READ DISCGRP-FILE INTO DIS-GROUP-RECORD",
+    "what": "CBACT04C reads the rate record; the rate is DIS-INT-RATE, PIC S9(04)V99"
+   },
+   {
+    "kind": "decides",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 214,
+    "text": "                     IF DIS-INT-RATE NOT = 0",
+    "what": "Interest is computed only when the rate isn't zero"
+   },
+   {
+    "kind": "derived",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 464,
+    "text": "           COMPUTE WS-MONTHLY-INT",
+    "what": "The rate becomes an amount: balance × rate ÷ 1200 (a percentage rate becomes money; no ROUNDED)"
+   },
+   {
+    "kind": "derived",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 467,
+    "text": "           ADD WS-MONTHLY-INT  TO WS-TOTAL-INT",
+    "what": "Monthly interest is summed per account"
+   },
+   {
+    "kind": "derived",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 352,
+    "text": "           ADD WS-TOTAL-INT  TO ACCT-CURR-BAL",
+    "what": "The total interest is added to the account balance"
+   },
+   {
+    "kind": "file",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 356,
+    "text": "           REWRITE FD-ACCTFILE-REC FROM  ACCOUNT-RECORD",
+    "what": "The balance goes back to the account file"
+   },
+   {
+    "kind": "renamed",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 490,
+    "text": "           MOVE WS-MONTHLY-INT       TO TRAN-AMT",
+    "what": "The interest is renamed TRAN-AMT, the amount of a new transaction"
+   },
+   {
+    "kind": "file",
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 500,
+    "text": "           WRITE FD-TRANFILE-REC FROM TRAN-RECORD",
+    "what": "The interest transaction is written to DD TRANSACT"
+   },
+   {
+    "kind": "file",
+    "file": "app/jcl/INTCALC.jcl",
+    "line": 37,
+    "text": "//TRANSACT DD DISP=(NEW,CATLG,DELETE),",
+    "what": "DD TRANSACT is a new generation of SYSTRAN, SYSTRAN(+1)"
+   },
+   {
+    "kind": "dataset",
+    "file": "app/jcl/COMBTRAN.jcl",
+    "line": 25,
+    "text": "//         DD DISP=SHR,",
+    "what": "COMBTRAN sorts SYSTRAN(0) together with the transaction backup (a concatenated SORTIN)"
+   },
+   {
+    "kind": "dataset",
+    "file": "app/jcl/COMBTRAN.jcl",
+    "line": 33,
+    "text": "//SORTOUT  DD DISP=(NEW,CATLG,DELETE),",
+    "what": "into TRANSACT.COMBINED(+1)"
+   },
+   {
+    "kind": "dataset",
+    "file": "app/jcl/COMBTRAN.jcl",
+    "line": 48,
+    "text": "   REPRO INFILE(TRANSACT) OUTFILE(TRANVSAM)",
+    "what": "which is loaded into the transaction file, TRANSACT.VSAM.KSDS"
+   },
+   {
+    "kind": "dataset",
+    "file": "app/jcl/CREASTMT.JCL",
+    "line": 45,
+    "text": "//SORTIN   DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+    "what": "The statement job sorts the transaction file"
+   },
+   {
+    "kind": "reformatted",
+    "file": "app/jcl/CREASTMT.JCL",
+    "line": 54,
+    "text": "  OUTREC FIELDS=(1:263,16,17:1,262,279:279,50)",
+    "what": "The sort moves the card number to the front: the amount moves from byte 133 to byte 149"
+   },
+   {
+    "kind": "dataset",
+    "file": "app/jcl/CREASTMT.JCL",
+    "line": 61,
+    "text": "  REPRO INFILE(INFILE) OUTFILE(OUTFILE)",
+    "what": "The sorted file is loaded into TRXFL.VSAM.KSDS"
+   },
+   {
+    "kind": "dataset",
+    "file": "app/jcl/CREASTMT.JCL",
+    "line": 83,
+    "text": "//TRNXFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+    "what": "CBSTM03A's step reads it through DD TRNXFILE"
+   },
+   {
+    "kind": "file",
+    "file": "app/cbl/CBSTM03B.CBL",
+    "line": 141,
+    "text": "               READ TRNX-FILE INTO LK-M03B-FLDT",
+    "what": "CBSTM03B, called by CBSTM03A, reads the record into its parameter"
+   },
+   {
+    "kind": "renamed",
+    "file": "app/cbl/CBSTM03A.CBL",
+    "line": 839,
+    "text": "               MOVE WS-M03B-FLDT TO TRNX-RECORD",
+    "what": "Back in CBSTM03A through CALL USING, the record lands in TRNX-RECORD: the amount is now TRNX-AMT"
+   },
+   {
+    "kind": "renamed",
+    "file": "app/cbl/CBSTM03A.CBL",
+    "line": 829,
+    "text": "           MOVE TRNX-REST TO WS-TRAN-REST (CR-CNT, TR-CNT).",
+    "what": "It waits in a table, inside an untyped X(318) group"
+   },
+   {
+    "kind": "renamed",
+    "file": "app/cbl/CBSTM03A.CBL",
+    "line": 426,
+    "text": "                       MOVE WS-TRAN-REST (CR-JMP, TR-JMP)",
+    "what": "and comes back out as TRNX-AMT"
+   },
+   {
+    "kind": "derived",
+    "file": "app/cbl/CBSTM03A.CBL",
+    "line": 429,
+    "text": "                       ADD TRNX-AMT TO WS-TOTAL-AMT",
+    "what": "It is added to the statement total"
+   },
+   {
+    "kind": "definition",
+    "file": "app/cbl/CBSTM03A.CBL",
+    "line": 678,
+    "text": "           MOVE TRNX-AMT TO ST-TRANAMT.",
+    "what": "It is printed on the statement: a signed number becomes edited text, PIC Z(9).99-"
+   }
+  ],
+  "definition_changes": [
+   {
+    "file": "app/cbl/CBACT04C.cbl",
+    "line": 464,
+    "from": "DIS-INT-RATE",
+    "to": "WS-MONTHLY-INT",
+    "change": "computed"
+   },
+   {
+    "file": "app/jcl/CREASTMT.JCL",
+    "line": 54,
+    "from": "offset 132",
+    "to": "offset 148",
+    "change": "moved by the sort"
+   },
+   {
+    "file": "app/cbl/CBSTM03A.CBL",
+    "line": 678,
+    "from": "TRNX-AMT",
+    "to": "ST-TRANAMT",
+    "change": "becomes edited text"
+   }
+  ]
  }
 }
